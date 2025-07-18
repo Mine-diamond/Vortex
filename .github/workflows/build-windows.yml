@@ -53,7 +53,7 @@ jobs:
 
       # 5. 安装 Inno Setup（脚本编译器 iscc）
       - name: Set up Inno Setup
-        uses: Minishlink/setup-inno-setup-action@v1
+        uses: crazy-max/ghaction-inno-setup@v2
 
       # 6. 编译安装包
       - name: Inno Setup – build installer

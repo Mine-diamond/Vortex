@@ -46,8 +46,6 @@ jobs:
             --type app-image `
             --dest build\app `
             --icon src\main\resources\images\app_icon.png `
-            --win-menu `
-            --win-shortcut `
             --app-version "${{ env.APP_VERSION }}" `
             --add-modules javafx.controls,javafx.fxml
 

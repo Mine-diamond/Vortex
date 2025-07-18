@@ -49,6 +49,7 @@ jobs:
             --icon src\main\resources\images\app_icon.png `
             --win-console `
             --app-version "${{ env.APP_VERSION }}" `
+            --add-modules ALL-MODULE-PATH
             --module-path "${{ env.JAVA_HOME }}\jmods" `
             --add-modules javafx.controls,javafx.fxml
 

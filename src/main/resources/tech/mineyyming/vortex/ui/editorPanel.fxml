@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import tech.mineyyming.vortex.ui.HoverPopOver?>
+<?import tech.mineyyming.vortex.ui.SimpleHoverTooltip?>
+
+<?import javafx.geometry.Insets?>
+<?import org.fxmisc.richtext.CodeArea?>
+<?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="tech.mineyyming.vortex.ui.EditorPanel"
+      spacing="10" prefWidth="300">
+    <padding>
+        <Insets top="10" right="10" left="10" bottom="10"/>
+    </padding>
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="setWarpButton" text="↩" SimpleHoverTooltip.text="自动换行：开"/>
+        <Button fx:id="setLineNum" text="行号" SimpleHoverTooltip.text="显示行号：开"/>
+        <Button fx:id="toggletextEditButton" text="⬅" SimpleHoverTooltip.text="显示行号：点击展开"/>
+    </HBox>
+    <VirtualizedScrollPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
+        <content>
+            <CodeArea fx:id="textEdit" />
+        </content>
+    </VirtualizedScrollPane>
+</VBox>

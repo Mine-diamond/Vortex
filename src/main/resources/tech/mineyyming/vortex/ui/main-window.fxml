@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:id="mainWindow"
+            fx:controller="tech.mineyyming.vortex.ui.MainWindow"
+            prefHeight="650.0" prefWidth="1200.0">
+
+    <TextField fx:id="search" promptText="搜索框" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
+    <StackPane AnchorPane.topAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="20">
+        <fx:include source="DefaultView.fxml" fx:id="DefaultView"/>
+    </StackPane>
+</AnchorPane>

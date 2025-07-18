@@ -46,7 +46,7 @@ jobs:
             --main-class "${{ env.MAIN_CLASS }}" `
             --type app-image `
             --dest build\app `
-            --icon src\main\resources\images\app_icon.png `
+            --icon src\main\resources\images\app_icon.ico `
             --win-console `
             --app-version "${{ env.APP_VERSION }}" `
             --module-path "$env:JAVA_HOME\jmods" `

@@ -1,56 +1,68 @@
-name: Build Windows Installer
+name: Build-Windows-Installer
 
 on:
   push:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ "main" ]     # 也可改成 release/* 等
+  workflow_dispatch:         # 允许手动触发
+
+env:
+  APP_NAME: Vortex
+  APP_VERSION: 1.0.0         # 可写死，也可读取 pom.xml
+  MAIN_JAR: Vortex-${{ env.APP_VERSION }}.jar
+  MAIN_CLASS: tech.mineyyming.vortex.Main
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
+      # 1. 拉代码
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up BellSoft Liberica JDK 21
+      # 2. Liberica 21（full = 自带 JavaFX + jpackage）
+      - name: Set up Liberica JDK 21-full
         uses: actions/setup-java@v4
         with:
+          distribution: liberica
           java-version: '21'
-          distribution: 'liberica'
-          java-package: 'jdk+fx' # 使用带有 JavaFX 的 Liberica Full JDK
+          architecture: x64
+          cache: maven
 
+      # 3. Maven Build（产生 fat-jar）
+      - name: Build with Maven
+        run: mvn -B clean package
+
+      # 4. jpackage 生成 app-image（绿色版）
+      - name: jpackage – create app-image
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build\app
+          jpackage `
+            --name "${{ env.APP_NAME }}" `
+            --input target `
+            --main-jar "${{ env.MAIN_JAR }}" `
+            --main-class "${{ env.MAIN_CLASS }}" `
+            --type app-image `
+            --dest build\app `
+            --icon src\main\resources\images\app_icon.png `
+            --win-menu `
+            --win-shortcut `
+            --app-version "${{ env.APP_VERSION }}" `
+            --add-modules javafx.controls,javafx.fxml
+
+      # 5. 安装 Inno Setup（脚本编译器 iscc）
       - name: Set up Inno Setup
         uses: Minishlink/setup-inno-setup-action@v1
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      # 6. 编译安装包
+      - name: Inno Setup – build installer
+        run: iscc setup.iss
 
-      - name: Create App Image with jpackage
-        run: |
-          # 创建临时模块路径目录
-          mkdir -p build/modules
-          
-          # 使用 jpackage 创建应用镜像
-          jpackage --name Vortex `
-            --type app-image `
-            --input target `
-            --dest build/app `
-            --main-jar Vortex-1.0-SNAPSHOT.jar `
-            --main-class tech.mineyyming.vortex.Main `
-            --icon src/main/resources/images/app_icon.ico `
-            --app-version 1.0.0 `
-            --vendor "MineyyMing Tech" `
-            --win-menu `
-            --win-shortcut `
-            --add-modules java.base,java.desktop,java.logging,java.sql,java.naming,javafx.controls,javafx.fxml,javafx.graphics `
-            --java-options "-Xmx512m"
-
-      - name: Compile Installer with Inno Setup
-        run: iscc "setup.iss"
-
-      - name: Upload Installer Artifact
+      # 7. 上传产物
+      - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: windows-installer
-          path: Output/Vortex-Setup.exe
+          name: Vortex-installer
+          path: |
+            Output\Vortex-Setup.exe

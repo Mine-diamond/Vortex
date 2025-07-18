@@ -1,0 +1,56 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up BellSoft Liberica JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'liberica'
+          java-package: 'jdk+fx' # 使用带有 JavaFX 的 Liberica Full JDK
+
+      - name: Set up Inno Setup
+        uses: Minishlink/setup-inno-setup-action@v1
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+
+      - name: Create App Image with jpackage
+        run: |
+          # 创建临时模块路径目录
+          mkdir -p build/modules
+          
+          # 使用 jpackage 创建应用镜像
+          jpackage --name Vortex `
+            --type app-image `
+            --input target `
+            --dest build/app `
+            --main-jar Vortex-1.0-SNAPSHOT.jar `
+            --main-class tech.mineyyming.vortex.Main `
+            --icon src/main/resources/images/app_icon.ico `
+            --app-version 1.0.0 `
+            --vendor "MineyyMing Tech" `
+            --win-menu `
+            --win-shortcut `
+            --add-modules java.base,java.desktop,java.logging,java.sql,java.naming,javafx.controls,javafx.fxml,javafx.graphics `
+            --java-options "-Xmx512m"
+
+      - name: Compile Installer with Inno Setup
+        run: iscc "setup.iss"
+
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: Output/Vortex-Setup.exe

@@ -51,13 +51,14 @@ jobs:
             --app-version "${{ env.APP_VERSION }}" `
             --add-modules javafx.controls,javafx.fxml
 
-      # 5. 安装 Inno Setup（脚本编译器 iscc）
-      - name: Set up Inno Setup
-        uses: crazy-max/ghaction-inno-setup@v2
-
-      # 6. 编译安装包
-      - name: Inno Setup – build installer
-        run: iscc setup.iss
+      # 5. 【替换步骤】使用 Minionguyjpro/Inno-Setup-Action 编译安装包
+      - name: Compile Installer with Inno Setup Action
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          # 指定你的 .iss 文件路径
+          path: setup.iss
+          # 关键：通过 options 参数把动态变量传给 Inno Setup
+          options: /DAppName="${{ env.APP_NAME }}" /DAppVersion="${{ env.APP_VERSION }}"
 
       # 7. 上传产物
       - name: Upload installer

@@ -27,6 +27,7 @@ jobs:
           distribution: liberica
           java-version: '21'
           architecture: x64
+          java-package: jdk-full
           cache: maven
 
       # 3. Maven Build（产生 fat-jar）

@@ -8,7 +8,7 @@ on:
 env:
   APP_NAME: Vortex
   APP_VERSION: 1.0.0         # 可写死，也可读取 pom.xml
-  MAIN_JAR: Vortex-${{ env.APP_VERSION }}.jar
+  MAIN_JAR: Vortex-1.0.0.jar
   MAIN_CLASS: tech.mineyyming.vortex.Main
 
 jobs:

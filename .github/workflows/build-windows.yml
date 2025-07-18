@@ -49,7 +49,6 @@ jobs:
             --icon src\main\resources\images\app_icon.png `
             --win-console `
             --app-version "${{ env.APP_VERSION }}" `
-            --module-path "${{ env.JAVA_HOME }}\jmods" `
             --add-modules javafx.controls,javafx.fxml
 
       # 5. 【替换步骤】使用 Minionguyjpro/Inno-Setup-Action 编译安装包

@@ -7,7 +7,7 @@ on:
 
 env:
   APP_NAME: Vortex
-  APP_VERSION: 1.0.0         # 可写死，也可读取 pom.xml
+  APP_VERSION: 1.0.0
   MAIN_JAR: Vortex-1.0.0.jar
   MAIN_CLASS: tech.mineyyming.vortex.Launcher
 

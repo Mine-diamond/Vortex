@@ -126,7 +126,7 @@ public class MainWindow {
 
         if (view == null) {
             try {
-                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fileName)));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/mineyyming/vortex/ui/" + fileName));
                 view = loader.load();
                 viewCache.put(fileName, view); // 加载后放入缓存
 

@@ -39,8 +39,8 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: deskto
 ; 勾选“startup”任务，则写入注册表实现自启
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; \
   ValueType: string; ValueName: "{#AppName}"; \
-  ValueData: """{app}\{#AppExeName}"""; Tasks: startup
+  ValueData: """{app}\{#AppExeName}"" --autostart"; Tasks: startup
 
 [Run]
-Filename: "{app}\{#AppExeName}"; Parameters: "--autostart"; Description: "{cm:LaunchProgram,{#AppName}}"; \
+Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#AppName}}"; \
   Flags: nowait postinstall skipifsilent

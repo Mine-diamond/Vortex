@@ -4,15 +4,29 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>tech.mineyyming</groupId>
     <artifactId>Vortex</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
+
+    <!-- 项目元数据 -->
+    <name>Vortex</name>
+    <description>Vortex is a software for quickly opening programs and files</description>
+    <url>https://github.com/Mine-diamond/Vortex</url>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, version 2 (GPL-2.0)</name>
+            <url>https://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
 
     <dependencies>
         <dependency>
@@ -130,6 +144,7 @@
 
     <build>
     <plugins>
+
         <!-- 打包出 fat-jar -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -147,11 +162,35 @@
                                 <mainClass>tech.mineyyming.vortex.Launcher</mainClass>
                             </transformer>
                         </transformers>
+                        <shadedArtifactAttached>false</shadedArtifactAttached>
                         <finalName>Vortex-1.0.0</finalName>   <!-- 与 Action 中 MAIN_JAR 一致 -->
                     </configuration>
                 </execution>
             </executions>
         </plugin>
+
+        <!--使用 antrun 插件在打包后删除多余的 "original" 文件-->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>3.1.0</version>
+            <executions>
+                <execution>
+                    <!-- 绑定到 package 阶段，确保在 shade 之后运行 -->
+                    <phase>package</phase>
+                    <goals>
+                        <goal>run</goal>
+                    </goals>
+                    <configuration>
+                        <target>
+                            <!-- Ant 任务：删除文件 -->
+                            <delete file="${project.build.directory}/original-${project.build.finalName}.jar"/>
+                        </target>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
     </plugins>
     </build>
 

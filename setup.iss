@@ -8,7 +8,7 @@
 [Setup]
 AppName={#AppName}
 AppVersion={#AppVersion}
-AppPublisher=Mineyyming
+AppPublisher=MineDiamond
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 OutputDir=Output

@@ -66,7 +66,7 @@ public class Main extends Application {
             primaryStage.centerOnScreen();
             logger.info("用户界面显示成功");
         }else {
-            icon.showInfoMessage("Vortex","程序已启动");
+            //icon.showInfoMessage("Vortex","程序已启动");
             logger.info("程序加载成功");
         }
     }

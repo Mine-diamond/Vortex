@@ -47,7 +47,6 @@ jobs:
             --type app-image `
             --dest build\app `
             --icon packaging\windows\app_icon.ico `
-            --win-console `
             --app-version "${{ env.APP_VERSION }}" `
             --module-path "$env:JAVA_HOME\jmods" `
             --add-modules ALL-MODULE-PATH 

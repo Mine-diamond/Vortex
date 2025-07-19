@@ -23,11 +23,22 @@ import java.util.logging.LogManager;
 
 public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    static boolean isAutoStart = false;
 
     public static void main(String[] args) {
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
         logger.info("Starting vortex");
+
+        // 1. 检查命令行参数
+        for (String arg : args) {
+            if ("--autostart".equalsIgnoreCase(arg)) {
+                isAutoStart = true;
+                logger.info("程序为开机自启动");
+                break; // 找到后即可退出循环
+            }
+        }
+
         launch(args);
     }
 
@@ -49,9 +60,13 @@ public class Main extends Application {
 
         setupTrayMenu(primaryStage);
 
-        primaryStage.show();
-        primaryStage.centerOnScreen();
-        logger.info("用户界面显示成功");
+        if(!isAutoStart) {
+            primaryStage.show();
+            primaryStage.centerOnScreen();
+            logger.info("用户界面显示成功");
+        }else {
+            logger.info("程序加载成功");
+        }
     }
 
     /**

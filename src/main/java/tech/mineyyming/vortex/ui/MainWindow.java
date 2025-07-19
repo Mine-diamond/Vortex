@@ -2,7 +2,10 @@ package tech.mineyyming.vortex.ui;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -13,6 +16,10 @@ import org.slf4j.LoggerFactory;
 import tech.mineyyming.vortex.service.ShowStageListener;
 
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +29,10 @@ public class MainWindow {
 
     @FXML
     private AnchorPane mainWindow;
-
+    @FXML
+    private AnchorPane tabWindow;
+    //缓存已经加载的视图
+    private Map<String, Parent> viewCache = new HashMap<>();
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -101,5 +111,33 @@ public class MainWindow {
                 stage.hide();
             }
         });
+    }
+
+    private void loadOrGetView(String fxmlFileName) {
+        Parent view = viewCache.get(fxmlFileName);
+
+        if (view == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlFileName)));
+                view = loader.load();
+                viewCache.put(fxmlFileName, view); // 加载后放入缓存
+
+                // 让新视图充满 tabWindow (可选，但推荐)
+                AnchorPane.setTopAnchor(view, 0.0);
+                AnchorPane.setBottomAnchor(view, 0.0);
+                AnchorPane.setLeftAnchor(view, 0.0);
+                AnchorPane.setRightAnchor(view, 0.0);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        tabWindow.getChildren().clear();
+        tabWindow.getChildren().add(view);
+    }
+
+    public void showFditorPanel(ActionEvent actionEvent) {
+        loadOrGetView("EditorPanel.fxml");
     }
 }

@@ -13,7 +13,16 @@
             prefHeight="650.0" prefWidth="1200.0">
 
     <TextField fx:id="search" promptText="搜索框" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
-    <StackPane AnchorPane.topAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.bottomAnchor="20">
-        <fx:include source="DefaultView.fxml" fx:id="DefaultView"/>
-    </StackPane>
+
+    <VBox alignment="CENTER" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="1020" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="20">
+        <Button text="aaaaa" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity"/>
+        <Button text="text" onAction="#showFditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity"/>
+    </VBox>
+
+    <AnchorPane fx:id="tabWindow" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="200" AnchorPane.bottomAnchor="20">
+
+    </AnchorPane>
+
+
+
 </AnchorPane>

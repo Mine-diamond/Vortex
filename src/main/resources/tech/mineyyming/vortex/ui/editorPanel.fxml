@@ -21,7 +21,6 @@
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <Button fx:id="setWarpButton" text="↩" SimpleHoverTooltip.text="自动换行：开"/>
         <Button fx:id="setLineNum" text="行号" SimpleHoverTooltip.text="显示行号：开"/>
-        <Button fx:id="toggletextEditButton" text="⬅" SimpleHoverTooltip.text="显示行号：点击展开"/>
     </HBox>
     <VirtualizedScrollPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <content>

@@ -13,6 +13,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
+import tech.mineyyming.vortex.model.ContentPanel;
 import tech.mineyyming.vortex.service.ShowStageListener;
 
 
@@ -20,12 +21,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class MainWindow {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MainWindow.class);
+    private static ContentPanel currentContentPanel;
 
     @FXML
     private AnchorPane mainWindow;
@@ -67,7 +70,7 @@ public class MainWindow {
                 stage.setY(y);
         });
 
-
+        loadOrGetView(ContentPanel.EDITORPANEL);
     }
 
     public void setStage(Stage stage) {
@@ -113,31 +116,39 @@ public class MainWindow {
         });
     }
 
-    private void loadOrGetView(String fxmlFileName) {
-        Parent view = viewCache.get(fxmlFileName);
+    private void loadOrGetView(ContentPanel fxmlFileName) {
+        if(fxmlFileName == currentContentPanel) {
+            logger.info("原页面：{}，新页面：{}，页面一致", fxmlFileName.getFileName(), currentContentPanel.getFileName());
+            return;
+        }
+        String fileName = fxmlFileName.getFileName();
+        Parent view = viewCache.get(fileName);
 
         if (view == null) {
             try {
-                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fxmlFileName)));
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource(fileName)));
                 view = loader.load();
-                viewCache.put(fxmlFileName, view); // 加载后放入缓存
+                viewCache.put(fileName, view); // 加载后放入缓存
 
                 // 让新视图充满 tabWindow (可选，但推荐)
                 AnchorPane.setTopAnchor(view, 0.0);
                 AnchorPane.setBottomAnchor(view, 0.0);
                 AnchorPane.setLeftAnchor(view, 0.0);
                 AnchorPane.setRightAnchor(view, 0.0);
+                logger.info("原页面：{}，新页面：{}，从文件加载新页面",Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
+        } else {
+            logger.info("原页面：{}，新页面：{}，从缓存加载新页面",Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
         }
-
+        currentContentPanel = fxmlFileName;
         tabWindow.getChildren().clear();
         tabWindow.getChildren().add(view);
     }
 
     public void showFditorPanel(ActionEvent actionEvent) {
-        loadOrGetView("EditorPanel.fxml");
+        loadOrGetView(ContentPanel.EDITORPANEL);
     }
 }

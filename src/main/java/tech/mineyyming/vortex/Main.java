@@ -20,10 +20,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.logging.LogManager;
 
-
 public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     static boolean isAutoStart = false;
+    static FXTrayIcon icon;
 
     public static void main(String[] args) {
         LogManager.getLogManager().reset();
@@ -44,6 +44,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         Platform.setImplicitExit(false);
         primaryStage.initStyle(StageStyle.UNDECORATED);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/mineyyming/vortex/ui/main-window.fxml"));
@@ -65,6 +66,7 @@ public class Main extends Application {
             primaryStage.centerOnScreen();
             logger.info("用户界面显示成功");
         }else {
+            icon.showInfoMessage("Vortex","程序已启动");
             logger.info("程序加载成功");
         }
     }
@@ -85,7 +87,7 @@ public class Main extends Application {
     }
 
     public void setupTrayMenu(Stage primaryStage) {
-        FXTrayIcon icon = new FXTrayIcon(primaryStage, getClass().getResource("/images/app_icon.png"));
+        icon = new FXTrayIcon(primaryStage, getClass().getResource("/images/app_icon.png"));
         icon.setTooltip("Vortex 快捷面板");
 //        icon.setOnAction(event -> {
 //            if(primaryStage.isShowing()) {

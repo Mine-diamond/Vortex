@@ -81,7 +81,7 @@ public class MainWindow {
         stage.setTitle("Vortex");
         stage.setAlwaysOnTop(true);
         stage.setResizable(false);
-        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/app_icon.png")));
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/app_icon_x510.png")));
     }
 
     //  这个方法将在 stage 被设置后，由 Main 类手动调用

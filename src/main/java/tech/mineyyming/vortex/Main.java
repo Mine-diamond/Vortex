@@ -87,7 +87,7 @@ public class Main extends Application {
     }
 
     public void setupTrayMenu(Stage primaryStage) {
-        icon = new FXTrayIcon(primaryStage, getClass().getResource("/images/app_icon.png"));
+        icon = new FXTrayIcon(primaryStage, getClass().getResource("/images/app_icon_x16.png"));
         icon.setTooltip("Vortex 快捷面板");
 //        icon.setOnAction(event -> {
 //            if(primaryStage.isShowing()) {

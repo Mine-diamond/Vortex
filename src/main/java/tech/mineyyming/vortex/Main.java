@@ -38,7 +38,6 @@ public class Main extends Application {
                 break; // 找到后即可退出循环
             }
         }
-
         launch(args);
     }
 
@@ -82,7 +81,8 @@ public class Main extends Application {
         } catch (NativeHookException ex) {
             ex.printStackTrace();
         }
-        System.out.println("JNativeHook 已注销，程序退出。");
+        icon.hide();
+        logger.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
         super.stop();
     }
 
@@ -119,7 +119,7 @@ public class Main extends Application {
 
         openItem.textProperty().bind(Bindings.when(primaryStage.showingProperty()).then("close window").otherwise("open window"));
         MenuItem exitItem = new MenuItem("exit");
-        exitItem.setOnAction(event -> {Platform.exit();System.exit(0);});
+        exitItem.setOnAction(event -> {Platform.exit();});
 
 
         icon.addMenuItem(pinItem);

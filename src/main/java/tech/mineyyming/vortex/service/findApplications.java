@@ -1,7 +1,7 @@
 package tech.mineyyming.vortex.service;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import tech.mineyyming.vortex.model.GlobalDataStore;
 import tech.mineyyming.vortex.model.ProgramInfo;
 import tech.mineyyming.vortex.model.ProgramSource;
@@ -105,9 +105,9 @@ public class findApplications {
         LocalTime time2 = LocalTime.now();
         System.out.println("powershell执行时间:" + Duration.between(time, time2).toMillis() + "ms");
 
-        Gson gson = new Gson();
-        Type programInfoListType = new TypeToken<List<ProgramInfo>>() {}.getType();
-        List<ProgramInfo> programs = gson.fromJson(jsonOutput, programInfoListType);
+        ObjectMapper mapper = new ObjectMapper();
+        List<ProgramInfo> programs = mapper.readValue(jsonOutput,new TypeReference<List<ProgramInfo>>(){});
+
 
         programs.sort(Comparator.comparing(ProgramInfo::getBaseName, Comparator.nullsLast(String::compareToIgnoreCase)));
         programs.removeIf((programInfo) ->{

@@ -13,6 +13,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
+import tech.mineyyming.vortex.model.AppConfig;
+import tech.mineyyming.vortex.model.AppConfigManager;
 import tech.mineyyming.vortex.model.ContentPanel;
 import tech.mineyyming.vortex.service.ShowStageListener;
 
@@ -29,6 +31,8 @@ public class MainWindow {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MainWindow.class);
     private static ContentPanel currentContentPanel;
+
+    AppConfig config = AppConfigManager.getInstance();
 
     @FXML
     private AnchorPane mainWindow;
@@ -79,7 +83,7 @@ public class MainWindow {
 
     public void setPrimaryStage(){
         stage.setTitle("Vortex");
-        stage.setAlwaysOnTop(true);
+        if(config.alwaysOnTop()) stage.setAlwaysOnTop(true);
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/app_icon_x510.png")));
     }

@@ -1,6 +1,5 @@
 package tech.mineyyming.vortex.model;
 
-import com.google.gson.annotations.SerializedName;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

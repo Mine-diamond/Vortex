@@ -13,6 +13,8 @@ import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import tech.mineyyming.vortex.model.AppConfig;
+import tech.mineyyming.vortex.model.AppConfigManager;
 import tech.mineyyming.vortex.ui.MainWindow;
 
 import org.slf4j.Logger;
@@ -22,6 +24,7 @@ import java.util.logging.LogManager;
 
 public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
+    AppConfig config = AppConfigManager.getInstance();
     static boolean isAutoStart = false;
     static FXTrayIcon icon;
 
@@ -30,12 +33,12 @@ public class Main extends Application {
         SLF4JBridgeHandler.install();
         logger.info("Starting vortex");
 
-        // 1. 检查命令行参数
+        // 检查命令行参数
         for (String arg : args) {
             if ("--autostart".equalsIgnoreCase(arg)) {
                 isAutoStart = true;
                 logger.info("程序为开机自启动");
-                break; // 找到后即可退出循环
+                break;
             }
         }
         launch(args);
@@ -65,7 +68,7 @@ public class Main extends Application {
             primaryStage.centerOnScreen();
             logger.info("用户界面显示成功");
         }else {
-            icon.showInfoMessage("Vortex","程序已启动");
+            //icon.showMessage("Vortex","程序已启动");
             logger.info("程序加载成功");
         }
     }
@@ -75,6 +78,7 @@ public class Main extends Application {
      */
     @Override
     public void stop() throws Exception {
+        AppConfigManager.save();
         try {
             // 注销全局钩子，释放资源
             GlobalScreen.unregisterNativeHook();
@@ -101,10 +105,12 @@ public class Main extends Application {
         pinItem.setOnAction(event -> {
             if(primaryStage.isAlwaysOnTop()){
                 primaryStage.setAlwaysOnTop(false);
-                System.out.println("取消置顶");
+                config.setAlwaysOnTop(false);
+                logger.info("取消置顶");
             } else {
                 primaryStage.setAlwaysOnTop(true);
-                System.out.println("置顶");
+                config.setAlwaysOnTop(true);
+                logger.info("置顶");
             }
         });
 

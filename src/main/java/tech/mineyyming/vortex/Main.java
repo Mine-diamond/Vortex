@@ -20,6 +20,7 @@ import tech.mineyyming.vortex.ui.MainWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.logging.LogManager;
 
 public class Main extends Application {
@@ -51,7 +52,13 @@ public class Main extends Application {
         primaryStage.initStyle(StageStyle.UNDECORATED);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/mineyyming/vortex/ui/main-window.fxml"));
         Parent root = loader.load();
-        primaryStage.setScene(new Scene(root));
+        Scene scene = new Scene(root);
+
+        String cssPath = Objects.requireNonNull(getClass().getResource("fluent-style.css")).toExternalForm();
+        scene.getStylesheets().add(cssPath);
+
+        // Set the scene to the stage
+        primaryStage.setScene(scene);
 
         MainWindow controller = loader.getController();
         logger.info("FXML加载成功");

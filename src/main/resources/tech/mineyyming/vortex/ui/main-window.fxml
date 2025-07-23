@@ -12,11 +12,16 @@
             fx:controller="tech.mineyyming.vortex.ui.MainWindow"
             prefHeight="650.0" prefWidth="1200.0">
 
+    <!-- 它是一个不可见对象，可以放在 <fx:define> 标签里，或者直接放在布局的任何位置 -->
+    <fx:define>
+        <ToggleGroup fx:id="mainToggleGroup" />
+    </fx:define>
+
     <TextField fx:id="search" promptText="搜索框" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
 
     <VBox alignment="CENTER" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="1070" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="20">
-        <Button text="aaaaa" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity"/>
-        <Button text="快速文本编辑器" onAction="#showFditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity"/>
+        <ToggleButton text="快速编辑" onAction="#showFditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity"/>
+        <ToggleButton text="搜索" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity"/>
     </VBox>
 
     <AnchorPane fx:id="tabWindow" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="150" AnchorPane.bottomAnchor="20">

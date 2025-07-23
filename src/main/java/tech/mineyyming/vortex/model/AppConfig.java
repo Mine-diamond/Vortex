@@ -1,9 +1,10 @@
 package tech.mineyyming.vortex.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AppConfig {
 
     private BooleanProperty showLineNum = new SimpleBooleanProperty(true);
@@ -16,8 +17,8 @@ public class AppConfig {
     public BooleanProperty wordWrapProperty() { return wordWarp; }
     public Boolean alwaysOnTop() { return alwaysOnTop; }
 
-    public void setIsShowLineNum(boolean showLineNum) {this.showLineNum.set(showLineNum);}
-    public boolean getIsShowLineNum() {return showLineNum.get();}
+    public void setshowLineNum(boolean showLineNum) {this.showLineNum.set(showLineNum);}
+    public boolean getshowLineNum() {return showLineNum.get();}
 
     public void setWordWarp(boolean wordWarp) {this.wordWarp.set(wordWarp);}
     public boolean getWordWarp() {return wordWarp.get();}

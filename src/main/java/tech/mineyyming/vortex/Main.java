@@ -127,7 +127,6 @@ public class Main extends Application {
         MenuItem exitItem = new MenuItem("exit");
         exitItem.setOnAction(event -> {Platform.exit();});
 
-
         icon.addMenuItem(pinItem);
         icon.addMenuItem(new MenuItem("-"));
         icon.addMenuItem(openItem);

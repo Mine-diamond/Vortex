@@ -16,7 +16,7 @@
       fx:controller="tech.mineyyming.vortex.ui.EditorPanel"
       spacing="10" prefWidth="300">
     <padding>
-        <Insets top="10" right="10" left="10" bottom="10"/>
+        <Insets top="10" right="20" left="10" bottom="10"/>
     </padding>
     <HBox spacing="10" alignment="CENTER_RIGHT">
         <TextField fx:id="searchField" promptText="搜索文本" />

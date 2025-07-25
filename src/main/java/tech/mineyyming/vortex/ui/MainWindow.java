@@ -2,10 +2,14 @@ package tech.mineyyming.vortex.ui;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -16,16 +20,15 @@ import org.slf4j.LoggerFactory;
 import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
 import tech.mineyyming.vortex.model.ContentPanel;
+import tech.mineyyming.vortex.service.BindingUtils;
 import tech.mineyyming.vortex.service.ShowStageListener;
+import tech.mineyyming.vortex.service.WindowAnimator;
 
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MainWindow {
 
@@ -38,15 +41,15 @@ public class MainWindow {
     private AnchorPane mainWindow;
     @FXML
     private AnchorPane tabWindow;
+    @FXML
+    private ToggleButton pinBtn;
+    @FXML
+    private Button exitBtn;
     //缓存已经加载的视图
     private Map<String, Parent> viewCache = new HashMap<>();
 
     private double xOffset = 0;
     private double yOffset = 0;
-    private boolean isStageShown = true;
-    private boolean isExplanding = false;
-
-    private boolean isHiddenNotFoucs = false;
 
     Stage stage;
 
@@ -54,14 +57,10 @@ public class MainWindow {
 
         mainWindow.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if(event.getCode() == KeyCode.ESCAPE) {
-                stage.hide();
+                //stage.hide();
+                WindowAnimator.hideWindow(stage);
             }
         });
-
-
-//        mainWindow.setOnMouseClicked(event -> {
-//            mainWindow.requestFocus();
-//        });
 
         mainWindow.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
@@ -74,6 +73,17 @@ public class MainWindow {
                 stage.setY(y);
         });
 
+        //pinBtn.selectedProperty().bindBidirectional(config.autoCloseOnFocusLossProperty());
+        pinBtn.setSelected(!config.getAutoCloseOnFocusLoss());
+        BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(),config.autoCloseOnFocusLossProperty());
+        SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("失焦隐藏：开启").otherwise("失焦隐藏：关闭"));
+
+        exitBtn.setOnAction(event -> {
+            if(stage.isShowing()) {
+                WindowAnimator.hideWindow(stage,Platform::exit);
+            }
+        });
+
         loadOrGetView(ContentPanel.EDITORPANEL);
     }
 
@@ -83,7 +93,7 @@ public class MainWindow {
 
     public void setPrimaryStage(){
         stage.setTitle("Vortex");
-        if(config.alwaysOnTop()) stage.setAlwaysOnTop(true);
+        stage.setAlwaysOnTop(true);
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/app_icon_x510.png")));
     }
@@ -113,9 +123,16 @@ public class MainWindow {
     }
 
     public void setOtherListeners() {
+
         stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue && isHiddenNotFoucs) {
-                stage.hide();
+            if(!newValue && config.getAutoCloseOnFocusLoss()) {
+                WindowAnimator.hideWindow(stage);
+            }
+        });
+
+        stage.iconifiedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) {
+                stage.setIconified(false);
             }
         });
     }

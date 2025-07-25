@@ -62,8 +62,8 @@ public class EditorPanel {
 
     public void initialize(){
 
-        if(config.wordWrapProperty().getValue()) textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
-        if(config.showLineNumProperty().getValue()) textEdit.setWrapText(true);
+        if(config.wordWrapProperty().getValue()) textEdit.setWrapText(true);
+        if(config.showLineNumProperty().getValue()) textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
 
         SimpleHoverTooltip.textProperty(setLineNum).bind(Bindings.when(config.showLineNumProperty()).then("显示行号：开").otherwise("显示行号：关"));
         SimpleHoverTooltip.textProperty(setWarpButton).bind(Bindings.when(config.wordWrapProperty()).then("自动换行：开").otherwise("自动换行：关"));

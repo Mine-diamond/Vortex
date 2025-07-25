@@ -21,11 +21,13 @@ public class ShowStageListener implements NativeKeyListener {
 
             Platform.runLater(() -> {
                 if (stage.isShowing()) {
-                    stage.hide();
+                    //stage.hide();
+                    WindowAnimator.hideWindow(stage);
                 } else {
-                    stage.show();
-                    stage.toFront();
-                    stage.requestFocus();
+                    //stage.show();
+                    //stage.toFront();
+                    //stage.requestFocus();
+                    WindowAnimator.showWindow(stage);
                 }
             });
 

@@ -10,17 +10,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuItem;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
+import tech.mineyyming.vortex.service.AutoOperateManager;
+import tech.mineyyming.vortex.service.WindowAnimator;
 import tech.mineyyming.vortex.ui.MainWindow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
 import java.util.logging.LogManager;
 
 public class Main extends Application {
@@ -49,13 +51,14 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         Platform.setImplicitExit(false);
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/mineyyming/vortex/ui/main-window.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
 
-        String cssPath = Objects.requireNonNull(getClass().getResource("fluent-style.css")).toExternalForm();
-        scene.getStylesheets().add(cssPath);
+        //String cssPath = Objects.requireNonNull(getClass().getResource("fluent-style.css")).toExternalForm();
+        //scene.getStylesheets().add(cssPath);
 
         // Set the scene to the stage
         primaryStage.setScene(scene);
@@ -68,11 +71,11 @@ public class Main extends Application {
         controller.setupGlobalKeyListener();
         controller.setOtherListeners();
 
+        AutoOperateManager.setAutoFocus(primaryStage,"searchField");
         setupTrayMenu(primaryStage);
 
         if(!isAutoStart) {
-            primaryStage.show();
-            primaryStage.centerOnScreen();
+            WindowAnimator.showWindow(primaryStage);
             logger.info("用户界面显示成功");
         }else {
             //icon.showMessage("Vortex","程序已启动");
@@ -108,31 +111,36 @@ public class Main extends Application {
 //            }
 //        });
         MenuItem pinItem = new MenuItem();
-        pinItem.textProperty().bind(Bindings.when(primaryStage.alwaysOnTopProperty()).then("window on top:true").otherwise("window on top:false"));
+        pinItem.textProperty().bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("Close when loses focus").otherwise("Don't Close when loses focus"));
         pinItem.setOnAction(event -> {
-            if(primaryStage.isAlwaysOnTop()){
-                primaryStage.setAlwaysOnTop(false);
-                config.setAlwaysOnTop(false);
-                logger.info("取消置顶");
-            } else {
-                primaryStage.setAlwaysOnTop(true);
-                config.setAlwaysOnTop(true);
-                logger.info("置顶");
-            }
+//            if(primaryStage.isAlwaysOnTop()){
+//                config.setAutoCloseOnFocusLoss(false);
+//                logger.info("取消失焦关闭");
+//            } else {
+//                config.setAutoCloseOnFocusLoss(true);
+//                logger.info("开启失焦关闭");
+//            }
+            config.setAutoCloseOnFocusLoss(!config.getAutoCloseOnFocusLoss());
         });
 
         MenuItem openItem = new MenuItem();
         openItem.setOnAction(event -> {
             if(primaryStage.isShowing()) {
-                primaryStage.hide();
+                WindowAnimator.hideWindow(primaryStage);
             } else {
-                primaryStage.show();
+                WindowAnimator.showWindow(primaryStage);
             }
         });
 
         openItem.textProperty().bind(Bindings.when(primaryStage.showingProperty()).then("close window").otherwise("open window"));
         MenuItem exitItem = new MenuItem("exit");
-        exitItem.setOnAction(event -> {Platform.exit();});
+        exitItem.setOnAction(event -> {
+            if(primaryStage.isShowing()){
+                WindowAnimator.hideWindow(primaryStage,Platform::exit);
+            } else {
+                Platform.exit();
+            }
+        });
 
         icon.addMenuItem(pinItem);
         icon.addMenuItem(new MenuItem("-"));
@@ -140,4 +148,5 @@ public class Main extends Application {
         icon.addMenuItem(exitItem);
         icon.show();
     }
+
 }

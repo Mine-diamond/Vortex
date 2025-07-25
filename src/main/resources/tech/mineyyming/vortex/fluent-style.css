@@ -1,0 +1,195 @@
+/* fluent-style.css */
+
+.root {
+    -fx-font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    -fx-font-size: 13px;
+    -fw-primary-color: #0078D7;
+    -fw-primary-light: #4ca6ff;
+    -fw-primary-dark: #005a9e;
+    -fw-surface-color: #FFFFFF;
+    -fw-surface-dark: #1E1E1E;
+    -fw-background-color: #F5F5F5;
+    -fw-background-dark: #2D2D2D;
+    -fw-text-primary: #212121;
+    -fw-text-secondary: #666666;
+    -fw-text-dark: #FFFFFF;
+    -fw-divider-color: #E0E0E0;
+    -fw-success-color: #107C10;
+    -fw-error-color: #D13438;
+    -fw-warning-color: #F2C811;
+}
+
+/* 基础面板样式 */
+.anchor-pane, .vbox, .hbox {
+    -fx-background-color: -fw-background-color;
+}
+
+/* 主窗口样式 */
+#mainWindow {
+    -fx-background-color: -fw-background-color;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 12, 0, 0, 0);
+}
+
+/* 导航栏样式 */
+#mainToggleGroup .toggle-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fw-text-primary;
+    -fx-font-weight: 500;
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 4px;
+    -fx-cursor: hand;
+}
+
+#mainToggleGroup .toggle-button:selected {
+    -fx-background-color: rgba(0, 120, 215, 0.1);
+    -fx-text-fill: -fw-primary-color;
+    -fx-font-weight: 600;
+}
+
+#mainToggleGroup .toggle-button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 编辑器区域 */
+#tabWindow {
+    -fx-background-color: -fw-surface-color;
+    -fx-border-color: -fw-divider-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 15px;
+}
+
+/* 编辑器工具栏 */
+.editor-toolbar {
+    -fx-padding: 0 0 12px 0;
+}
+
+/* 搜索框 */
+.text-field {
+    -fx-background-color: -fw-surface-color;
+    -fx-border-color: -fw-divider-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 8px 12px;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused {
+    -fx-border-color: -fw-primary-color;
+    -fx-border-width: 2px;
+    -fx-padding: 7px 11px;
+}
+
+/* 按钮样式 */
+.button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fw-text-primary;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 10px;
+    -fx-cursor: hand;
+    -fx-min-width: 36px;
+    -fx-min-height: 36px;
+    -fx-font-size: 14px;
+    -fx-alignment: center;
+}
+
+.button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.05);
+}
+
+.button:armed {
+    -fx-background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* 特殊按钮 */
+#setLineNum, #setWarpButton {
+    -fx-font-weight: 600;
+}
+
+/* 标签样式 */
+.label {
+    -fx-text-fill: -fw-text-primary;
+    -fx-font-size: 14px;
+}
+
+#showIndexLabel {
+    -fx-text-fill: -fw-text-secondary;
+    -fx-font-size: 13px;
+    -fx-padding: 0 8px;
+    -fx-alignment: center-right;
+}
+
+/* 分隔线 */
+.separator:vertical {
+    -fx-padding: 0 8px;
+    -fx-border-width: 0 0 0 1px;
+    -fx-border-color: -fw-divider-color;
+}
+
+/* 代码区域样式 */
+.code-area {
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 14px;
+    -fx-background-color: -fw-surface-color;
+    -fx-border-color: -fw-divider-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px;
+}
+
+.code-area .paragraph-box .paragraph-text {
+    -fx-padding: 0 5px 0 0;
+}
+
+/* 滚动窗格 */
+.virtualized-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: -fw-divider-color;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.virtualized-scroll-pane .scroll-bar:vertical,
+.virtualized-scroll-pane .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.virtualized-scroll-pane .scroll-bar:vertical .thumb,
+.virtualized-scroll-pane .scroll-bar:horizontal .thumb {
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-background-radius: 4px;
+}
+
+.virtualized-scroll-pane .scroll-bar:vertical .thumb:hover,
+.virtualized-scroll-pane .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* 行号样式 */
+.line-number {
+    -fx-text-fill: #666666;
+    -fx-font-family: "Consolas", "Courier New", monospace;
+    -fx-font-size: 14px;
+    -fx-padding: 0 5px 0 8px;
+    -fx-background-color: #f8f8f8;
+}
+
+/* 悬浮提示 */
+.simple-hover-tooltip {
+    -fx-background-color: #424242;
+    -fx-background-radius: 4px;
+    -fx-padding: 6px 8px;
+}
+
+.simple-hover-tooltip .label {
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+}
+
+

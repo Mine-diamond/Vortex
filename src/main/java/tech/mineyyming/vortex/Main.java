@@ -17,12 +17,14 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
 import tech.mineyyming.vortex.service.AutoOperateManager;
+import tech.mineyyming.vortex.service.ThemeManager;
 import tech.mineyyming.vortex.service.WindowAnimator;
 import tech.mineyyming.vortex.ui.MainWindow;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.logging.LogManager;
 
 public class Main extends Application {
@@ -32,6 +34,8 @@ public class Main extends Application {
     static FXTrayIcon icon;
 
     public static void main(String[] args) {
+        //System.setProperty("prism.lcdtext", "false");
+        //System.setProperty("prism.text", "t2k");
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
         logger.info("Starting vortex");
@@ -57,8 +61,9 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
 
-        //String cssPath = Objects.requireNonNull(getClass().getResource("fluent-style.css")).toExternalForm();
-        //scene.getStylesheets().add(cssPath);
+//        String cssPath = Objects.requireNonNull(getClass().getResource("fluent-style.css")).toExternalForm();
+//        scene.getStylesheets().add(cssPath);
+        ThemeManager.initialize(scene);
 
         // Set the scene to the stage
         primaryStage.setScene(scene);

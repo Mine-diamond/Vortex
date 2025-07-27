@@ -21,12 +21,13 @@
     <TextField fx:id="searchField" promptText="搜索框" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
 
     <VBox alignment="CENTER" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="1070" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="70">
-        <ToggleButton text="快速编辑" onAction="#showFditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
+        <ToggleButton text="快速编辑" fx:id="quickEditBtn" onAction="#showFditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
         <ToggleButton text="搜索" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
     </VBox>
 
-    <HBox alignment="CENTER_LEFT" AnchorPane.topAnchor="580" AnchorPane.rightAnchor="1070" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="20">
+    <HBox alignment="CENTER" AnchorPane.topAnchor="580" AnchorPane.rightAnchor="1070" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="20">
         <ToggleButton text="📌" fx:id="pinBtn" SimpleHoverTooltip.text="失焦隐藏"/>
+        <Button text="🔁" fx:id="themeSwitchBtn" />
         <Button text="⏻" fx:id="exitBtn" SimpleHoverTooltip.text="退出"/>
     </HBox>
 

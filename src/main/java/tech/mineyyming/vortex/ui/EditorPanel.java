@@ -10,12 +10,14 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
+import tech.mineyyming.vortex.model.DynamicLineNumberFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,9 +30,9 @@ public class EditorPanel {
     @FXML
     private CodeArea textEdit;
     @FXML
-    private Button setLineNum;
+    private ToggleButton setLineNum;
     @FXML
-    private Button setWarpButton;
+    private ToggleButton setWarpButton;
     @FXML
     private TextField searchField;
     @FXML
@@ -63,7 +65,9 @@ public class EditorPanel {
     public void initialize(){
 
         if(config.wordWrapProperty().getValue()) textEdit.setWrapText(true);
-        if(config.showLineNumProperty().getValue()) textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
+        //if(config.showLineNumProperty().getValue()) textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
+        if(config.showLineNumProperty().getValue()) textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
+
 
         SimpleHoverTooltip.textProperty(setLineNum).bind(Bindings.when(config.showLineNumProperty()).then("显示行号：开").otherwise("显示行号：关"));
         SimpleHoverTooltip.textProperty(setWarpButton).bind(Bindings.when(config.wordWrapProperty()).then("自动换行：开").otherwise("自动换行：关"));
@@ -72,24 +76,24 @@ public class EditorPanel {
         findPreviousBtn.disableProperty().bind(Bindings.size(allIndex).lessThanOrEqualTo(0));
         findNextBtn.disableProperty().bind(Bindings.size(allIndex).lessThanOrEqualTo(0));
 
+        setWarpButton.selectedProperty().bindBidirectional(config.wordWrapProperty());
+        textEdit.wrapTextProperty().bindBidirectional(config.wordWrapProperty());
 
-        setWarpButton.setOnAction(event -> {
-            if (config.wordWrapProperty().getValue()){
-                textEdit.setWrapText(false);
-                config.wordWrapProperty().setValue(false);
+//        setLineNum.setOnAction(event -> {
+//            if (config.showLineNumProperty().getValue()){
+//                textEdit.setParagraphGraphicFactory(null);
+//                config.showLineNumProperty().setValue(false);
+//            } else {
+//                textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
+//                config.showLineNumProperty().setValue(true);
+//            }
+//        });
+        setLineNum.selectedProperty().bindBidirectional(config.showLineNumProperty());
+        config.showLineNumProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue){
+                textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
             } else {
-                textEdit.setWrapText(true);
-                config.wordWrapProperty().setValue(true);
-            }
-        });
-
-        setLineNum.setOnAction(event -> {
-            if (config.showLineNumProperty().getValue()){
                 textEdit.setParagraphGraphicFactory(null);
-                config.showLineNumProperty().setValue(false);
-            } else {
-                textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
-                config.showLineNumProperty().setValue(true);
             }
         });
 

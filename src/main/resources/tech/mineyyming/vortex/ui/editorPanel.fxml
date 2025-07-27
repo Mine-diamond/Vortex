@@ -18,14 +18,14 @@
     <padding>
         <Insets top="10" right="20" left="10" bottom="10"/>
     </padding>
-    <HBox spacing="10" alignment="CENTER_RIGHT">
+    <HBox spacing="5" alignment="CENTER_RIGHT">
         <TextField fx:id="searchField" promptText="搜索文本" />
         <Label fx:id="showIndexLabel" text="0/0"/>
         <Button fx:id="findPreviousBtn" text="↑" onAction="#findPrevious" focusTraversable="false" SimpleHoverTooltip.text="查找上一个"/>
         <Button fx:id="findNextBtn" text="↓" onAction="#findNext" focusTraversable="false" SimpleHoverTooltip.text="查找下一个"/>
-        <Separator orientation="VERTICAL"/>
-        <Button fx:id="setWarpButton" text="↩" SimpleHoverTooltip.text="自动换行：开"/>
-        <Button fx:id="setLineNum" text="行号" />
+
+        <ToggleButton fx:id="setWarpButton" text="↩" SimpleHoverTooltip.text="自动换行：开"/>
+        <ToggleButton fx:id="setLineNum" text="行号" />
     </HBox>
     <VirtualizedScrollPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <content>

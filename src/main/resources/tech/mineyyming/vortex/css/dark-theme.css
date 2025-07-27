@@ -1,0 +1,31 @@
+/* dark-theme.css */
+
+.root {
+    /*字体样式*/
+    /*-fx-font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;*/
+    -fx-font-size: 13px;
+    -fx-font-smoothing-type: lcd;
+
+    /*全局背景样式*/
+    -fx-background-color: #242424;
+
+    /*全局自定义样式*/
+    -app-text-fill-color: #f3f6f6;
+
+    /* 按钮样式 */
+    -button-bg-color-hover: #434343; /* 悬停时更亮一点 */
+    -button-bg-color-pressed: #5a5a5a; /* 按下时更深一点 */
+    -button-selected-bg-color: #7c7c7c; /* 选中后的按钮背景 */
+    -button-text-fill-color-disabled: #afaeae;/*禁用按钮时的文字颜色*/
+    /*文本框样式*/
+    -textField-bg-color: #202020;/*文本框背景颜色*/
+    -textField-bg-color-focused: #494848;/*聚焦时文本框背景颜色*/
+    -textField-border-color: #6f7071;/*文本框边框颜色*/
+    -textField-border-color-focused: #c8cbcc;/*聚焦时文本框边框颜色*/
+
+    /*codeArea样式*/
+    -code-area-bg-color: #353434;/*editor背景颜色*/
+    -code-area-selection-fill-color: rgba(199, 243, 157, 0.4);/*被选中的文本的样式*/
+    -scroll-bar-thumb-bg-color: #515050;/*滚动条正常颜色*/
+    -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
+}

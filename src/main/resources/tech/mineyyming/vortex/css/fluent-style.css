@@ -1,0 +1,212 @@
+/* fluent-style.css */
+
+/* 加载常规字重 */
+@font-face {
+    -fx-font-family: 'Noto Sans SC';
+    src: url('../../../../fonts/NotoSansSC-Regular.ttf');
+}
+
+.root {
+    /*字体样式*/
+    /*-fx-font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;*/
+    -fx-font-size: 13px;
+    -fx-font-smoothing-type: lcd;
+
+    /*全局背景样式*/
+    -fx-background-color: #f1f1f1;
+
+    /*全局自定义样式*/
+    -app-text-fill-color: #302d2d;
+
+    /* 按钮样式 */
+    -button-bg-color-hover: #e6e7e8; /* 悬停时更亮一点 */
+    -button-bg-color-pressed: #e1e2e3; /* 按下时更深一点 */
+    -button-selected-bg-color: #e3e4e4; /* 选中后的按钮背景 */
+    -button-text-fill-color-disabled: #2e2b2b;/*禁用按钮时的文字颜色*/
+    /*文本框样式*/
+    -textField-bg-color: #f2f3f4;/*文本框背景颜色*/
+    -textField-bg-color-focused: #fdfdfd;/*聚焦时文本框背景颜色*/
+    -textField-border-color: #c8cbcc;/*文本框边框颜色*/
+    -textField-border-color-focused: #3e3d3d;/*聚焦时文本框边框颜色*/
+
+    /*codeArea样式*/
+    -code-area-bg-color:#e3e1de;/*editor背景颜色*/
+    -code-area-selection-fill-color: rgba(121, 136, 107, 0.4);/*被选中的文本的样式*/
+    -scroll-bar-thumb-bg-color:#c6c6c6;/*滚动条正常颜色*/
+    -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
+}
+
+.label {
+    -fx-text-fill:-app-text-fill-color
+}
+
+/* 创建按钮样式 */
+.button, .toggle-button{
+    /*鼠标形状:手性*/
+    -fx-cursor: hand;
+
+    /* 形状与空间 */
+    -fx-background-radius: 4px; /* 关键的圆角 */
+    -fx-border-radius: 4px;     /* 边框也需要圆角 */
+
+    -fx-background-color: transparent;
+
+    -fx-text-fill: -app-text-fill-color;
+
+    /* 2. 现在可以安全地添加边框了 */
+    -fx-border-color: transparent; /* 默认透明边框，占位但不显示 */
+    -fx-border-width: 1px; /* 固定边框宽度 */
+
+    /* 对背景色和阴影效果的变化，应用一个0.15秒的缓动动画 */
+    -fx-transition: -fx-background-color 0.15s ease-in-out, -fx-effect 0.15s ease-in-out;
+}
+
+.button:hover ,.toggle-button:hover{
+    -fx-background-color: -button-bg-color-hover;
+}
+
+.button:pressed ,.toggle-button:pressed{
+    -fx-background-color: -button-bg-color-pressed;
+}
+
+.button:disabled ,.toggle-button:disabled{
+    -fx-text-fill: -button-text-fill-color-disabled;
+}
+
+.toggle-button:selected {
+    -fx-background-color: -button-selected-bg-color;
+}
+
+/*创建textField样式*/
+.text-field {
+    /* 形状与空间 */
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-background-color: -textField-bg-color;
+    -fx-border-color: -textField-border-color;
+
+    -fx-text-fill: -app-text-fill-color;
+}
+
+.text-field:focused {
+    -fx-background-color: -textField-bg-color-focused;
+    -fx-border-color: -textField-border-color-focused;
+}
+
+/*创建codeArea样式*/
+.code-area {
+    -fx-font-family: 'Consolas', 'Courier New', monospace;
+    -fx-font-size: 14px;
+    -fx-fill: -app-text-fill-color;
+    -fx-background-color: -code-area-bg-color;
+}
+
+.line-number-label {
+    -fx-font-family: 'Consolas', 'Courier New', monospace;
+    -fx-font-size: 14px;
+    -fx-background-color: -code-area-bg-color;
+}
+
+.code-area .text {
+    /* -fx-fill 是 JavaFX 中用于设置文本颜色的属性 */
+    -fx-fill: -app-text-fill-color;
+}
+
+.selection {
+    -fx-fill: -code-area-selection-fill-color;
+}
+
+/* 默认文本颜色 */
+.paragraph-text {
+    -fx-fill: -app-text-fill-color;
+}
+
+
+/* 光标样式 */
+.caret {
+    -fx-stroke: -app-text-fill-color;
+}
+
+/* ===== 滚动条样式 ===== */
+
+/* 滚动条 */
+.scroll-bar:vertical ,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent; /* 滚动条整体背景 */
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+/* 为垂直滚动条设置宽度 */
+.scroll-bar:vertical {
+    -fx-pref-width: 12px;
+}
+
+/* 为水平滚动条设置高度 */
+.scroll-bar:horizontal {
+    -fx-pref-height: 12px;
+}
+
+/* 滚动条轨道 */
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+/* 滚动条滑块 */
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: -scroll-bar-thumb-bg-color;
+    -fx-background-radius: 6px; /* 圆角滑块 */
+    -fx-border-radius: 6px;
+}
+
+/* 滑块悬停和按下效果 */
+.scroll-bar:vertical .thumb:hover,
+.scroll-bar:horizontal .thumb:hover,
+.scroll-bar:vertical .thumb:pressed,
+.scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: -scroll-bar-thumb-bg-color-hover-pressed;
+}
+
+/* 滑块按下效果 */
+/*
+.scroll-bar:vertical .thumb:pressed,
+.scroll-bar:horizontal .thumb:pressed {
+    -fx-background-color: #5a5a5a;
+}
+*/
+
+/* 隐藏滚动条的箭头按钮 */
+.scroll-bar:vertical .increment-button,
+.scroll-bar:vertical .decrement-button,
+.scroll-bar:horizontal .increment-button,
+.scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-color: transparent;
+
+    -fx-pref-width: 0;
+    -fx-pref-height: 0;
+}
+
+/* 同时隐藏按钮内的箭头图标本身 */
+.virtualized-scroll-pane .scroll-bar .increment-arrow,
+.virtualized-scroll-pane .scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+/* ===simple-hover-tooltip=== */
+.simple-hover-tooltip {
+    -fx-background-color: #424242;
+    -fx-background-radius: 2;
+}
+
+.simple-hover-tooltip .label {
+    -fx-text-fill: WHITE;
+}

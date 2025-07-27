@@ -38,11 +38,10 @@ public class SimpleHoverTooltip {
         this.owner = owner;
         this.popup = new Popup();
         this.textLabel = new Label();
-        this.textLabel.setTextFill(Color.WHITE);
 
         StackPane contentPane = new StackPane(textLabel);
         contentPane.setPadding(new Insets(1, 2, 1, 2));
-        contentPane.setStyle("-fx-background-color: #424242; -fx-background-radius: 2;");
+        contentPane.getStyleClass().add("simple-hover-tooltip");
 
         this.popup.getContent().add(contentPane);
         this.popup.setAutoFix(false);

@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
 import tech.mineyyming.vortex.model.ContentPanel;
+import tech.mineyyming.vortex.model.Theme;
 import tech.mineyyming.vortex.service.BindingUtils;
 import tech.mineyyming.vortex.service.ShowStageListener;
 import tech.mineyyming.vortex.service.WindowAnimator;
@@ -45,6 +47,12 @@ public class MainWindow {
     private ToggleButton pinBtn;
     @FXML
     private Button exitBtn;
+    @FXML
+    private ToggleGroup mainToggleGroup;
+    @FXML
+    private ToggleButton quickEditBtn;
+    @FXML
+    private Button themeSwitchBtn;
     //缓存已经加载的视图
     private Map<String, Parent> viewCache = new HashMap<>();
 
@@ -78,13 +86,36 @@ public class MainWindow {
         BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(),config.autoCloseOnFocusLossProperty());
         SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("失焦隐藏：开启").otherwise("失焦隐藏：关闭"));
 
+        SimpleHoverTooltip.textProperty(themeSwitchBtn).bind(Bindings.createStringBinding(()->{
+            Theme theme = config.getTheme();
+            return switch(theme) {
+                case LIGHT -> "主题：亮色";
+                case DARK -> "主题：暗色";
+            };
+        },config.themeProperty()));
+        themeSwitchBtn.setOnAction(event -> {
+            Theme theme = config.getTheme();
+            if(theme == Theme.LIGHT){
+                config.setTheme(Theme.DARK);
+            } else {
+                config.setTheme(Theme.LIGHT);
+            }
+        });
+
         exitBtn.setOnAction(event -> {
             if(stage.isShowing()) {
                 WindowAnimator.hideWindow(stage,Platform::exit);
             }
         });
 
+        mainToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null) {
+                mainToggleGroup.selectToggle(oldValue);
+            }
+        });
+
         loadOrGetView(ContentPanel.EDITORPANEL);
+        mainToggleGroup.selectToggle(quickEditBtn);
     }
 
     public void setStage(Stage stage) {

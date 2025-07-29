@@ -12,8 +12,10 @@
     -fx-font-size: 13px;
     -fx-font-smoothing-type: lcd;
 
-    /*全局背景样式*/
+    /*根节点样式*/
     -fx-background-color: #f1f1f1;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
 
     /*全局自定义样式*/
     -app-text-fill-color: #302d2d;
@@ -127,6 +129,7 @@
     -fx-stroke: -app-text-fill-color;
 }
 
+
 /* ===== 滚动条样式 ===== */
 
 /* 滚动条 */
@@ -209,4 +212,13 @@
 
 .simple-hover-tooltip .label {
     -fx-text-fill: WHITE;
+}
+
+/* ===特殊按钮=== */
+#pinBtn:selected {
+    -fx-text-fill: #46d346;
+}
+
+#exitBtn:hover {
+    -fx-text-fill: #b51010;
 }

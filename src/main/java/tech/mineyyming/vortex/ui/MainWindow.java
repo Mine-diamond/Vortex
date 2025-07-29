@@ -22,10 +22,10 @@ import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
 import tech.mineyyming.vortex.model.ContentPanel;
 import tech.mineyyming.vortex.model.Theme;
+import tech.mineyyming.vortex.service.AutoOperateManager;
 import tech.mineyyming.vortex.service.BindingUtils;
 import tech.mineyyming.vortex.service.ShowStageListener;
 import tech.mineyyming.vortex.service.WindowAnimator;
-
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,9 +35,9 @@ import java.util.Optional;
 public class MainWindow {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MainWindow.class);
-    private static ContentPanel currentContentPanel;
-
     AppConfig config = AppConfigManager.getInstance();
+
+    private static ContentPanel currentContentPanel;
 
     @FXML
     private AnchorPane mainWindow;
@@ -63,39 +63,43 @@ public class MainWindow {
 
     public void initialize() {
 
-        mainWindow.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            if(event.getCode() == KeyCode.ESCAPE) {
-                //stage.hide();
-                WindowAnimator.hideWindow(stage);
-            }
-        });
+        handleDragWindow();
+        initUIComponent();
 
+        loadOrGetView(ContentPanel.EDITORPANEL);
+        mainToggleGroup.selectToggle(quickEditBtn);
+    }
+
+    //鼠标拖拽移动窗口功能
+    public void handleDragWindow(){
         mainWindow.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
 
         mainWindow.setOnMouseDragged(event -> {
-                stage.setX(event.getScreenX() - xOffset);
-                double y = event.getScreenY() - yOffset < Screen.getPrimary().getVisualBounds().getMaxY() - 50 ? event.getScreenY() - yOffset : Screen.getPrimary().getVisualBounds().getMaxY() - 50;
-                stage.setY(y);
+            stage.setX(event.getScreenX() - xOffset);
+            double y = event.getScreenY() - yOffset < Screen.getPrimary().getVisualBounds().getMaxY() - 50 ? event.getScreenY() - yOffset : Screen.getPrimary().getVisualBounds().getMaxY() - 50;
+            stage.setY(y);
         });
+    }
 
-        //pinBtn.selectedProperty().bindBidirectional(config.autoCloseOnFocusLossProperty());
+    public void initUIComponent(){
         pinBtn.setSelected(!config.getAutoCloseOnFocusLoss());
-        BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(),config.autoCloseOnFocusLossProperty());
-        SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("失焦隐藏：开启").otherwise("失焦隐藏：关闭"));
+        BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(), config.autoCloseOnFocusLossProperty());
+        SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("未固定").otherwise("已固定"));
 
-        SimpleHoverTooltip.textProperty(themeSwitchBtn).bind(Bindings.createStringBinding(()->{
+        SimpleHoverTooltip.textProperty(themeSwitchBtn).bind(Bindings.createStringBinding(() -> {
             Theme theme = config.getTheme();
-            return switch(theme) {
+            return switch (theme) {
                 case LIGHT -> "主题：亮色";
                 case DARK -> "主题：暗色";
             };
-        },config.themeProperty()));
+        }, config.themeProperty()));
+
         themeSwitchBtn.setOnAction(event -> {
             Theme theme = config.getTheme();
-            if(theme == Theme.LIGHT){
+            if (theme == Theme.LIGHT) {
                 config.setTheme(Theme.DARK);
             } else {
                 config.setTheme(Theme.LIGHT);
@@ -103,48 +107,45 @@ public class MainWindow {
         });
 
         exitBtn.setOnAction(event -> {
-            if(stage.isShowing()) {
-                WindowAnimator.hideWindow(stage,Platform::exit);
+            if (stage.isShowing()) {
+                WindowAnimator.hideWindow(stage, Platform::exit);
             }
         });
 
         mainToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue == null) {
+            if (newValue == null) {
                 mainToggleGroup.selectToggle(oldValue);
             }
         });
-
-        loadOrGetView(ContentPanel.EDITORPANEL);
-        mainToggleGroup.selectToggle(quickEditBtn);
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
-    public void setPrimaryStage(){
+    public void setupStageProperties() {
         stage.setTitle("Vortex");
         stage.setAlwaysOnTop(true);
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/app_icon_x510.png")));
+        AutoOperateManager.setAutoFocus(stage, "searchField");
     }
 
     //  这个方法将在 stage 被设置后，由 Main 类手动调用
     public void setupGlobalKeyListener() {
         // 确保 stage 不是 null
         if (this.stage == null) {
-            logger.error("错误：在设置 Stage 之前调用了 setupGlobalKeyListener！");
+            logger.error("在设置 Stage 之前调用了 setupGlobalKeyListener");
             return;
         }
-
         logger.info("setupGlobalKeyListener() called. Stage is now available.");
 
         try {
             // 注册全局钩子
             GlobalScreen.registerNativeHook();
         } catch (NativeHookException ex) {
-            logger.error("注册全局钩子时出现问题。",ex);
-            System.exit(1);
+            logger.error("注册全局钩子时出现问题。", ex);
+            Platform.exit();
         }
 
         // 现在 stage 肯定不是 null，可以安全地创建监听器了
@@ -153,23 +154,29 @@ public class MainWindow {
         logger.info("全局按键监听器已成功设置！");
     }
 
-    public void setOtherListeners() {
+    public void setupWindowListeners() {
 
         stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue && config.getAutoCloseOnFocusLoss()) {
+            if (!newValue && config.getAutoCloseOnFocusLoss()) {
                 WindowAnimator.hideWindow(stage);
             }
         });
 
         stage.iconifiedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue) {
+            if (newValue) {
                 stage.setIconified(false);
+            }
+        });
+
+        stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            if (event.getCode() == KeyCode.ESCAPE) {
+                WindowAnimator.hideWindow(stage);
             }
         });
     }
 
     private void loadOrGetView(ContentPanel fxmlFileName) {
-        if(fxmlFileName == currentContentPanel) {
+        if (fxmlFileName == currentContentPanel) {
             logger.info("原页面：{}，新页面：{}，页面一致", fxmlFileName.getFileName(), currentContentPanel.getFileName());
             return;
         }
@@ -182,25 +189,25 @@ public class MainWindow {
                 view = loader.load();
                 viewCache.put(fileName, view); // 加载后放入缓存
 
-                // 让新视图充满 tabWindow (可选，但推荐)
+                // 让新视图充满 tabWindow
                 AnchorPane.setTopAnchor(view, 0.0);
                 AnchorPane.setBottomAnchor(view, 0.0);
                 AnchorPane.setLeftAnchor(view, 0.0);
                 AnchorPane.setRightAnchor(view, 0.0);
-                logger.info("原页面：{}，新页面：{}，从文件加载新页面",Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+                logger.info("原页面：{}，新页面：{}，从文件加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
         } else {
-            logger.info("原页面：{}，新页面：{}，从缓存加载新页面",Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+            logger.info("原页面：{}，新页面：{}，从缓存加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
         }
         currentContentPanel = fxmlFileName;
-        tabWindow.getChildren().clear();
-        tabWindow.getChildren().add(view);
+        //更新tabWindow
+        tabWindow.getChildren().setAll(view);
     }
 
-    public void showFditorPanel(ActionEvent actionEvent) {
+    public void showEditorPanel(ActionEvent actionEvent) {
         loadOrGetView(ContentPanel.EDITORPANEL);
     }
 }

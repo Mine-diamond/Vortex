@@ -6,7 +6,7 @@ package tech.mineyyming.vortex;
  */
 public class Launcher {
     public static void main(String[] args) {
-        // 调用你真正的 Main 类的 main 方法
+        // 调用真正的 Main 类的 main 方法
         Main.main(args);
     }
 }

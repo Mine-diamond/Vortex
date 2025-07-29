@@ -13,6 +13,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
@@ -21,12 +23,14 @@ import tech.mineyyming.vortex.service.ThemeManager;
 import tech.mineyyming.vortex.service.WindowAnimator;
 import tech.mineyyming.vortex.ui.MainWindow;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.List;
 import java.util.logging.LogManager;
 
+/**
+ * 程序的主类
+ */
 public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     AppConfig config = AppConfigManager.getInstance();
@@ -34,11 +38,15 @@ public class Main extends Application {
     static FXTrayIcon icon;
 
     public static void main(String[] args) {
-        //System.setProperty("prism.lcdtext", "false");
-        //System.setProperty("prism.text", "t2k");
+        //初始化日志系统
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
         logger.info("Starting vortex");
+
+        //输出当前的JVM参数
+        RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> jvmArgs = runtimeMxBean.getInputArguments();
+        logger.info("JVM arguments: {}", jvmArgs);
 
         // 检查命令行参数
         for (String arg : args) {
@@ -48,48 +56,46 @@ public class Main extends Application {
                 break;
             }
         }
+
+        //执行start方法
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        Platform.setImplicitExit(false);
+        Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/mineyyming/vortex/ui/main-window.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
 
-//        String cssPath = Objects.requireNonNull(getClass().getResource("fluent-style.css")).toExternalForm();
-//        scene.getStylesheets().add(cssPath);
         ThemeManager.initialize(scene);
 
-        // Set the scene to the stage
         primaryStage.setScene(scene);
 
         MainWindow controller = loader.getController();
         logger.info("FXML加载成功");
 
         controller.setStage(primaryStage);
-        controller.setPrimaryStage();
+        controller.setupStageProperties();
         controller.setupGlobalKeyListener();
-        controller.setOtherListeners();
+        controller.setupWindowListeners();
 
-        AutoOperateManager.setAutoFocus(primaryStage,"searchField");
         setupTrayMenu(primaryStage);
 
-        if(!isAutoStart) {
+        if (!isAutoStart) {
             WindowAnimator.showWindow(primaryStage);
             logger.info("用户界面显示成功");
-        }else {
+        } else {
             //icon.showMessage("Vortex","程序已启动");
             logger.info("程序加载成功");
         }
     }
 
     /**
-     * 新增的部分：当应用关闭时，这个方法会被调用
+     * 当应用关闭时，这个方法会被调用
      */
     @Override
     public void stop() throws Exception {
@@ -98,7 +104,7 @@ public class Main extends Application {
             // 注销全局钩子，释放资源
             GlobalScreen.unregisterNativeHook();
         } catch (NativeHookException ex) {
-            ex.printStackTrace();
+            logger.error("注销全局钩子出错, {}", ex.getMessage());
         }
         icon.hide();
         logger.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
@@ -118,19 +124,12 @@ public class Main extends Application {
         MenuItem pinItem = new MenuItem();
         pinItem.textProperty().bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("Close when loses focus").otherwise("Don't Close when loses focus"));
         pinItem.setOnAction(event -> {
-//            if(primaryStage.isAlwaysOnTop()){
-//                config.setAutoCloseOnFocusLoss(false);
-//                logger.info("取消失焦关闭");
-//            } else {
-//                config.setAutoCloseOnFocusLoss(true);
-//                logger.info("开启失焦关闭");
-//            }
             config.setAutoCloseOnFocusLoss(!config.getAutoCloseOnFocusLoss());
         });
 
         MenuItem openItem = new MenuItem();
         openItem.setOnAction(event -> {
-            if(primaryStage.isShowing()) {
+            if (primaryStage.isShowing()) {
                 WindowAnimator.hideWindow(primaryStage);
             } else {
                 WindowAnimator.showWindow(primaryStage);
@@ -140,8 +139,8 @@ public class Main extends Application {
         openItem.textProperty().bind(Bindings.when(primaryStage.showingProperty()).then("close window").otherwise("open window"));
         MenuItem exitItem = new MenuItem("exit");
         exitItem.setOnAction(event -> {
-            if(primaryStage.isShowing()){
-                WindowAnimator.hideWindow(primaryStage,Platform::exit);
+            if (primaryStage.isShowing()) {
+                WindowAnimator.hideWindow(primaryStage, Platform::exit);
             } else {
                 Platform.exit();
             }

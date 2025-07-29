@@ -2,7 +2,10 @@ package tech.mineyyming.vortex.ui;
 
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,7 +15,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.mineyyming.vortex.model.AppConfig;
@@ -65,7 +67,6 @@ public class EditorPanel {
     public void initialize(){
 
         if(config.wordWrapProperty().getValue()) textEdit.setWrapText(true);
-        //if(config.showLineNumProperty().getValue()) textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
         if(config.showLineNumProperty().getValue()) textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
 
 

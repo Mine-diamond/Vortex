@@ -134,6 +134,13 @@
             <version>1.5.18</version> <!-- 保持和SLF4J版本兼容 -->
         </dependency>
 
+        <!-- Janino -->
+        <dependency>
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
+            <version>3.1.12</version>
+        </dependency>
+
         <!--  JUL → SLF4J 桥接器 -->
         <dependency>
             <groupId>org.slf4j</groupId>

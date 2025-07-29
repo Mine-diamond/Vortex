@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import tech.mineyyming.vortex.ui.HoverPopOver?>
 <?import tech.mineyyming.vortex.ui.SimpleHoverTooltip?>
 
 <?import javafx.geometry.Insets?>

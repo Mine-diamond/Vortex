@@ -49,7 +49,8 @@ jobs:
             --icon packaging\windows\app_icon.ico `
             --app-version "${{ env.APP_VERSION }}" `
             --module-path "$env:JAVA_HOME\jmods" `
-            --add-modules ALL-MODULE-PATH 
+            --add-modules ALL-MODULE-PATH `
+            --java-options "-DAPP_ENV=prod" 
 
       # 5. 【替换步骤】使用 Minionguyjpro/Inno-Setup-Action 编译安装包
       - name: Compile Installer with Inno Setup Action

@@ -11,6 +11,9 @@
     <property name="FILE_LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger - %msg%n" />
 
+    <!-- 读取系统属性 APP_ENV, 如果系统属性不存在，它会有一个默认值 "dev" -->
+    <property name="APP_ENV" value="${APP_ENV:-dev}" />
+
     <!-- 2. Appender: 定义日志输出的目的地 -->
 
     <!-- 2.1 ConsoleAppender: 输出到控制台 -->
@@ -49,11 +52,11 @@
     <!-- 异步日志包装器 (真正暴露给 root logger 的 appender) -->
     <appender name="FILE" class="ch.qos.logback.classic.AsyncAppender">
         <!-- 队列大小，默认256 -->
-        <queueSize>512</queueSize>
-        <!-- 当队列剩余空间小于20%时，丢弃 TRACE, DEBUG, INFO 级别的日志，防止队列溢出 -->
+        <queueSize>1024</queueSize>
+        <!-- 当队列剩余空间小于0%时，丢弃 TRACE, DEBUG, INFO 级别的日志，防止队列溢出 -->
         <discardingThreshold>0</discardingThreshold>
-        <!-- 可能阻塞主线程 -->
-        <neverBlock>false</neverBlock>
+        <!-- 永远不会阻塞主线程 -->
+        <neverBlock>true</neverBlock>
         <!-- 引用真正的文件写入器 -->
         <appender-ref ref="FILE_SYNC" />
     </appender>
@@ -65,12 +68,24 @@
     <logger name="tech.mineyyming.vortex" level="DEBUG" />
 
     <!-- 4. Root Logger: 根记录器，所有logger的父级 -->
-    <!-- level属性定义了全局最低日志级别 -->
-    <root level="INFO">
-        <!-- 将上面定义的两个appender引用到root logger -->
-        <appender-ref ref="CONSOLE" />
-        <appender-ref ref="FILE" />
-    </root>
+
+    <if condition='property("APP_ENV").equalsIgnoreCase("prod")'>
+        <!-- 如果 APP_ENV 的值是 "prod" (忽略大小写) -->
+        <then>
+            <!-- 生产环境 (prod) 配置 -->
+            <root level="INFO">
+                <appender-ref ref="FILE" />
+            </root>
+        </then>
+        <!-- 否则 (即 APP_ENV 不是 "prod", 或者是 "dev", 或者未设置) -->
+        <else>
+            <!-- 开发环境 (dev) 配置 -->
+            <root level="DEBUG">
+                <appender-ref ref="CONSOLE" />
+                <appender-ref ref="FILE" />
+            </root>
+        </else>
+    </if>
 
 
 </configuration>

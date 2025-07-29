@@ -8,6 +8,10 @@ import java.util.Objects;
 
 public class ThemeManager {
 
+    final String cssPath = Objects.requireNonNull(getClass().getResource("/tech/mineyyming/vortex/css/fluent-style.css")).toExternalForm();
+    final String lightCssPath = Objects.requireNonNull(getClass().getResource("/tech/mineyyming/vortex/css/light-theme.css")).toExternalForm();
+    final String darkCssPath = Objects.requireNonNull(getClass().getResource("/tech/mineyyming/vortex/css/dark-theme.css")).toExternalForm();
+
     private static final AppConfig config = AppConfigManager.getInstance();
 
     private ThemeManager() {}
@@ -21,25 +25,22 @@ public class ThemeManager {
     }
 
     public void setupToggleTheme(Scene scene) {
-        String cssPath = Objects.requireNonNull(getClass().getResource("/tech/mineyyming/vortex/css/fluent-style.css")).toExternalForm();
-        String lightCssPath = Objects.requireNonNull(getClass().getResource("/tech/mineyyming/vortex/css/light-theme.css")).toExternalForm();
-        String darkCssPath = Objects.requireNonNull(getClass().getResource("/tech/mineyyming/vortex/css/dark-theme.css")).toExternalForm();
         scene.getStylesheets().add(cssPath);
         switch (config.getTheme()) {
-            case DARK->{
+            case DARK -> {
                 scene.getStylesheets().add(darkCssPath);
             }
-            case LIGHT->{
+            case LIGHT -> {
                 scene.getStylesheets().add(lightCssPath);
             }
         }
         config.themeProperty().addListener((observable, oldValue, newValue) -> {
             switch (newValue) {
-                case DARK->{
+                case DARK -> {
                     scene.getStylesheets().remove(lightCssPath);
                     scene.getStylesheets().add(darkCssPath);
                 }
-                case LIGHT->{
+                case LIGHT -> {
                     scene.getStylesheets().remove(darkCssPath);
                     scene.getStylesheets().add(lightCssPath);
                 }

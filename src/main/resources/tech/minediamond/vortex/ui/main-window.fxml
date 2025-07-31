@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import tech.minediamond.vortex.ui.SimpleHoverTooltip?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:id="mainWindow"
+            fx:controller="tech.minediamond.vortex.ui.MainWindow"
+            prefHeight="650.0" prefWidth="1200.0">
+
+    <!-- 它是一个不可见对象，可以放在 <fx:define> 标签里，或者直接放在布局的任何位置 -->
+    <fx:define>
+        <ToggleGroup fx:id="mainToggleGroup" />
+    </fx:define>
+
+    <TextField fx:id="searchField" promptText="搜索框" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
+
+    <VBox alignment="CENTER" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="1070" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="70">
+        <ToggleButton text="快速编辑" fx:id="quickEditBtn" onAction="#showEditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
+        <ToggleButton text="搜索" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
+        <ToggleButton text="设置" fx:id="settingBtn" onAction="#showSettingPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
+    </VBox>
+
+    <HBox alignment="CENTER" AnchorPane.topAnchor="580" AnchorPane.rightAnchor="1050" AnchorPane.leftAnchor="5" AnchorPane.bottomAnchor="20">
+        <ToggleButton text="📌" fx:id="pinBtn" />
+        <Button text="🔁" fx:id="themeSwitchBtn" />
+        <Button text="-" fx:id="hideWindowBtn" />
+    </HBox>
+
+    <AnchorPane fx:id="tabWindow" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="150" AnchorPane.bottomAnchor="20">
+
+    </AnchorPane>
+
+
+
+</AnchorPane>

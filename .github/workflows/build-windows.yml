@@ -9,7 +9,7 @@ env:
   APP_NAME: Vortex
   APP_VERSION: 1.0.0
   MAIN_JAR: Vortex-1.0.0.jar
-  MAIN_CLASS: tech.mineyyming.vortex.Launcher
+  MAIN_CLASS: tech.minediamond.vortex.Launcher
 
 jobs:
   build:

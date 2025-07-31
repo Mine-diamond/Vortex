@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tech.minediamond.vortex.ui.SettingPanel"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <ScrollPane fx:id="scrollPane"  fitToWidth="true" pickOnBounds="false" focusTraversable="false" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20" AnchorPane.bottomAnchor="0">
+        <VBox fx:id="settingList" spacing="5">
+            <padding>
+                <Insets top="5" bottom="5" right="5" left="5"/>
+            </padding>
+            <HBox>
+                <Label text="官方网站"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="前往" onAction="#openWebsiteAction"/>
+            </HBox>
+            <HBox>
+                <Label text="关闭程序"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="关闭程序" fx:id="exitBtn" onAction="#exitBtnAction"/>
+            </HBox>
+        </VBox>
+    </ScrollPane>
+
+</AnchorPane>

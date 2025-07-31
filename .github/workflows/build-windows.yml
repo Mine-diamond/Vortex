@@ -1,7 +1,7 @@
 name: Build-Windows-Installer
 
 on:
-  push:                      # 也可改成 release/* 等
+  push:                      # 推送任意分支触发
   workflow_dispatch:         # 允许手动触发
 
 env:
@@ -47,7 +47,7 @@ jobs:
             --dest build\app `
             --icon packaging\windows\app_icon.ico `
             --app-version "${{ env.APP_VERSION }}" `
-            --module-path "$env:JAVA_HOME\jmods" `
+            --module-path "target/dependencies;$env:JAVA_HOME\jmods" `
             --add-modules ALL-MODULE-PATH `
             --java-options "-DAPP_ENV=prod" 
 

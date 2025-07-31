@@ -25,7 +25,13 @@
 
     /*codeArea样式*/
     -code-area-bg-color:#e3e1de;/*editor背景颜色*/
-    -code-area-selection-fill-color: rgba(121, 136, 107, 0.4);/*被选中的文本的样式*/
+    -code-area-selection-fill-color: rgba(98, 190, 239, 0.4);/*被选中的文本的样式*/
     -scroll-bar-thumb-bg-color:#c6c6c6;/*滚动条正常颜色*/
     -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
+
+    /*设置面板样式*/
+    -fx-settinf-list-bg-color: #e1e1e3;/*设置条目背景颜色*/
+    -fx-setting-list-button-bg-color:#cdcdd2;/*设置条目按钮颜色*/
+    -fx-setting-list-button-bg-color-hover:#c1c1c7;/*设置条目悬浮时按钮颜色*/
+    -fx-setting-list-button-bg-color-pressed:#b9b9be;/*设置条目按下时按钮颜色*/
 }

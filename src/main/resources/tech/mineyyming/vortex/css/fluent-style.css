@@ -36,6 +36,12 @@
     -code-area-selection-fill-color: rgba(121, 136, 107, 0.4);/*被选中的文本的样式*/
     -scroll-bar-thumb-bg-color:#c6c6c6;/*滚动条正常颜色*/
     -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
+
+    /*设置面板样式*/
+    -fx-settinf-list-bg-color: #e1e1e3;/*设置条目背景颜色*/
+    -fx-setting-list-button-bg-color:#cdcdd2;/*设置条目按钮颜色*/
+    -fx-setting-list-button-bg-color-hover:#c1c1c7;/*设置条目悬浮时按钮颜色*/
+    -fx-setting-list-button-bg-color-pressed:#b9b9be;/*设置条目按下时按钮颜色*/
 }
 
 .label {
@@ -58,6 +64,10 @@
     /* 2. 现在可以安全地添加边框了 */
     -fx-border-color: transparent; /* 默认透明边框，占位但不显示 */
     -fx-border-width: 1px; /* 固定边框宽度 */
+
+    -fx-alignment: CENTER;
+    -fx-min-width: 30;
+    -fx-pref-height: 30;
 
     /* 对背景色和阴影效果的变化，应用一个0.15秒的缓动动画 */
     -fx-transition: -fx-background-color 0.15s ease-in-out, -fx-effect 0.15s ease-in-out;
@@ -212,6 +222,64 @@
 
 .simple-hover-tooltip .label {
     -fx-text-fill: WHITE;
+}
+
+/* ===设置界面=== */
+#settingList HBox {
+    -fx-min-height: 40;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 4px; /* 圆角 */
+    -fx-border-radius: 4px;     /* 边框也需要圆角 */
+
+    -fx-background-color: -fx-settinf-list-bg-color;
+    -fx-effect: dropshadow(gaussian, -fx-settinf-list-bg-color, 3, 0, 0, 0);
+
+    -fx-spacing: 5;
+    -fx-padding: 5 5 5 5;
+}
+
+/* 创建按钮样式 */
+#settingList .button{
+    -fx-text-fill: -app-text-fill-color;
+    -fx-background-color: -fx-setting-list-button-bg-color;
+
+    -fx-effect: dropshadow(gaussian, -fx-setting-list-button-bg-color, 3, 0, 0, 0);
+
+}
+
+#settingList .button:hover{
+    -fx-background-color: -fx-setting-list-button-bg-color-hover;
+}
+
+#settingList .button:pressed{
+    -fx-background-color: -fx-setting-list-button-bg-color-pressed;
+}
+
+.settings-panel {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-pick-on-bounds: false;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-pick-on-bounds: false;
+}
+
+
+/* 显示实际内容的 viewport */
+.scroll-pane .viewport {
+    -fx-background-color: transparent ;
+    -fx-pick-on-bounds: false;
+}
+
+/* 两条滚动条交汇处的小方块 */
+.scroll-pane .corner {
+    -fx-background-color: transparent ;
+    -fx-pick-on-bounds: false;
 }
 
 /* ===特殊按钮=== */

@@ -46,13 +46,13 @@ public class MainWindow {
     @FXML
     private ToggleButton pinBtn;
     @FXML
-    private Button exitBtn;
-    @FXML
     private ToggleGroup mainToggleGroup;
     @FXML
     private ToggleButton quickEditBtn;
     @FXML
     private Button themeSwitchBtn;
+    @FXML
+    private Button hideWindowBtn;
     //缓存已经加载的视图
     private Map<String, Parent> viewCache = new HashMap<>();
 
@@ -73,6 +73,7 @@ public class MainWindow {
     //鼠标拖拽移动窗口功能
     public void handleDragWindow(){
         mainWindow.setOnMousePressed(event -> {
+            System.out.println("主界面被点击了");
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
@@ -88,6 +89,7 @@ public class MainWindow {
         pinBtn.setSelected(!config.getAutoCloseOnFocusLoss());
         BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(), config.autoCloseOnFocusLossProperty());
         SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("未固定").otherwise("已固定"));
+        SimpleHoverTooltip.setText(hideWindowBtn,"隐藏窗口(Ctrl+Space)");
 
         SimpleHoverTooltip.textProperty(themeSwitchBtn).bind(Bindings.createStringBinding(() -> {
             Theme theme = config.getTheme();
@@ -106,10 +108,8 @@ public class MainWindow {
             }
         });
 
-        exitBtn.setOnAction(event -> {
-            if (stage.isShowing()) {
-                WindowAnimator.hideWindow(stage, Platform::exit);
-            }
+        hideWindowBtn.setOnAction(event -> {
+            WindowAnimator.hideWindow(stage);
         });
 
         mainToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -209,5 +209,9 @@ public class MainWindow {
 
     public void showEditorPanel(ActionEvent actionEvent) {
         loadOrGetView(ContentPanel.EDITORPANEL);
+    }
+
+    public void showSettingPanel(ActionEvent actionEvent) {
+        loadOrGetView(ContentPanel.SETTINGPANEL);
     }
 }

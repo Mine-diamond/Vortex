@@ -3,7 +3,8 @@ package tech.mineyyming.vortex.model;
 import tech.mineyyming.vortex.ui.EditorPanel;
 
 public enum ContentPanel {
-    EDITORPANEL("editorPanel.fxml");
+    EDITORPANEL("editorPanel.fxml"),
+    SETTINGPANEL("settingPanel.fxml");
 
     private final String fileName;
 

@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.mineyyming.vortex.model.AppConfig;
 import tech.mineyyming.vortex.model.AppConfigManager;
-import tech.mineyyming.vortex.service.AutoOperateManager;
 import tech.mineyyming.vortex.service.ThemeManager;
 import tech.mineyyming.vortex.service.WindowAnimator;
 import tech.mineyyming.vortex.ui.MainWindow;
@@ -65,6 +64,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
+        setupShutDownHook();
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/mineyyming/vortex/ui/main-window.fxml"));
         Parent root = loader.load();
@@ -109,6 +109,15 @@ public class Main extends Application {
         icon.hide();
         logger.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
         super.stop();
+    }
+
+    /**
+    * 创建并注册一个 Shutdown Hook，当程序正常或异常退出时总会执行
+    */
+    public void setupShutDownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("🔌 Shutdown Hook 正在执行...还没有任何逻辑喵~");
+        }));
     }
 
     public void setupTrayMenu(Stage primaryStage) {

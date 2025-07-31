@@ -1,8 +1,7 @@
 name: Build-Windows-Installer
 
 on:
-  push:
-    branches: [ "main" ]     # 也可改成 release/* 等
+  push:                      # 也可改成 release/* 等
   workflow_dispatch:         # 允许手动触发
 
 env:

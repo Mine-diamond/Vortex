@@ -255,12 +255,12 @@
                                         <groupId>org.jetbrains.kotlin</groupId>
                                         <artifactId>kotlin-stdlib-common</artifactId>
                                     </artifact>
-                                    <moduleInfo>
+                                    <moduleInfoSource>
                                         module kotlin.stdlib.common {
                                         exports kotlin;
                                         exports kotlin.collections;
                                         }
-                                    </moduleInfo>
+                                    </moduleInfoSource>
                                 </module>
                             </modules>
                         </configuration>

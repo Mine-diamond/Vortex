@@ -234,8 +234,40 @@
                     </archive>
                 </configuration>
             </plugin>
+
+            <!-- Maven 示例 -->
+            <plugin>
+                <groupId>org.moditect</groupId>
+                <artifactId>moditect-maven-plugin</artifactId>
+                <version>1.0.0.Final</version>
+                <executions>
+                    <execution>
+                        <id>add-module-infos</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>add-module-info</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/modules</outputDirectory>
+                            <modules>
+                                <module>
+                                    <artifact>
+                                        <groupId>org.jetbrains.kotlin</groupId>
+                                        <artifactId>kotlin-stdlib-common</artifactId>
+                                    </artifact>
+                                    <moduleInfo>
+                                        module kotlin.stdlib.common {
+                                        exports kotlin;
+                                        exports kotlin.collections;
+                                        }
+                                    </moduleInfo>
+                                </module>
+                            </modules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
 
 </project>

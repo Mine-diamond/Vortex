@@ -20,18 +20,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. (新步骤) 从 git tag 中提取版本号
-
-      # github.ref_name 会包含 tag 名称, 例如: v1.0.1
-      # ${GITHUB_REF_NAME#v} 会移除开头的 'v'
-      - name: Extract version from tag
+      # 2. 获取最新的 git tag 作为版本号
+      - name: Get version from latest git tag
         shell: bash
-        id: get_version
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
+          # 获取最新的 tag（按版本排序）
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+          # 移除 'v' 前缀得到版本号
+          VERSION=${LATEST_TAG#v}
+          
           echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
           echo "MAIN_JAR=${{ env.APP_NAME }}-$VERSION.jar" >> $GITHUB_ENV
-          echo "Extracted version: $VERSION"
+          echo "Latest tag: $LATEST_TAG"
+          echo "Using version: $VERSION"
 
       # 2. Liberica 21（full = 自带 JavaFX + jpackage）
       - name: Set up Liberica JDK 21-full
@@ -45,7 +46,7 @@ jobs:
 
       # 3. Maven Build（产生 fat-jar）
       - name: Build with Maven
-        run: mvn -B clean package
+        run: mvn -B clean package -Drevision=${{ env.APP_VERSION }}
 
       # 4. jpackage 生成 app-image（绿色版）
       - name: jpackage – create app-image

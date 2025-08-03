@@ -1,12 +1,13 @@
 name: Build-Windows-Installer
+# 测试每次修改后的代码是否能正常构建exe文件
 
 on:
-  push:                      # 也可改成 release/* 等
+  push:                      # 任意commit后触发
   workflow_dispatch:         # 允许手动触发
 
 env:
   APP_NAME: Vortex
-  APP_VERSION: 1.0.0
+  # APP_VERSION: 1.0.0
   MAIN_JAR: Vortex-1.0.0.jar
   MAIN_CLASS: tech.minediamond.vortex.Launcher
 
@@ -18,6 +19,19 @@ jobs:
       # 1. 拉代码
       - name: Checkout
         uses: actions/checkout@v4
+
+      # 2. (新步骤) 从 git tag 中提取版本号
+
+      # github.ref_name 会包含 tag 名称, 例如: v1.0.1
+      # ${GITHUB_REF_NAME#v} 会移除开头的 'v'
+      - name: Extract version from tag
+        shell: bash
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "APP_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "MAIN_JAR=${{ env.APP_NAME }}-$VERSION.jar" >> $GITHUB_ENV
+          echo "Extracted version: $VERSION"
 
       # 2. Liberica 21（full = 自带 JavaFX + jpackage）
       - name: Set up Liberica JDK 21-full

@@ -51,16 +51,16 @@ jobs:
             --add-modules ALL-MODULE-PATH `
             --java-options "-DAPP_ENV=prod" 
 
-      # 5. 【替换步骤】使用 Minionguyjpro/Inno-Setup-Action 编译安装包
+      # 5. 使用 Minionguyjpro/Inno-Setup-Action 编译安装包
       - name: Compile Installer with Inno Setup Action
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
-          # 指定你的 .iss 文件路径
+          # 指定 .iss 文件路径
           path: setup.iss
-          # 关键：通过 options 参数把动态变量传给 Inno Setup
+          # 通过 options 参数把动态变量传给 Inno Setup
           options: /DAppName="${{ env.APP_NAME }}" /DAppVersion="${{ env.APP_VERSION }}"
 
-      # 7. 上传产物
+      # 6. 上传产物
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:

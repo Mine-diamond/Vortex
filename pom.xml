@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>tech.mineyyming</groupId>
+    <groupId>tech.minediamond</groupId>
     <artifactId>Vortex</artifactId>
     <version>1.0.0</version>
 
@@ -153,6 +153,46 @@
 
     <build>
     <plugins>
+
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.6.0</version>
+
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals><goal>shade</goal></goals>
+
+                    <configuration>
+                        <!-- 1) 去掉依赖包里的签名文件 -->
+                        <filters>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                    <exclude>META-INF/*.EC</exclude>
+                                </excludes>
+                            </filter>
+                        </filters>
+
+                        <!-- 2) 保留你本身要生成的 MANIFEST -->
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>tech.minediamond.vortex.Launcher</mainClass>
+                            </transformer>
+                        </transformers>
+
+                        <createDependencyReducedPom>false</createDependencyReducedPom>
+                        <shadedArtifactAttached>false</shadedArtifactAttached>
+                        <finalName>Vortex-1.0.0</finalName>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
 
         <!-- 打包出 fat-jar -->
         <plugin>

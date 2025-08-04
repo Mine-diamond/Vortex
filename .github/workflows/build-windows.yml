@@ -34,7 +34,7 @@ jobs:
           echo "Latest tag: $LATEST_TAG"
           echo "Using version: $VERSION"
 
-      # 2. Liberica 21（full = 自带 JavaFX + jpackage）
+      # 3. Liberica 21（full = 自带 JavaFX + jpackage）
       - name: Set up Liberica JDK 21-full
         uses: actions/setup-java@v4
         with:
@@ -44,11 +44,11 @@ jobs:
           java-package: jdk-full
           cache: maven
 
-      # 3. Maven Build（产生 fat-jar）
+      # 4. Maven Build（产生 fat-jar）
       - name: Build with Maven
         run: mvn -B clean package "-Drevision=${{ env.APP_VERSION }}"
 
-      # 4. jpackage 生成 app-image（绿色版）
+      # 5. jpackage 生成 app-image（绿色版）
       - name: jpackage – create app-image
         shell: pwsh
         run: |
@@ -66,7 +66,7 @@ jobs:
             --add-modules ALL-MODULE-PATH `
             --java-options "-DAPP_ENV=prod" 
 
-      # 5. 使用 Minionguyjpro/Inno-Setup-Action 编译安装包
+      # 6. 使用 Minionguyjpro/Inno-Setup-Action 编译安装包
       - name: Compile Installer with Inno Setup Action
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
@@ -75,7 +75,7 @@ jobs:
           # 通过 options 参数把动态变量传给 Inno Setup
           options: /DAppName="${{ env.APP_NAME }}" /DAppVersion="${{ env.APP_VERSION }}"
 
-      # 6. 上传产物
+      # 7. 上传产物
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:

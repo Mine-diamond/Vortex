@@ -37,6 +37,7 @@ public class Main extends Application {
     private Injector injector;
     static boolean isAutoStart = false;
     static FXTrayIcon icon;
+    WindowAnimator windowAnimator;
 
     public static void main(String[] args) {
         //初始化日志系统
@@ -66,6 +67,8 @@ public class Main extends Application {
     public void init() throws Exception {
         super.init();
         this.injector = Guice.createInjector(new AppModule());
+
+        windowAnimator = injector.getInstance(WindowAnimator.class);
     }
 
     @Override
@@ -96,7 +99,7 @@ public class Main extends Application {
         setupTrayMenu(primaryStage);
 
         if (!isAutoStart) {
-            WindowAnimator.showWindow(primaryStage);
+            windowAnimator.showWindow(primaryStage);
             log.info("用户界面显示成功");
         } else {
             log.info("程序加载成功");
@@ -150,9 +153,9 @@ public class Main extends Application {
         MenuItem openItem = new MenuItem();
         openItem.setOnAction(event -> {
             if (primaryStage.isShowing()) {
-                WindowAnimator.hideWindow(primaryStage);
+                windowAnimator.hideWindow(primaryStage);
             } else {
-                WindowAnimator.showWindow(primaryStage);
+                windowAnimator.showWindow(primaryStage);
             }
         });
 
@@ -160,7 +163,7 @@ public class Main extends Application {
         MenuItem exitItem = new MenuItem("exit");
         exitItem.setOnAction(event -> {
             if (primaryStage.isShowing()) {
-                WindowAnimator.hideWindow(primaryStage, Platform::exit);
+                windowAnimator.hideWindow(primaryStage, Platform::exit);
             } else {
                 Platform.exit();
             }

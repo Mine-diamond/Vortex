@@ -1,5 +1,6 @@
 package tech.minediamond.vortex.ui;
 
+import com.google.inject.Inject;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,8 @@ import java.net.URI;
 @Slf4j
 public class SettingPanel {
 
+    private static WindowAnimator windowAnimator;
+
     @FXML
     private VBox settingList;
     @FXML
@@ -24,6 +27,11 @@ public class SettingPanel {
     private ScrollPane scrollPane;
 
     private static Stage stage;
+
+    @Inject
+    public SettingPanel(WindowAnimator windowAnimator) {
+        this.windowAnimator = windowAnimator;
+    }
 
     public void initialize() {
     }
@@ -37,7 +45,7 @@ public class SettingPanel {
 
     public void exitBtnAction(ActionEvent actionEvent) {
         if (getStage().isShowing()) {
-            WindowAnimator.hideWindow(getStage(), Platform::exit);
+            windowAnimator.hideWindow(getStage(), Platform::exit);
         }
     }
 

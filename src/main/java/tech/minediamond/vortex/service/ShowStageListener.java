@@ -2,14 +2,19 @@ package tech.minediamond.vortex.service;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 
 public class ShowStageListener implements NativeKeyListener {
     private Stage stage; // 持有对主窗口的引用
+    private WindowAnimator windowAnimator;
 
-    public ShowStageListener(Stage stage) {
+    @Inject
+    public ShowStageListener(@Assisted Stage stage, WindowAnimator windowAnimator) {
         this.stage = stage;
+        this.windowAnimator = windowAnimator;
     }
 
     @Override
@@ -20,9 +25,9 @@ public class ShowStageListener implements NativeKeyListener {
 
             Platform.runLater(() -> {
                 if (stage.isShowing()) {
-                    WindowAnimator.hideWindow(stage);
+                    windowAnimator.hideWindow(stage);
                 } else {
-                    WindowAnimator.showWindow(stage);
+                    windowAnimator.showWindow(stage);
                 }
             });
 

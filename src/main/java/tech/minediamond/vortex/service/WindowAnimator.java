@@ -23,24 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class WindowAnimator {
 
-    // 使用枚举实现线程安全的单例
-    private enum SingletonHolder {
-        INSTANCE;
-        private final WindowAnimator manager = new WindowAnimator();
-    }
-
     // 用于存储每个窗口的动画上下文
     private final Map<Stage, WindowAnimationContext> windowContexts = new ConcurrentHashMap<>();
 
     // 私有构造函数
-    private WindowAnimator() {
-    }
-
-    /**
-     * 获取单例实例
-     */
-    public static WindowAnimator getInstance() {
-        return SingletonHolder.INSTANCE.manager;
+    public WindowAnimator() {
     }
 
     /**
@@ -142,31 +129,31 @@ public class WindowAnimator {
     }
 
     // =================================================================
-    // 静态便捷方法 (供外部调用)
+    // 供外部调用方法
     // =================================================================
 
-    public static void showWindow(Stage stage) {
-        getInstance().playShowAnimation(stage);
+    public void showWindow(Stage stage) {
+        playShowAnimation(stage);
     }
 
     /**
-     * 静态方法：隐藏窗口，不带回调
+     * 隐藏窗口，不带回调
      */
-    public static void hideWindow(Stage stage) {
-        getInstance().playHideAnimation(stage, null);
+    public void hideWindow(Stage stage) {
+        playHideAnimation(stage, null);
     }
 
     /**
-     * 静态方法：隐藏窗口，并在动画结束后执行一个任务
+     * 隐藏窗口，并在动画结束后执行一个任务
      *
      * @param stage              要隐藏的窗口
      * @param onFinishedCallback 动画结束后执行的任务
      */
-    public static void hideWindow(Stage stage, Runnable onFinishedCallback) {
-        getInstance().playHideAnimation(stage, onFinishedCallback);
+    public void hideWindow(Stage stage, Runnable onFinishedCallback) {
+        playHideAnimation(stage, onFinishedCallback);
     }
 
-    public static void cleanup(Stage stage) {
-        getInstance().cleanupStage(stage);
+    public void cleanup(Stage stage) {
+        cleanupStage(stage);
     }
 }

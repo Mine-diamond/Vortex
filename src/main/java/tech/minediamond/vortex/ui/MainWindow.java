@@ -23,10 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.model.ContentPanel;
 import tech.minediamond.vortex.model.Theme;
-import tech.minediamond.vortex.service.AutoOperateManager;
-import tech.minediamond.vortex.service.BindingUtils;
-import tech.minediamond.vortex.service.ShowStageListener;
-import tech.minediamond.vortex.service.WindowAnimator;
+import tech.minediamond.vortex.service.*;
+import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,6 +35,7 @@ import java.util.Optional;
 public class MainWindow {
     private static AppConfig config;
     private static Injector injector;
+    private static WindowAnimator windowAnimator;
 
     private static ContentPanel currentContentPanel;
 
@@ -63,9 +62,10 @@ public class MainWindow {
     Stage stage;
 
     @Inject
-    public MainWindow(AppConfig config, Injector injector) {
+    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator) {
         this.config = config;
         this.injector = injector;
+        this.windowAnimator = windowAnimator;
     }
 
     public void initialize() {
@@ -116,7 +116,7 @@ public class MainWindow {
         });
 
         hideWindowBtn.setOnAction(event -> {
-            WindowAnimator.hideWindow(stage);
+            windowAnimator.hideWindow(stage);
         });
 
         mainToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
@@ -155,8 +155,7 @@ public class MainWindow {
             Platform.exit();
         }
 
-        // 现在 stage 肯定不是 null，可以安全地创建监听器了
-        ShowStageListener showStageListener = new ShowStageListener(this.stage);
+        ShowStageListener showStageListener = injector.getInstance(ShowStageListenerFactory.class).create(stage);
         GlobalScreen.addNativeKeyListener(showStageListener);
         log.info("全局按键监听器已成功设置。");
     }
@@ -165,7 +164,7 @@ public class MainWindow {
 
         stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue && config.getAutoCloseOnFocusLoss()) {
-                WindowAnimator.hideWindow(stage);
+                windowAnimator.hideWindow(stage);
             }
         });
 
@@ -177,7 +176,7 @@ public class MainWindow {
 
         stage.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             if (event.getCode() == KeyCode.ESCAPE) {
-                WindowAnimator.hideWindow(stage);
+                windowAnimator.hideWindow(stage);
             }
         });
     }

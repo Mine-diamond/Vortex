@@ -18,7 +18,7 @@ import javafx.scene.control.ToggleButton;
 import lombok.extern.slf4j.Slf4j;
 import org.fxmisc.richtext.CodeArea;
 import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.model.DynamicLineNumberFactory;
+import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +53,8 @@ public class EditorPanel {
     private int startPosition;
     private int endPosition;
 
+    private static DynamicLineNumberFactoryFactory dynamicLineNumberFactoryFactory;
+
     enum AddOrDelete {
         ADD, DELETE
     }
@@ -62,15 +64,16 @@ public class EditorPanel {
     }
 
     @Inject
-    public EditorPanel(AppConfig config) {
+    public EditorPanel(AppConfig config, DynamicLineNumberFactoryFactory dynamicLineNumberFactoryFactory) {
         this.config = config;
+        this.dynamicLineNumberFactoryFactory = dynamicLineNumberFactoryFactory;
     }
 
     public void initialize() {
 
         if (config.wordWrapProperty().getValue()) textEdit.setWrapText(true);
         if (config.showLineNumProperty().getValue())
-            textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
+            textEdit.setParagraphGraphicFactory(dynamicLineNumberFactoryFactory.create(textEdit));
 
 
         SimpleHoverTooltip.textProperty(setLineNum).bind(Bindings.when(config.showLineNumProperty()).then("显示行号：开").otherwise("显示行号：关"));
@@ -83,19 +86,10 @@ public class EditorPanel {
         setWarpButton.selectedProperty().bindBidirectional(config.wordWrapProperty());
         textEdit.wrapTextProperty().bindBidirectional(config.wordWrapProperty());
 
-//        setLineNum.setOnAction(event -> {
-//            if (config.showLineNumProperty().getValue()){
-//                textEdit.setParagraphGraphicFactory(null);
-//                config.showLineNumProperty().setValue(false);
-//            } else {
-//                textEdit.setParagraphGraphicFactory(LineNumberFactory.get(textEdit));
-//                config.showLineNumProperty().setValue(true);
-//            }
-//        });
         setLineNum.selectedProperty().bindBidirectional(config.showLineNumProperty());
         config.showLineNumProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue) {
-                textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
+                textEdit.setParagraphGraphicFactory(dynamicLineNumberFactoryFactory.create(textEdit));
             } else {
                 textEdit.setParagraphGraphicFactory(null);
             }

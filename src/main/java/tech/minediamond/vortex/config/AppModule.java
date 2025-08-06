@@ -2,9 +2,13 @@ package tech.minediamond.vortex.config;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.service.AppConfigProvider;
 import tech.minediamond.vortex.service.ConfigService;
+import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
+import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
+import tech.minediamond.vortex.service.WindowAnimator;
 import tech.minediamond.vortex.ui.EditorPanel;
 import tech.minediamond.vortex.ui.MainWindow;
 import tech.minediamond.vortex.ui.SettingPanel;
@@ -18,5 +22,18 @@ public class AppModule extends AbstractModule {
         bind(MainWindow.class);
         bind(EditorPanel.class);
         bind(SettingPanel.class);
+
+        bind(WindowAnimator.class).in(Scopes.SINGLETON);
+
+        // 2. 安装 AssistedInject 工厂模块
+        install(new FactoryModuleBuilder()
+                // 3. 告诉 Guice，这个工厂创建出的实例是 ShowStageListener
+                //    （如果返回类型就是具体类，这行可以省略，但写上更清晰）
+                // .implement(ShowStageListener.class, ShowStageListener.class)
+
+                // 4. 告诉 Guice，这个工厂的实现是基于 ShowStageListenerFactory 接口
+                .build(ShowStageListenerFactory.class));
+
+        install(new FactoryModuleBuilder().build(DynamicLineNumberFactoryFactory.class));
     }
 }

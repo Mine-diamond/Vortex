@@ -1,5 +1,7 @@
-package tech.minediamond.vortex.model;
+package tech.minediamond.vortex.service;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -12,18 +14,11 @@ public class DynamicLineNumberFactory implements IntFunction<Node> {
     private final CodeArea codeArea;
 
     // 构造函数，需要传入 CodeArea 实例
-    private DynamicLineNumberFactory(CodeArea codeArea) {
+    @Inject
+    public DynamicLineNumberFactory(@Assisted CodeArea codeArea) {
         this.codeArea = codeArea;
     }
 
-    /**
-     * 静态工厂方法，这是你应该调用的方法
-     * @param codeArea The code area to attach to.
-     * @return A new instance of DynamicLineNumberFactory.
-     */
-    public static IntFunction<Node> create(CodeArea codeArea) {
-        return new DynamicLineNumberFactory(codeArea);
-    }
 
     @Override
     public Node apply(int lineIndex) {

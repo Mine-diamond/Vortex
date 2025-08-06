@@ -149,6 +149,13 @@
             <artifactId>jul-to-slf4j</artifactId>
             <version>2.0.17</version>
         </dependency>
+        
+        <!-- 简单DI实现 -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>7.0.0</version>
+        </dependency>
 
     </dependencies>
 

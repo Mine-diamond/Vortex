@@ -7,16 +7,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.service.WindowAnimator;
 
 import java.awt.*;
 import java.net.URI;
 
+@Slf4j
 public class SettingPanel {
-
-    Logger logger = LoggerFactory.getLogger(SettingPanel.class);
 
     @FXML
     private VBox settingList;
@@ -46,12 +44,12 @@ public class SettingPanel {
     public void openWebsiteAction(ActionEvent actionEvent) {
         String url = "https://github.com/Mine-diamond/Vortex";
 
-        if(Desktop.isDesktopSupported()) {
+        if (Desktop.isDesktopSupported()) {
             Desktop desktop = Desktop.getDesktop();
             try {
                 desktop.browse(new URI(url));
             } catch (Exception e) {
-                logger.error("打开浏览器出错：" + e.getMessage());
+                log.error("打开浏览器出错：" + e.getMessage());
             }
         }
     }

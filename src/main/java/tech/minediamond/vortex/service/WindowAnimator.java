@@ -6,24 +6,22 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 窗口动画管理器 - 改良版单例模式
- *
+ * <p>
  * 特点：
  * 1. 单例模式，全局只有一个实例。
  * 2. 支持多窗口管理。
  * 3. 自动延迟初始化，第一次使用时绑定Stage。
  * 4. 提供了带回调的隐藏方法，用于处理“动画后退出”等场景。
  */
+@Slf4j
 public class WindowAnimator {
-
-    private static final Logger logger = LoggerFactory.getLogger(WindowAnimator.class);
 
     // 使用枚举实现线程安全的单例
     private enum SingletonHolder {
@@ -35,7 +33,8 @@ public class WindowAnimator {
     private final Map<Stage, WindowAnimationContext> windowContexts = new ConcurrentHashMap<>();
 
     // 私有构造函数
-    private WindowAnimator() {}
+    private WindowAnimator() {
+    }
 
     /**
      * 获取单例实例
@@ -97,12 +96,13 @@ public class WindowAnimator {
         stage.show();
         stage.centerOnScreen();
         context.showAnimation.playFromStart();
-        logger.debug("Started show animation for stage: {}", stage.getTitle());
+        log.debug("Started show animation for stage: {}", stage.getTitle());
     }
 
     /**
      * 播放隐藏动画的核心方法，可以附加一个结束回调
-     * @param stage 要隐藏的窗口
+     *
+     * @param stage              要隐藏的窗口
      * @param onFinishedCallback 动画结束后执行的任务 (可以为 null)
      */
     public void playHideAnimation(Stage stage, Runnable onFinishedCallback) {
@@ -127,7 +127,7 @@ public class WindowAnimator {
         });
 
         context.hideAnimation.playFromStart();
-        logger.debug("Started hide animation for stage: {} with callback.", stage.getTitle());
+        log.debug("Started hide animation for stage: {} with callback.", stage.getTitle());
     }
 
     public void cleanupStage(Stage stage) {
@@ -137,7 +137,7 @@ public class WindowAnimator {
             if (context.hideAnimation != null) {
                 context.hideAnimation.stop();
             }
-            logger.debug("Cleaned up animation context for stage: {}", stage.getTitle());
+            log.debug("Cleaned up animation context for stage: {}", stage.getTitle());
         }
     }
 
@@ -158,7 +158,8 @@ public class WindowAnimator {
 
     /**
      * 静态方法：隐藏窗口，并在动画结束后执行一个任务
-     * @param stage 要隐藏的窗口
+     *
+     * @param stage              要隐藏的窗口
      * @param onFinishedCallback 动画结束后执行的任务
      */
     public static void hideWindow(Stage stage, Runnable onFinishedCallback) {

@@ -2,6 +2,8 @@ package tech.minediamond.vortex.ui;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
@@ -17,9 +19,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.model.AppConfigManager;
 import tech.minediamond.vortex.model.ContentPanel;
 import tech.minediamond.vortex.model.Theme;
 import tech.minediamond.vortex.service.AutoOperateManager;
@@ -32,10 +33,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 public class MainWindow {
-
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MainWindow.class);
-    AppConfig config = AppConfigManager.getInstance();
+    private static AppConfig config;
+    private static Injector injector;
 
     private static ContentPanel currentContentPanel;
 
@@ -61,6 +62,12 @@ public class MainWindow {
 
     Stage stage;
 
+    @Inject
+    public MainWindow(AppConfig config, Injector injector) {
+        this.config = config;
+        this.injector = injector;
+    }
+
     public void initialize() {
 
         handleDragWindow();
@@ -71,9 +78,9 @@ public class MainWindow {
     }
 
     //鼠标拖拽移动窗口功能
-    public void handleDragWindow(){
+    public void handleDragWindow() {
         mainWindow.setOnMousePressed(event -> {
-            System.out.println("主界面被点击了");
+            //System.out.println("主界面被点击了");
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
@@ -85,11 +92,11 @@ public class MainWindow {
         });
     }
 
-    public void initUIComponent(){
+    public void initUIComponent() {
         pinBtn.setSelected(!config.getAutoCloseOnFocusLoss());
         BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(), config.autoCloseOnFocusLossProperty());
         SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("未固定").otherwise("已固定"));
-        SimpleHoverTooltip.setText(hideWindowBtn,"隐藏窗口(Ctrl+Space)");
+        SimpleHoverTooltip.setText(hideWindowBtn, "隐藏窗口(Ctrl+Space)");
 
         SimpleHoverTooltip.textProperty(themeSwitchBtn).bind(Bindings.createStringBinding(() -> {
             Theme theme = config.getTheme();
@@ -135,23 +142,23 @@ public class MainWindow {
     public void setupGlobalKeyListener() {
         // 确保 stage 不是 null
         if (this.stage == null) {
-            logger.error("在设置 Stage 之前调用了 setupGlobalKeyListener");
+            log.error("在设置 Stage 之前调用了 setupGlobalKeyListener");
             return;
         }
-        logger.info("setupGlobalKeyListener() called. Stage is now available.");
+        log.info("setupGlobalKeyListener() called. Stage is now available.");
 
         try {
             // 注册全局钩子
             GlobalScreen.registerNativeHook();
         } catch (NativeHookException ex) {
-            logger.error("注册全局钩子时出现问题。", ex);
+            log.error("注册全局钩子时出现问题。", ex);
             Platform.exit();
         }
 
         // 现在 stage 肯定不是 null，可以安全地创建监听器了
         ShowStageListener showStageListener = new ShowStageListener(this.stage);
         GlobalScreen.addNativeKeyListener(showStageListener);
-        logger.info("全局按键监听器已成功设置！");
+        log.info("全局按键监听器已成功设置。");
     }
 
     public void setupWindowListeners() {
@@ -177,7 +184,7 @@ public class MainWindow {
 
     private void loadOrGetView(ContentPanel fxmlFileName) {
         if (fxmlFileName == currentContentPanel) {
-            logger.info("原页面：{}，新页面：{}，页面一致", fxmlFileName.getFileName(), currentContentPanel.getFileName());
+            log.info("原页面：{}，新页面：{}，页面一致", fxmlFileName.getFileName(), currentContentPanel.getFileName());
             return;
         }
         String fileName = fxmlFileName.getFileName();
@@ -186,6 +193,7 @@ public class MainWindow {
         if (view == null) {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/minediamond/vortex/ui/" + fileName));
+                loader.setControllerFactory(injector::getInstance);
                 view = loader.load();
                 viewCache.put(fileName, view); // 加载后放入缓存
 
@@ -194,13 +202,13 @@ public class MainWindow {
                 AnchorPane.setBottomAnchor(view, 0.0);
                 AnchorPane.setLeftAnchor(view, 0.0);
                 AnchorPane.setRightAnchor(view, 0.0);
-                logger.info("原页面：{}，新页面：{}，从文件加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+                log.info("原页面：{}，新页面：{}，从文件加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
             } catch (IOException e) {
                 e.printStackTrace();
                 return;
             }
         } else {
-            logger.info("原页面：{}，新页面：{}，从缓存加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+            log.info("原页面：{}，新页面：{}，从缓存加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
         }
         currentContentPanel = fxmlFileName;
         //更新tabWindow

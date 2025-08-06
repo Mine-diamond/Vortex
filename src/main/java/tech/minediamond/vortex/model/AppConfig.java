@@ -14,7 +14,7 @@ public class AppConfig {
     private BooleanProperty autoCloseOnFocusLoss = new SimpleBooleanProperty(true);
     private ObjectProperty<Theme> theme = new SimpleObjectProperty<Theme>(Theme.LIGHT);
 
-    AppConfig(){}
+    public AppConfig(){}
 
     public BooleanProperty showLineNumProperty() { return showLineNum; }
     public BooleanProperty wordWrapProperty() { return wordWarp; }

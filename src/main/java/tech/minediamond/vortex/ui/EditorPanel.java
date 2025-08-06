@@ -1,6 +1,7 @@
 package tech.minediamond.vortex.ui;
 
 
+import com.google.inject.Inject;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -14,20 +15,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import lombok.extern.slf4j.Slf4j;
 import org.fxmisc.richtext.CodeArea;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.model.AppConfigManager;
 import tech.minediamond.vortex.model.DynamicLineNumberFactory;
 
 import java.util.Collections;
 import java.util.List;
 
-
+@Slf4j
 public class EditorPanel {
-
-    Logger logger = LoggerFactory.getLogger(EditorPanel.class);
 
     @FXML
     private CodeArea textEdit;
@@ -44,7 +41,7 @@ public class EditorPanel {
     @FXML
     private Label showIndexLabel;
 
-    AppConfig config = AppConfigManager.getInstance();
+    AppConfig config;
 
     private ObservableList<Integer> allIndex = FXCollections.observableArrayList();
     private IntegerProperty indexForAllIndex = new SimpleIntegerProperty(-1);
@@ -56,23 +53,29 @@ public class EditorPanel {
     private int startPosition;
     private int endPosition;
 
-    enum AddOrDelete{
+    enum AddOrDelete {
         ADD, DELETE
     }
 
-    enum SearchChangeType{
-        SEARCH_CONTENT,TEXT
+    enum SearchChangeType {
+        SEARCH_CONTENT, TEXT
     }
 
-    public void initialize(){
+    @Inject
+    public EditorPanel(AppConfig config) {
+        this.config = config;
+    }
 
-        if(config.wordWrapProperty().getValue()) textEdit.setWrapText(true);
-        if(config.showLineNumProperty().getValue()) textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
+    public void initialize() {
+
+        if (config.wordWrapProperty().getValue()) textEdit.setWrapText(true);
+        if (config.showLineNumProperty().getValue())
+            textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
 
 
         SimpleHoverTooltip.textProperty(setLineNum).bind(Bindings.when(config.showLineNumProperty()).then("显示行号：开").otherwise("显示行号：关"));
         SimpleHoverTooltip.textProperty(setWarpButton).bind(Bindings.when(config.wordWrapProperty()).then("自动换行：开").otherwise("自动换行：关"));
-        SimpleHoverTooltip.textProperty(showIndexLabel).bind(Bindings.format("所有匹配数量：%d\n当前位于：%d",Bindings.size(allIndex),indexForAllIndex.add(1)));
+        SimpleHoverTooltip.textProperty(showIndexLabel).bind(Bindings.format("所有匹配数量：%d\n当前位于：%d", Bindings.size(allIndex), indexForAllIndex.add(1)));
 
         findPreviousBtn.disableProperty().bind(Bindings.size(allIndex).lessThanOrEqualTo(0));
         findNextBtn.disableProperty().bind(Bindings.size(allIndex).lessThanOrEqualTo(0));
@@ -91,7 +94,7 @@ public class EditorPanel {
 //        });
         setLineNum.selectedProperty().bindBidirectional(config.showLineNumProperty());
         config.showLineNumProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue){
+            if (newValue) {
                 textEdit.setParagraphGraphicFactory(DynamicLineNumberFactory.create(textEdit));
             } else {
                 textEdit.setParagraphGraphicFactory(null);
@@ -108,7 +111,7 @@ public class EditorPanel {
             int insertionEndPosition = change.getInsertionEnd();
             int removalEndPosition = change.getRemovalEnd();
 
-            if(position == insertionEndPosition){
+            if (position == insertionEndPosition) {
                 addOrDelete = AddOrDelete.DELETE;
                 startPosition = position;
                 endPosition = removalEndPosition;
@@ -118,8 +121,8 @@ public class EditorPanel {
                 endPosition = insertionEndPosition;
             }
             searchChangeType = SearchChangeType.TEXT;
-            //logger.debug("位置：{}\n插入结束位置：{}\n删除结束位置：{}", position,insertionEndPosition, removalEndPosition);
-            //logger.debug("增删：{}\n开始位置：{}\n结束位置：{}",addOrDelete,startPosition,endPosition);
+            //log.debug("位置：{}\n插入结束位置：{}\n删除结束位置：{}", position,insertionEndPosition, removalEndPosition);
+            //log.debug("增删：{}\n开始位置：{}\n结束位置：{}",addOrDelete,startPosition,endPosition);
 
             searchWord();
         });
@@ -129,55 +132,55 @@ public class EditorPanel {
 
     }
 
-    public void searchWord(){
+    public void searchWord() {
         String searchContent = searchField.getText().toLowerCase();
-        if(searchContent.isEmpty() && searchChangeType == SearchChangeType.TEXT){
+        if (searchContent.isEmpty() && searchChangeType == SearchChangeType.TEXT) {
 
-        } else if((searchContent.isEmpty() && searchChangeType == SearchChangeType.SEARCH_CONTENT) || textEdit.getText().isEmpty()){//搜索内容为空会清空结果
+        } else if ((searchContent.isEmpty() && searchChangeType == SearchChangeType.SEARCH_CONTENT) || textEdit.getText().isEmpty()) {//搜索内容为空会清空结果
             allIndex.clear();
             indexForAllIndex.setValue(-1);
             setSelection(true);
-        }else {//搜索内容不为空进行判断
+        } else {//搜索内容不为空进行判断
             boolean isRequestFollowCaret = true;
             text = textEdit.getText().toLowerCase();
-            if(searchChangeType == SearchChangeType.TEXT){
+            if (searchChangeType == SearchChangeType.TEXT) {
                 isRequestFollowCaret = false;
             }
             int lastVisitIndex = -1;
-            if(!indexForAllIndex.getValue().equals(-1)){
+            if (!indexForAllIndex.getValue().equals(-1)) {
                 lastVisitIndex = allIndex.get(indexForAllIndex.get());
             }
 
-            if(searchChangeType == SearchChangeType.TEXT && lastVisitIndex != -1){
-                if(addOrDelete == AddOrDelete.ADD && endPosition < lastVisitIndex){
-                    lastVisitIndex += endPosition-startPosition;
-                }else if(addOrDelete == AddOrDelete.DELETE && startPosition < lastVisitIndex){
-                    if(endPosition > lastVisitIndex){
+            if (searchChangeType == SearchChangeType.TEXT && lastVisitIndex != -1) {
+                if (addOrDelete == AddOrDelete.ADD && endPosition < lastVisitIndex) {
+                    lastVisitIndex += endPosition - startPosition;
+                } else if (addOrDelete == AddOrDelete.DELETE && startPosition < lastVisitIndex) {
+                    if (endPosition > lastVisitIndex) {
                         lastVisitIndex = endPosition;
-                    }else {
-                        lastVisitIndex -= endPosition-startPosition;
+                    } else {
+                        lastVisitIndex -= endPosition - startPosition;
                     }
                 }
             }
 
             allIndex.clear();
 
-            for(int index = -1;(index = text.indexOf(searchContent, index + 1)) != -1; ){
+            for (int index = -1; (index = text.indexOf(searchContent, index + 1)) != -1; ) {
                 allIndex.add(index);
             }
 
 
-            if(allIndex.isEmpty()){
+            if (allIndex.isEmpty()) {
                 indexForAllIndex.set(-1);
-            } else if(allIndex.contains(lastVisitIndex)){
+            } else if (allIndex.contains(lastVisitIndex)) {
                 indexForAllIndex.set(allIndex.indexOf(lastVisitIndex));
             } else if (!allIndex.contains(lastVisitIndex) && searchChangeType == SearchChangeType.TEXT) {
-                lastVisitIndex = findSpecialIndex(allIndex,lastVisitIndex);
+                lastVisitIndex = findSpecialIndex(allIndex, lastVisitIndex);
             } else {
                 indexForAllIndex.set(0);
             }
             setSelection(isRequestFollowCaret);
-            logger.debug("search result: {}",allIndex.toString());
+            log.debug("search result: {}", allIndex.toString());
         }
     }
 
@@ -201,7 +204,7 @@ public class EditorPanel {
 
     public void findPrevious(ActionEvent actionEvent) {
         if (allIndex.isEmpty()) return;
-        indexForAllIndex.set((indexForAllIndex.get() - 1 + allIndex.size()) % allIndex.size() );
+        indexForAllIndex.set((indexForAllIndex.get() - 1 + allIndex.size()) % allIndex.size());
         setSelection(true);
     }
 
@@ -211,13 +214,13 @@ public class EditorPanel {
         setSelection(true);
     }
 
-    public void setSelection(boolean isRequestFollowCaret){
-        if(indexForAllIndex.getValue() == -1 || allIndex.size() == 0){
-            textEdit.selectRange(0,0);
-            logger.debug("无选择");
-        }else if(!searchField.getText().isEmpty()){
+    public void setSelection(boolean isRequestFollowCaret) {
+        if (indexForAllIndex.getValue() == -1 || allIndex.size() == 0) {
+            textEdit.selectRange(0, 0);
+            log.debug("无选择");
+        } else if (!searchField.getText().isEmpty()) {
             textEdit.selectRange(allIndex.get(indexForAllIndex.get()), allIndex.get(indexForAllIndex.get()) + searchField.getText().length());
-            if(isRequestFollowCaret) textEdit.requestFollowCaret();
+            if (isRequestFollowCaret) textEdit.requestFollowCaret();
         }
     }
 }

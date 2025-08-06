@@ -16,17 +16,12 @@ public class ShowStageListener implements NativeKeyListener {
     public void nativeKeyPressed(NativeKeyEvent e){
 
 
-
         if(e.getKeyCode() == NativeKeyEvent.VC_SPACE && ((e.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0)){
 
             Platform.runLater(() -> {
                 if (stage.isShowing()) {
-                    //stage.hide();
                     WindowAnimator.hideWindow(stage);
                 } else {
-                    //stage.show();
-                    //stage.toFront();
-                    //stage.requestFocus();
                     WindowAnimator.showWindow(stage);
                 }
             });

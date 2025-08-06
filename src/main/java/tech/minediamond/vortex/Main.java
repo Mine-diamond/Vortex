@@ -3,6 +3,8 @@ package tech.minediamond.vortex;
 import com.dustinredmond.fxtrayicon.FXTrayIcon;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -13,12 +15,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.model.AppConfigManager;
-import tech.minediamond.vortex.service.ThemeManager;
+import tech.minediamond.vortex.service.ConfigService;
+import tech.minediamond.vortex.service.ThemeService;
 import tech.minediamond.vortex.service.WindowAnimator;
 import tech.minediamond.vortex.ui.MainWindow;
 
@@ -28,11 +30,11 @@ import java.util.List;
 import java.util.logging.LogManager;
 
 /**
- * 程序的主类
+ * 程序的主类，负责启动整个程序
  */
+@Slf4j
 public class Main extends Application {
-    private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    AppConfig config = AppConfigManager.getInstance();
+    private Injector injector;
     static boolean isAutoStart = false;
     static FXTrayIcon icon;
 
@@ -40,18 +42,18 @@ public class Main extends Application {
         //初始化日志系统
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
-        logger.info("Starting vortex");
+        log.info("Starting vortex");
 
         //输出当前的JVM参数
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmArgs = runtimeMxBean.getInputArguments();
-        logger.info("JVM arguments: {}", jvmArgs);
+        log.info("JVM arguments: {}", jvmArgs);
 
         // 检查命令行参数
         for (String arg : args) {
             if ("--autostart".equalsIgnoreCase(arg)) {
                 isAutoStart = true;
-                logger.info("程序为开机自启动");
+                log.info("程序为开机自启动");
                 break;
             }
         }
@@ -61,22 +63,30 @@ public class Main extends Application {
     }
 
     @Override
+    public void init() throws Exception {
+        super.init();
+        this.injector = Guice.createInjector(new AppModule());
+    }
+
+    @Override
     public void start(Stage primaryStage) throws Exception {
 
         Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
         setupShutDownHook();
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/minediamond/vortex/ui/main-window.fxml"));
+        loader.setControllerFactory(injector::getInstance);
         Parent root = loader.load();
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
 
-        ThemeManager.initialize(scene);
+        ThemeService themeManager = injector.getInstance(ThemeService.class);
+        themeManager.initialize(scene);
 
         primaryStage.setScene(scene);
 
         MainWindow controller = loader.getController();
-        logger.info("FXML加载成功");
+        log.info("FXML加载成功");
 
         controller.setStage(primaryStage);
         controller.setupStageProperties();
@@ -87,10 +97,9 @@ public class Main extends Application {
 
         if (!isAutoStart) {
             WindowAnimator.showWindow(primaryStage);
-            logger.info("用户界面显示成功");
+            log.info("用户界面显示成功");
         } else {
-            //icon.showMessage("Vortex","程序已启动");
-            logger.info("程序加载成功");
+            log.info("程序加载成功");
         }
     }
 
@@ -99,15 +108,16 @@ public class Main extends Application {
      */
     @Override
     public void stop() throws Exception {
-        AppConfigManager.save();
+        ConfigService configService = injector.getInstance(ConfigService.class);
+        configService.save();
         try {
             // 注销全局钩子，释放资源
             GlobalScreen.unregisterNativeHook();
         } catch (NativeHookException ex) {
-            logger.error("注销全局钩子出错, {}", ex.getMessage());
+            log.error("注销全局钩子出错, {}", ex.getMessage());
         }
         icon.hide();
-        logger.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
+        log.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
         super.stop();
     }
 
@@ -121,6 +131,7 @@ public class Main extends Application {
     }
 
     public void setupTrayMenu(Stage primaryStage) {
+        AppConfig config = injector.getInstance(AppConfig.class);
         icon = new FXTrayIcon(primaryStage, getClass().getResource("/images/app_icon_x16.png"));
         icon.setTooltip("Vortex 快捷面板");
 //        icon.setOnAction(event -> {

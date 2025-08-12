@@ -13,6 +13,7 @@ public class AppConfig {
     private BooleanProperty wordWarp = new SimpleBooleanProperty(true);
     private BooleanProperty autoCloseOnFocusLoss = new SimpleBooleanProperty(true);
     private ObjectProperty<Theme> theme = new SimpleObjectProperty<Theme>(Theme.LIGHT);
+    private BooleanProperty ifCenterOnScreen = new SimpleBooleanProperty(true);
 
     public AppConfig(){}
 
@@ -20,6 +21,7 @@ public class AppConfig {
     public BooleanProperty wordWrapProperty() { return wordWarp; }
     public BooleanProperty autoCloseOnFocusLossProperty() { return autoCloseOnFocusLoss; }
     public ObjectProperty<Theme> themeProperty() { return theme; }
+    public BooleanProperty ifCenterOnScreenProperty() { return ifCenterOnScreen; }
 
     public void setshowLineNum(boolean showLineNum) {this.showLineNum.set(showLineNum);}
     public boolean getshowLineNum() {return showLineNum.get();}
@@ -34,4 +36,7 @@ public class AppConfig {
     public void setTheme(Theme theme) {this.theme.set(theme);}
     //@JsonProperty("theme")
     public Theme getTheme() {return theme.get();}
+
+    public void setIfCenterOnScreen(boolean ifCenterOnScreen) {this.ifCenterOnScreen.set(ifCenterOnScreen);}
+    public boolean getIfCenterOnScreen() {return ifCenterOnScreen.get();}
 }

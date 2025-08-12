@@ -34,4 +34,14 @@
     -fx-setting-list-button-bg-color:#4f4f4f;/*设置条目按钮颜色*/
     -fx-setting-list-button-bg-color-hover:#5a5a5a;/*设置条目悬浮时按钮颜色*/
     -fx-setting-list-button-bg-color-pressed:#5f5f5f;/*设置条目按下时按钮颜色*/
+
+    -fx-setting-combo-box-popup-bg-color: #414141;/*设置条目单选按钮弹出框背景颜色*/
+    -fx-setting-combo-box-popup-border-color: #727277;/*设置条目单选按钮弹出框边框颜色*/
+    -fx-setting-combo-box-popup-bg-color-hover: #5a5a5a;/*设置条目单选按钮弹出框悬浮是背景颜色*/
+    -fx-setting-combo-box-popup-bg-color-pressed: #5f5f5f;/*设置条目单选按钮弹出框按下时背景颜色*/
+    -fx-setting-combo-box-arrow-border-color: #e0e0e0;/* 设置条目单选按钮箭头边框颜色*/
+
+    /*特殊样式*/
+    -fx-exit-button-bg-color-hover:#b34646;/*退出按钮悬浮时背景颜色*/
+    -fx-exit-button-bg-color-pressed: #c64d4d;/*退出按钮悬浮时背景颜色*/
 }

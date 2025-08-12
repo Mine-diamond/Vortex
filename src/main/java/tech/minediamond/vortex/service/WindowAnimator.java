@@ -73,7 +73,7 @@ public class WindowAnimator {
     // 核心公共API (实例方法)
     // =================================================================
 
-    public void playShowAnimation(Stage stage) {
+    public void playShowAnimation(Stage stage, boolean ifCenterOnScreen) {
         WindowAnimationContext context = getOrCreateContext(stage);
         Parent root = stage.getScene().getRoot();
         root.setOpacity(1.0);
@@ -81,7 +81,9 @@ public class WindowAnimator {
         root.setScaleY(1.0);
 
         stage.show();
-        stage.centerOnScreen();
+        if (ifCenterOnScreen) {
+            stage.centerOnScreen();
+        }
         context.showAnimation.playFromStart();
         log.debug("Started show animation for stage: {}", stage.getTitle());
     }
@@ -132,8 +134,8 @@ public class WindowAnimator {
     // 供外部调用方法
     // =================================================================
 
-    public void showWindow(Stage stage) {
-        playShowAnimation(stage);
+    public void showWindow(Stage stage, boolean ifCenterOnScreen) {
+        playShowAnimation(stage,ifCenterOnScreen);
     }
 
     /**

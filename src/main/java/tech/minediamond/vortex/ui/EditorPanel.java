@@ -15,11 +15,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
 import org.fxmisc.richtext.CodeArea;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,6 +46,8 @@ public class EditorPanel {
     private Button findNextBtn;
     @FXML
     private Label showIndexLabel;
+    @FXML
+    private Button saveTextBtn;
 
     AppConfig config;
 
@@ -123,6 +131,40 @@ public class EditorPanel {
 
         showIndexLabel.textProperty().bind(Bindings.format("%d/%d", indexForAllIndex.add(1), Bindings.size(allIndex)));
 
+        saveTextBtn.setOnAction(event -> {
+            // 创建一个FileChooser实例
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("保存文件");
+
+            // 设置初始目录
+            fileChooser.setInitialDirectory(
+                    new File(System.getProperty("user.home")) // 设置为用户主目录
+            );
+
+            // 设置文件类型过滤器
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("文本文件", "*.txt", "*.md"),
+                    new FileChooser.ExtensionFilter("所有文件", "*.*")
+            );
+
+            // 显示文件打开对话框
+            File fileToSave = fileChooser.showSaveDialog(saveTextBtn.getScene().getWindow());
+
+            if (fileToSave != null) {
+                log.info("用户选择的保存路径: " + fileToSave.getAbsolutePath());
+                Path path = fileToSave.toPath();
+                try {
+                    Files.write(path, textEdit.getText().getBytes(StandardCharsets.UTF_8));
+                    log.info("保存成功");
+                } catch (IOException e) {
+                    log.error("保存失败");
+                    throw new RuntimeException(e);
+                }
+
+            } else {
+                log.info("用户取消了保存。");
+            }
+        });
 
     }
 

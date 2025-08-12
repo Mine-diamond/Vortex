@@ -42,6 +42,16 @@
     -fx-setting-list-button-bg-color:#cdcdd2;/*设置条目按钮颜色*/
     -fx-setting-list-button-bg-color-hover:#c1c1c7;/*设置条目悬浮时按钮颜色*/
     -fx-setting-list-button-bg-color-pressed:#b9b9be;/*设置条目按下时按钮颜色*/
+
+    -fx-setting-combo-box-popup-bg-color: #e1e1e3;/*设置条目单选按钮弹出框背景颜色*/
+    -fx-setting-combo-box-popup-border-color: #99999f;/*设置条目单选按钮弹出框边框颜色*/
+    -fx-setting-combo-box-popup-bg-color-hover: #c1c1c7;/*设置条目单选按钮弹出框悬浮是背景颜色*/
+    -fx-setting-combo-box-popup-bg-color-pressed: #b9b9be;/*设置条目单选按钮弹出框按下时背景颜色*/
+    -fx-setting-combo-box-arrow-border-color: #353333;/* 设置条目单选按钮箭头边框颜色*/
+
+    /*特殊样式*/
+    -fx-exit-button-bg-color-hover: #f86868;/*退出按钮悬浮时背景颜色*/
+    -fx-exit-button-bg-color-pressed: #e86363;/*退出按钮悬浮时背景颜色*/
 }
 
 .label {
@@ -75,10 +85,12 @@
 
 .button:hover ,.toggle-button:hover{
     -fx-background-color: -button-bg-color-hover;
+    -fx-effect: dropshadow(gaussian, -button-bg-color-hover, 3, 0, 0, 0);
 }
 
 .button:pressed ,.toggle-button:pressed{
     -fx-background-color: -button-bg-color-pressed;
+    -fx-effect: dropshadow(gaussian, -button-bg-color-pressed, 3, 0, 0, 0);
 }
 
 .button:disabled ,.toggle-button:disabled{
@@ -87,6 +99,7 @@
 
 .toggle-button:selected {
     -fx-background-color: -button-selected-bg-color;
+    -fx-effect: dropshadow(gaussian, -button-selected-bg-color, 3, 0, 0, 0);
 }
 
 /*创建textField样式*/
@@ -282,11 +295,69 @@
     -fx-pick-on-bounds: false;
 }
 
+/* ==ComboBox== */
+.combo-box {
+    -fx-cursor: hand;
+    -fx-background-color: -fx-setting-list-button-bg-color;
+    -fx-effect: dropshadow(gaussian, -fx-setting-list-button-bg-color, 3, 0, 0, 0);
+}
+
+.combo-box:hover {
+    -fx-background-color: -fx-setting-list-button-bg-color-hover;
+}
+
+.combo-box:showing {
+    -fx-background-color: -fx-setting-list-button-bg-color-pressed;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: -app-text-fill-color;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: -fx-setting-combo-box-popup-bg-color;
+    -fx-background-radius: 2px;
+}
+
+.combo-box-popup .list-view {
+    -fx-cursor: hand;
+    -fx-background-color: -fx-setting-combo-box-popup-bg-color;
+    -fx-border-color: -fx-setting-combo-box-popup-border-color;
+    -fx-border-width: 1;
+    -fx-background-radius: 2px;
+    -fx-border-radius: 2px;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: -fx-setting-combo-box-popup-bg-color-hover;
+}
+
+.combo-box-popup .list-cell:pressed {
+    -fx-background-color: -fx-setting-combo-box-popup-bg-color-pressed;
+}
+
+/* 针对 ComboBox 内部的箭头图形 */
+.combo-box .arrow {
+    /* 1. 定义箭头的颜色 */
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-setting-combo-box-arrow-border-color; /* 箭头的亮灰色 */
+    -fx-border-width: 1px;   /* 箭头的线条粗细 */
+
+    /* 2. 定义箭头的形状 */
+    -fx-shape: "M -4 -2 L 0 2 L 4 -2";
+    -fx-effect: dropshadow(gaussian, -fx-setting-combo-box-arrow-border-color, 1, 0.6, 0, 0);
+
+}
+
 /* ===特殊按钮=== */
 #pinBtn:selected {
     -fx-text-fill: #46d346;
 }
 
-#exitBtn:hover {
-    -fx-text-fill: #b51010;
+#settingList #exitBtn:hover {
+    -fx-background-color:-fx-exit-button-bg-color-hover;
+}
+
+#settingList #exitBtn:pressed {
+    -fx-background-color:-fx-exit-button-bg-color-pressed;
 }

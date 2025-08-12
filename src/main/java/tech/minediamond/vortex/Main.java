@@ -99,7 +99,7 @@ public class Main extends Application {
         setupTrayMenu(primaryStage);
 
         if (!isAutoStart) {
-            windowAnimator.showWindow(primaryStage);
+            windowAnimator.showWindow(primaryStage,true);
             log.info("用户界面显示成功");
         } else {
             log.info("程序加载成功");
@@ -155,7 +155,7 @@ public class Main extends Application {
             if (primaryStage.isShowing()) {
                 windowAnimator.hideWindow(primaryStage);
             } else {
-                windowAnimator.showWindow(primaryStage);
+                windowAnimator.showWindow(primaryStage, config.getIfCenterOnScreen());
             }
         });
 

@@ -4,6 +4,10 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.skin.TabPaneSkin.TabControlButtons?>
+<?import javafx.scene.control.cell.ComboBoxTreeCell?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tech.minediamond.vortex.ui.SettingPanel"
@@ -14,6 +18,18 @@
             <padding>
                 <Insets top="5" bottom="5" right="5" left="5"/>
             </padding>
+            <HBox>
+                <Label text="显示窗口时"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="showPlaceComboBox" value="居中显示">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="居中显示"/>
+                            <String fx:value="在隐藏时的位置显示"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </HBox>
             <HBox>
                 <Label text="官方网站"/>
                 <Region HBox.hgrow="ALWAYS"/>

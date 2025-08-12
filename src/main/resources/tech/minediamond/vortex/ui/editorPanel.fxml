@@ -22,6 +22,8 @@
 
         <ToggleButton fx:id="setWarpButton" text="↩" SimpleHoverTooltip.text="自动换行：开"/>
         <ToggleButton fx:id="setLineNum" text="行号" />
+
+        <Button fx:id="saveTextBtn" text="保存"/>
     </HBox>
     <VirtualizedScrollPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
         <content>

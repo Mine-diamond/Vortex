@@ -25,13 +25,13 @@ public class AppModule extends AbstractModule {
 
         bind(WindowAnimator.class).in(Scopes.SINGLETON);
 
-        // 2. 安装 AssistedInject 工厂模块
+        // 安装 AssistedInject 工厂模块
         install(new FactoryModuleBuilder()
-                // 3. 告诉 Guice，这个工厂创建出的实例是 ShowStageListener
+                // 告诉 Guice，这个工厂创建出的实例是 ShowStageListener
                 //    （如果返回类型就是具体类，这行可以省略，但写上更清晰）
                 // .implement(ShowStageListener.class, ShowStageListener.class)
 
-                // 4. 告诉 Guice，这个工厂的实现是基于 ShowStageListenerFactory 接口
+                // 告诉 Guice，这个工厂的实现是基于 ShowStageListenerFactory 接口
                 .build(ShowStageListenerFactory.class));
 
         install(new FactoryModuleBuilder().build(DynamicLineNumberFactoryFactory.class));

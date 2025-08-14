@@ -12,7 +12,7 @@ public class ThemeService {
     final String lightCssPath = Objects.requireNonNull(getClass().getResource("/tech/minediamond/vortex/css/light-theme.css")).toExternalForm();
     final String darkCssPath = Objects.requireNonNull(getClass().getResource("/tech/minediamond/vortex/css/dark-theme.css")).toExternalForm();
 
-    private static AppConfig config;
+    private AppConfig config;
 
     @Inject
     public ThemeService(AppConfig config) {

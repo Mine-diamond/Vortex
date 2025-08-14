@@ -1,7 +1,6 @@
 package tech.minediamond.vortex.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 

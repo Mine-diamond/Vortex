@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.skin.TabPaneSkin.TabControlButtons?>
-<?import javafx.scene.control.cell.ComboBoxTreeCell?>
-<?import javafx.collections.FXCollections?>
 <?import java.lang.String?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -33,7 +30,7 @@
             <HBox>
                 <Label text="官方网站"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="前往" fx:id="openOfficalWebsiteBtn" onAction="#openWebsiteAction"/>
+                <Button text="前往" fx:id="openOfficialWebsiteBtn" onAction="#openWebsiteAction"/>
             </HBox>
             <HBox>
                 <Label text="关闭程序"/>

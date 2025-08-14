@@ -119,38 +119,13 @@
 }
 
 /*创建codeArea样式*/
-.code-area {
-    -fx-font-family: 'Consolas', 'Courier New', monospace;
-    -fx-font-size: 14px;
-    -fx-fill: -app-text-fill-color;
-    -fx-background-color: -code-area-bg-color;
-}
 
-.line-number-label {
-    -fx-font-family: 'Consolas', 'Courier New', monospace;
-    -fx-font-size: 14px;
-    -fx-background-color: -code-area-bg-color;
-}
-
-.code-area .text {
-    /* -fx-fill 是 JavaFX 中用于设置文本颜色的属性 */
-    -fx-fill: -app-text-fill-color;
-}
-
-.selection {
-    -fx-fill: -code-area-selection-fill-color;
-}
-
-/* 默认文本颜色 */
-.paragraph-text {
-    -fx-fill: -app-text-fill-color;
-}
-
-
-/* 光标样式 */
+/* 光标样式
 .caret {
     -fx-stroke: -app-text-fill-color;
 }
+*/
+
 
 
 /* ===== 滚动条样式 ===== */

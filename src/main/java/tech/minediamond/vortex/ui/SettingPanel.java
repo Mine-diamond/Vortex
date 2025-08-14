@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
@@ -22,14 +21,14 @@ import java.net.URI;
 @Slf4j
 public class SettingPanel {
 
-    private static WindowAnimator windowAnimator;
+    private WindowAnimator windowAnimator;
 
     @FXML
     private VBox settingList;
     @FXML
     private Button exitBtn;
     @FXML
-    private Button openOfficalWebsiteBtn;
+    private Button openOfficialWebsiteBtn;
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -77,7 +76,7 @@ public class SettingPanel {
     }
 
     /**
-     * 这是 {@link #openOfficalWebsiteBtn} 的默认触发动作
+     * 这是 {@link #openOfficialWebsiteBtn} 的默认触发动作
      * @param actionEvent
      */
     public void openWebsiteAction(ActionEvent actionEvent) {

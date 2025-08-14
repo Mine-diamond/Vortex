@@ -24,10 +24,10 @@ public class ConfigService {
 
     public void save() {
         try {
-            log.info("正在保存配置...");
             MAPPER.writeValue(CONFIG_FILE, appConfig);
+            log.info("保存配置成功");
         } catch (IOException e) {
-            log.error("写入配置失败: {}", e.getMessage());
+            log.error("保存配置失败: {}", e.getMessage());
         }
     }
 }

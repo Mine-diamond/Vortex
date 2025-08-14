@@ -19,7 +19,7 @@ public class AppConfigProvider implements Provider<AppConfig> {
     // get() 方法是创建 AppConfig 实例的入口
     @Override
     public AppConfig get() {
-        log.info("正在加载应用配置...");
+        log.info("正在加载应用配置");
         try {
             return CONFIG_FILE.exists()
                     ? MAPPER.readValue(CONFIG_FILE, AppConfig.class)

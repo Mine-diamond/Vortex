@@ -1,39 +1,29 @@
 package tech.minediamond.vortex.ui;
 
 
+import com.gluonhq.richtextarea.RichTextArea;
+import com.gluonhq.richtextarea.model.DecorationModel;
+import com.gluonhq.richtextarea.model.Document;
+import com.gluonhq.richtextarea.model.ParagraphDecoration;
+import com.gluonhq.richtextarea.model.TextDecoration;
 import com.google.inject.Inject;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.stage.FileChooser;
 import lombok.extern.slf4j.Slf4j;
-import org.fxmisc.richtext.CodeArea;
 import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 public class EditorPanel {
 
     @FXML
-    private CodeArea textEdit;
+    private RichTextArea richTextArea;
     @FXML
     private ToggleButton setLineNum;
     @FXML
@@ -51,212 +41,59 @@ public class EditorPanel {
 
     AppConfig config;
 
-    private ObservableList<Integer> allIndex = FXCollections.observableArrayList();
-    private IntegerProperty indexForAllIndex = new SimpleIntegerProperty(-1);
-    private StringProperty foundIndexLabelText = new SimpleStringProperty("");
-    private boolean lastSearchFieldHasWords = false;
-    private String text = "";
-    private AddOrDelete addOrDelete = AddOrDelete.ADD;
-    private SearchChangeType searchChangeType = SearchChangeType.SEARCH_CONTENT;
-    private int startPosition;
-    private int endPosition;
-
-    private static DynamicLineNumberFactoryFactory dynamicLineNumberFactoryFactory;
-
-    enum AddOrDelete {
-        ADD, DELETE
-    }
-
-    enum SearchChangeType {
-        SEARCH_CONTENT, TEXT
-    }
 
     @Inject
-    public EditorPanel(AppConfig config, DynamicLineNumberFactoryFactory dynamicLineNumberFactoryFactory) {
+    public EditorPanel(AppConfig config) {
         this.config = config;
-        this.dynamicLineNumberFactoryFactory = dynamicLineNumberFactoryFactory;
     }
 
     public void initialize() {
 
-        if (config.wordWrapProperty().getValue()) textEdit.setWrapText(true);
-        if (config.showLineNumProperty().getValue())
-            textEdit.setParagraphGraphicFactory(dynamicLineNumberFactoryFactory.create(textEdit));
-
+        //if (config.wordWrapProperty().getValue()) codeArea.setWrapText(true);
 
         SimpleHoverTooltip.textProperty(setLineNum).bind(Bindings.when(config.showLineNumProperty()).then("显示行号：开").otherwise("显示行号：关"));
         SimpleHoverTooltip.textProperty(setWarpButton).bind(Bindings.when(config.wordWrapProperty()).then("自动换行：开").otherwise("自动换行：关"));
-        SimpleHoverTooltip.textProperty(showIndexLabel).bind(Bindings.format("所有匹配数量：%d\n当前位于：%d", Bindings.size(allIndex), indexForAllIndex.add(1)));
+        //SimpleHoverTooltip.textProperty(showIndexLabel).bind(Bindings.format("所有匹配数量：%d\n当前位于：%d", Bindings.size(positions), positionIndex.add(1)));
 
-        findPreviousBtn.disableProperty().bind(Bindings.size(allIndex).lessThanOrEqualTo(0));
-        findNextBtn.disableProperty().bind(Bindings.size(allIndex).lessThanOrEqualTo(0));
+        //findPreviousBtn.disableProperty().bind(Bindings.size(positions).lessThanOrEqualTo(0));
+        //findNextBtn.disableProperty().bind(Bindings.size(positions).lessThanOrEqualTo(0));
 
         setWarpButton.selectedProperty().bindBidirectional(config.wordWrapProperty());
-        textEdit.wrapTextProperty().bindBidirectional(config.wordWrapProperty());
 
         setLineNum.selectedProperty().bindBidirectional(config.showLineNumProperty());
-        config.showLineNumProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                textEdit.setParagraphGraphicFactory(dynamicLineNumberFactoryFactory.create(textEdit));
-            } else {
-                textEdit.setParagraphGraphicFactory(null);
-            }
-        });
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchChangeType = SearchChangeType.SEARCH_CONTENT;
-            searchWord();
+            //getSearchPosition(newValue);
         });
 
-        textEdit.plainTextChanges().subscribe(change -> {
-            int position = change.getPosition();
-            int insertionEndPosition = change.getInsertionEnd();
-            int removalEndPosition = change.getRemovalEnd();
 
-            if (position == insertionEndPosition) {
-                addOrDelete = AddOrDelete.DELETE;
-                startPosition = position;
-                endPosition = removalEndPosition;
-            } else {
-                addOrDelete = AddOrDelete.ADD;
-                startPosition = position;
-                endPosition = insertionEndPosition;
-            }
-            searchChangeType = SearchChangeType.TEXT;
-            //log.debug("位置：{}\n插入结束位置：{}\n删除结束位置：{}", position,insertionEndPosition, removalEndPosition);
-            //log.debug("增删：{}\n开始位置：{}\n结束位置：{}",addOrDelete,startPosition,endPosition);
-
-            searchWord();
-        });
-
-        showIndexLabel.textProperty().bind(Bindings.format("%d/%d", indexForAllIndex.add(1), Bindings.size(allIndex)));
+        //showIndexLabel.textProperty().bind(Bindings.format("%d/%d", positionIndex.add(1), Bindings.size(positions)));
+        showIndexLabel.setText("0/0");
 
         saveTextBtn.setOnAction(event -> {
-            // 创建一个FileChooser实例
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("保存文件");
 
-            // 设置初始目录
-            fileChooser.setInitialDirectory(
-                    new File(System.getProperty("user.home")) // 设置为用户主目录
-            );
-
-            // 设置文件类型过滤器
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("文本文件", "*.txt", "*.md"),
-                    new FileChooser.ExtensionFilter("所有文件", "*.*")
-            );
-
-            // 显示文件打开对话框
-            File fileToSave = fileChooser.showSaveDialog(saveTextBtn.getScene().getWindow());
-
-            if (fileToSave != null) {
-                log.info("用户选择的保存路径: " + fileToSave.getAbsolutePath());
-                Path path = fileToSave.toPath();
-                try {
-                    Files.write(path, textEdit.getText().getBytes(StandardCharsets.UTF_8));
-                    log.info("保存成功");
-                } catch (IOException e) {
-                    log.error("保存失败");
-                    throw new RuntimeException(e);
-                }
-
-            } else {
-                log.info("用户取消了保存。");
-            }
         });
 
-    }
+        String text = "Hello RTA";
+        TextDecoration textDecoration = TextDecoration.builder().presets()
+                .fontFamily("Arial")
+                .fontSize(20)
+                .foreground("red")
+                .build();
+        ParagraphDecoration paragraphDecoration = ParagraphDecoration.builder().presets().build();
+        DecorationModel decorationModel = new DecorationModel(0, text.length(), textDecoration, paragraphDecoration);
+        Document document = new Document(text, List.of(decorationModel), text.length());
+        richTextArea.getActionFactory().open(document).execute(new ActionEvent());
 
-    public void searchWord() {
-        String searchContent = searchField.getText().toLowerCase();
-        if (searchContent.isEmpty() && searchChangeType == SearchChangeType.TEXT) {
-
-        } else if ((searchContent.isEmpty() && searchChangeType == SearchChangeType.SEARCH_CONTENT) || textEdit.getText().isEmpty()) {//搜索内容为空会清空结果
-            allIndex.clear();
-            indexForAllIndex.setValue(-1);
-            setSelection(true);
-        } else {//搜索内容不为空进行判断
-            boolean isRequestFollowCaret = true;
-            text = textEdit.getText().toLowerCase();
-            if (searchChangeType == SearchChangeType.TEXT) {
-                isRequestFollowCaret = false;
-            }
-            int lastVisitIndex = -1;
-            if (!indexForAllIndex.getValue().equals(-1)) {
-                lastVisitIndex = allIndex.get(indexForAllIndex.get());
-            }
-
-            if (searchChangeType == SearchChangeType.TEXT && lastVisitIndex != -1) {
-                if (addOrDelete == AddOrDelete.ADD && endPosition < lastVisitIndex) {
-                    lastVisitIndex += endPosition - startPosition;
-                } else if (addOrDelete == AddOrDelete.DELETE && startPosition < lastVisitIndex) {
-                    if (endPosition > lastVisitIndex) {
-                        lastVisitIndex = endPosition;
-                    } else {
-                        lastVisitIndex -= endPosition - startPosition;
-                    }
-                }
-            }
-
-            allIndex.clear();
-
-            for (int index = -1; (index = text.indexOf(searchContent, index + 1)) != -1; ) {
-                allIndex.add(index);
-            }
-
-
-            if (allIndex.isEmpty()) {
-                indexForAllIndex.set(-1);
-            } else if (allIndex.contains(lastVisitIndex)) {
-                indexForAllIndex.set(allIndex.indexOf(lastVisitIndex));
-            } else if (!allIndex.contains(lastVisitIndex) && searchChangeType == SearchChangeType.TEXT) {
-                lastVisitIndex = findSpecialIndex(allIndex, lastVisitIndex);
-            } else {
-                indexForAllIndex.set(0);
-            }
-            setSelection(isRequestFollowCaret);
-            log.debug("search result: {}", allIndex.toString());
-        }
-    }
-
-    public static int findSpecialIndex(List<Integer> sortedList, int target) {
-        // 1. 使用 binarySearch 查找
-        int index = Collections.binarySearch(sortedList, target);
-
-        // 2. 分析返回值
-        if (index >= 0) {
-            return index;
-        } else {
-            int insertionPoint = -(index + 1);
-
-            if (insertionPoint < sortedList.size()) {
-                return insertionPoint;
-            } else {
-                return sortedList.size() - 1;
-            }
-        }
     }
 
     public void findPrevious(ActionEvent actionEvent) {
-        if (allIndex.isEmpty()) return;
-        indexForAllIndex.set((indexForAllIndex.get() - 1 + allIndex.size()) % allIndex.size());
-        setSelection(true);
+
     }
 
     public void findNext(ActionEvent actionEvent) {
-        if (allIndex.isEmpty()) return;
-        indexForAllIndex.set((indexForAllIndex.get() + 1) % allIndex.size());
-        setSelection(true);
+
     }
 
-    public void setSelection(boolean isRequestFollowCaret) {
-        if (indexForAllIndex.getValue() == -1 || allIndex.size() == 0) {
-            textEdit.selectRange(0, 0);
-            log.debug("无选择");
-        } else if (!searchField.getText().isEmpty()) {
-            textEdit.selectRange(allIndex.get(indexForAllIndex.get()), allIndex.get(indexForAllIndex.get()) + searchField.getText().length());
-            if (isRequestFollowCaret) textEdit.requestFollowCaret();
-        }
-    }
+
 }

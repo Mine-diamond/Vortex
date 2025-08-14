@@ -20,6 +20,7 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.service.ConfigService;
+import tech.minediamond.vortex.service.GetStageService;
 import tech.minediamond.vortex.service.ThemeService;
 import tech.minediamond.vortex.service.WindowAnimator;
 import tech.minediamond.vortex.ui.MainWindow;
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.logging.LogManager;
 
 /**
- * 程序的主类，负责启动整个程序
+ * 这是程序真正的主类，负责启动整个程序
  */
 @Slf4j
 public class Main extends Application {
@@ -74,6 +75,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        //初始化GetStageService服务
+        GetStageService getStageService = injector.getInstance(GetStageService.class);
+        getStageService.setStage(primaryStage);
+
         Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
         setupShutDownHook();
         primaryStage.initStyle(StageStyle.TRANSPARENT);
@@ -91,7 +96,6 @@ public class Main extends Application {
         MainWindow controller = loader.getController();
         log.info("FXML加载成功");
 
-        controller.setStage(primaryStage);
         controller.setupStageProperties();
         controller.setupGlobalKeyListener();
         controller.setupWindowListeners();

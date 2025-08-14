@@ -7,6 +7,7 @@
 <?import javafx.geometry.Insets?>
 <?import org.fxmisc.richtext.CodeArea?>
 <?import org.fxmisc.flowless.VirtualizedScrollPane?>
+<?import com.gluonhq.richtextarea.RichTextArea?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="tech.minediamond.vortex.ui.EditorPanel"
@@ -25,9 +26,10 @@
 
         <Button fx:id="saveTextBtn" text="保存"/>
     </HBox>
-    <VirtualizedScrollPane maxWidth="Infinity" maxHeight="Infinity" VBox.vgrow="ALWAYS">
-        <content>
-            <CodeArea fx:id="textEdit" />
-        </content>
-    </VirtualizedScrollPane>
+
+    <RichTextArea fx:id="richTextArea" VBox.vgrow="ALWAYS"/>
+
+
+
+
 </VBox>

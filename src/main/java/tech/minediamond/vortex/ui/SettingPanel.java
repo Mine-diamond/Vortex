@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
+import tech.minediamond.vortex.service.GetStageService;
 import tech.minediamond.vortex.service.WindowAnimator;
 
 import java.awt.*;
@@ -28,19 +29,22 @@ public class SettingPanel {
     @FXML
     private Button exitBtn;
     @FXML
+    private Button openOfficalWebsiteBtn;
+    @FXML
     private ScrollPane scrollPane;
     @FXML
     private ComboBox<String> showPlaceComboBox;
 
-    private static Stage stage;
-    private static AppConfig appConfig;
+    private AppConfig appConfig;
+    private GetStageService getStageService;
 
     StringConverter<Boolean> converter;
 
     @Inject
-    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig) {
+    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig, GetStageService getStageService) {
         this.windowAnimator = windowAnimator;
         this.appConfig = appConfig;
+        this.getStageService = getStageService;
     }
 
     public void initialize() {
@@ -61,19 +65,21 @@ public class SettingPanel {
         Bindings.bindBidirectional(showPlaceComboBox.valueProperty(), appConfig.ifCenterOnScreenProperty(), converter);
     }
 
-    private Stage getStage() {
-        if (stage == null) {
-            stage = (Stage) settingList.getScene().getWindow();
-        }
-        return stage;
-    }
 
+    /**
+     * 这是 {@link #exitBtn} 的默认触发动作
+     * @param actionEvent
+     */
     public void exitBtnAction(ActionEvent actionEvent) {
-        if (getStage().isShowing()) {
-            windowAnimator.hideWindow(getStage(), Platform::exit);
+        if (getStageService.getStage().isShowing()) {
+            windowAnimator.hideWindow(getStageService.getStage(), Platform::exit);
         }
     }
 
+    /**
+     * 这是 {@link #openOfficalWebsiteBtn} 的默认触发动作
+     * @param actionEvent
+     */
     public void openWebsiteAction(ActionEvent actionEvent) {
         String url = "https://github.com/Mine-diamond/Vortex";
 

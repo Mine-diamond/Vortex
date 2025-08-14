@@ -113,6 +113,13 @@
             <version>0.11.5</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.gluonhq</groupId>
+            <artifactId>rich-text-area</artifactId>
+            <version>1.2.1</version> <!-- 你可以使用最新的版本 -->
+        </dependency>
+
+
         <!--托盘与通知-->
         <dependency>
             <groupId>com.dustinredmond.fxtrayicon</groupId>

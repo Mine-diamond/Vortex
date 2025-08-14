@@ -33,7 +33,7 @@
             <HBox>
                 <Label text="官方网站"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="前往" onAction="#openWebsiteAction"/>
+                <Button text="前往" fx:id="openOfficalWebsiteBtn" onAction="#openWebsiteAction"/>
             </HBox>
             <HBox>
                 <Label text="关闭程序"/>

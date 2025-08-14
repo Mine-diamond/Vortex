@@ -33,9 +33,10 @@ import java.util.Optional;
 
 @Slf4j
 public class MainWindow {
-    private static AppConfig config;
-    private static Injector injector;
-    private static WindowAnimator windowAnimator;
+    private AppConfig config;
+    private Injector injector;
+    private WindowAnimator windowAnimator;
+    private GetStageService getStageService;
 
     private static ContentPanel currentContentPanel;
 
@@ -62,10 +63,13 @@ public class MainWindow {
     Stage stage;
 
     @Inject
-    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator) {
+    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator, GetStageService getStageService) {
         this.config = config;
         this.injector = injector;
         this.windowAnimator = windowAnimator;
+        this.getStageService = getStageService;
+
+        this.stage = getStageService.getStage();
     }
 
     public void initialize() {
@@ -92,6 +96,9 @@ public class MainWindow {
         });
     }
 
+    /**
+     * 为mainWindows的各个组件提供基本的文本绑定点击事件绑定
+     */
     public void initUIComponent() {
         pinBtn.setSelected(!config.getAutoCloseOnFocusLoss());
         BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(), config.autoCloseOnFocusLossProperty());
@@ -124,10 +131,6 @@ public class MainWindow {
                 mainToggleGroup.selectToggle(oldValue);
             }
         });
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
     }
 
     public void setupStageProperties() {
@@ -181,6 +184,10 @@ public class MainWindow {
         });
     }
 
+    /**
+     * 加载面板到区域
+     * @param fxmlFileName 文件名
+     */
     private void loadOrGetView(ContentPanel fxmlFileName) {
         if (fxmlFileName == currentContentPanel) {
             log.info("原页面：{}，新页面：{}，页面一致", fxmlFileName.getFileName(), currentContentPanel.getFileName());
@@ -203,6 +210,7 @@ public class MainWindow {
                 AnchorPane.setRightAnchor(view, 0.0);
                 log.info("原页面：{}，新页面：{}，从文件加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
             } catch (IOException e) {
+                log.error("加载 {} 页面出现错误: {}", fileName, e);
                 e.printStackTrace();
                 return;
             }

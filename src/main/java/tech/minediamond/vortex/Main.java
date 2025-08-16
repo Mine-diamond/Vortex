@@ -38,10 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.service.ConfigService;
-import tech.minediamond.vortex.service.GetStageService;
-import tech.minediamond.vortex.service.ThemeService;
-import tech.minediamond.vortex.service.WindowAnimator;
+import tech.minediamond.vortex.service.*;
 import tech.minediamond.vortex.ui.MainWindow;
 
 import java.lang.management.ManagementFactory;
@@ -103,6 +100,7 @@ public class Main extends Application {
         primaryStage.initStyle(StageStyle.TRANSPARENT);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/minediamond/vortex/ui/main-window.fxml"));
         loader.setControllerFactory(injector::getInstance);
+        loader.setResources(injector.getInstance(I18nService.class).getResourceBundle());
         Parent root = loader.load();
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);

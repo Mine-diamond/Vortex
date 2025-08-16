@@ -56,6 +56,7 @@ public class MainWindow {
     private Injector injector;
     private WindowAnimator windowAnimator;
     private GetStageService getStageService;
+    private I18nService i18n;
 
     private static ContentPanel currentContentPanel;
 
@@ -82,11 +83,12 @@ public class MainWindow {
     Stage stage;
 
     @Inject
-    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator, GetStageService getStageService) {
+    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator, GetStageService getStageService, I18nService i18nService) {
         this.config = config;
         this.injector = injector;
         this.windowAnimator = windowAnimator;
         this.getStageService = getStageService;
+        this.i18n = i18nService;
 
         this.stage = getStageService.getStage();
     }
@@ -122,13 +124,13 @@ public class MainWindow {
         pinBtn.setSelected(!config.getAutoCloseOnFocusLoss());
         BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(), config.autoCloseOnFocusLossProperty());
         SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("未固定").otherwise("已固定"));
-        SimpleHoverTooltip.setText(hideWindowBtn, "隐藏窗口(Ctrl+Space)");
+        SimpleHoverTooltip.setText(hideWindowBtn, i18n.getString("window.action.hide"));
 
         SimpleHoverTooltip.textProperty(themeSwitchBtn).bind(Bindings.createStringBinding(() -> {
             Theme theme = config.getTheme();
             return switch (theme) {
-                case LIGHT -> "主题：亮色";
-                case DARK -> "主题：暗色";
+                case LIGHT -> i18n.getString("main.theme.tooltip.light");
+                case DARK -> i18n.getString("main.theme.tooltip.dark");
             };
         }, config.themeProperty()));
 
@@ -219,6 +221,7 @@ public class MainWindow {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/minediamond/vortex/ui/" + fileName));
                 loader.setControllerFactory(injector::getInstance);
+                loader.setResources(injector.getInstance(I18nService.class).getResourceBundle());
                 view = loader.load();
                 viewCache.put(fileName, view); // 加载后放入缓存
 

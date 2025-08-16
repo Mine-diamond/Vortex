@@ -22,6 +22,7 @@ package tech.minediamond.vortex.ui;
 import com.google.inject.Inject;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -31,7 +32,9 @@ import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
+import tech.minediamond.vortex.model.SupportedLocales;
 import tech.minediamond.vortex.service.GetStageService;
+import tech.minediamond.vortex.service.I18nService;
 import tech.minediamond.vortex.service.WindowAnimator;
 
 import java.awt.*;
@@ -52,21 +55,26 @@ public class SettingPanel {
     private ScrollPane scrollPane;
     @FXML
     private ComboBox<String> showPlaceComboBox;
+    @FXML
+    private ComboBox<String> userLanguageComBox;
 
     private AppConfig appConfig;
     private GetStageService getStageService;
+    private I18nService i18n;
 
-    StringConverter<Boolean> converter;
+    StringConverter<Boolean> showPlaceComboBoxconverter;
+    StringConverter<SupportedLocales> supportedLocalesConverter;
 
     @Inject
-    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig, GetStageService getStageService) {
+    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig, GetStageService getStageService, I18nService i18n) {
         this.windowAnimator = windowAnimator;
         this.appConfig = appConfig;
         this.getStageService = getStageService;
+        this.i18n = i18n;
     }
 
     public void initialize() {
-        converter = new StringConverter<>() {
+        showPlaceComboBoxconverter = new StringConverter<>() {
             @Override
             public String toString(Boolean value) {
                 // 将 Boolean 翻译成 String
@@ -80,7 +88,47 @@ public class SettingPanel {
             }
         };
 
-        Bindings.bindBidirectional(showPlaceComboBox.valueProperty(), appConfig.ifCenterOnScreenProperty(), converter);
+        supportedLocalesConverter = new StringConverter<>() {
+
+            @Override
+            public String toString(SupportedLocales supportedLocales) {
+                if (supportedLocales == null) {
+                    return ""; // 如果对象为空，返回空字符串
+                }
+
+                // 根据枚举名，构造 properties 文件中的 key
+                String key = supportedLocales.getI18nKey();
+
+                // 从 ResourceBundle 中获取对应的字符串值
+                // 如果找不到，为了程序不崩溃，可以返回一个默认值，比如 key 本身
+                return i18n.getString(key);
+            }
+
+            @Override
+            public SupportedLocales fromString(String string) {
+                if (string == null || string.isEmpty()) {
+                    return null;
+                }
+                // 遍历所有枚举值，找到显示名称匹配的那个
+                for (SupportedLocales locale : SupportedLocales.values()) {
+                    if (toString(locale).equals(string)) {
+                        return locale;
+                    }
+                }
+                // 如果找不到匹配项，返回 null 或抛出异常
+                return null;
+            }
+        };
+
+        userLanguageComBox.setItems(FXCollections.observableArrayList(
+                i18n.getString("lang.auto"),
+                i18n.getString("lang.en"),
+                i18n.getString("lang.zh_CN"),
+                i18n.getString("lang.zh_TW")
+        ));
+
+        Bindings.bindBidirectional(showPlaceComboBox.valueProperty(), appConfig.ifCenterOnScreenProperty(), showPlaceComboBoxconverter);
+        Bindings.bindBidirectional(userLanguageComBox.valueProperty(),appConfig.userLocalesProperty(), supportedLocalesConverter);
     }
 
 

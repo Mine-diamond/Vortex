@@ -47,6 +47,12 @@
                 </ComboBox>
             </HBox>
             <HBox>
+                <Label text="%setting.lang"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="userLanguageComBox" value="%lang.auto">
+                </ComboBox>
+            </HBox>
+            <HBox>
                 <Label text="官方网站"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button text="前往" fx:id="openOfficialWebsiteBtn" onAction="#openWebsiteAction"/>

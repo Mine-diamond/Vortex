@@ -33,6 +33,7 @@ public class AppConfig {
     private BooleanProperty autoCloseOnFocusLoss = new SimpleBooleanProperty(true);
     private ObjectProperty<Theme> theme = new SimpleObjectProperty<Theme>(Theme.LIGHT);
     private BooleanProperty ifCenterOnScreen = new SimpleBooleanProperty(true);
+    private ObjectProperty<SupportedLocales> userLocales = new SimpleObjectProperty<>(SupportedLocales.zh_CN);
 
     public AppConfig(){}
 
@@ -41,6 +42,7 @@ public class AppConfig {
     public BooleanProperty autoCloseOnFocusLossProperty() { return autoCloseOnFocusLoss; }
     public ObjectProperty<Theme> themeProperty() { return theme; }
     public BooleanProperty ifCenterOnScreenProperty() { return ifCenterOnScreen; }
+    public ObjectProperty<SupportedLocales> userLocalesProperty() { return userLocales; }
 
     public void setshowLineNum(boolean showLineNum) {this.showLineNum.set(showLineNum);}
     public boolean getshowLineNum() {return showLineNum.get();}
@@ -58,4 +60,7 @@ public class AppConfig {
 
     public void setIfCenterOnScreen(boolean ifCenterOnScreen) {this.ifCenterOnScreen.set(ifCenterOnScreen);}
     public boolean getIfCenterOnScreen() {return ifCenterOnScreen.get();}
+
+    public void setUserLocales(SupportedLocales userLocales) {this.userLocales.set(userLocales);}
+    public SupportedLocales getUserLocales() {return userLocales.get();}
 }

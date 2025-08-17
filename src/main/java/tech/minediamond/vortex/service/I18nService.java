@@ -25,13 +25,14 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
 
+import org.jetbrains.annotations.PropertyKey;
 import java.text.MessageFormat;
 import java.util.*;
 
 /**
  * 获取多语言文本的服务,会获取{@link AppConfig#getUserLocales()} 选定的语言的文本
  * <p>
- * 通过{@link #getString(String)} 和 {@link #getString(String, Object...)} 获取文本
+ * 通过{@link #t(String)} 和 {@link #t(String, Object...)} 获取文本
  * <p>
  * 不支持程序运行中切换语言，修改语言需应用重启
  */
@@ -39,14 +40,13 @@ import java.util.*;
 @Slf4j
 public class I18nService {
 
-    private AppConfig appConfig;
+    private final AppConfig appConfig;
 
-    private Locale locale;
+    private final Locale locale;
     @Getter
-    private ResourceBundle resourceBundle;
+    private final ResourceBundle resourceBundle;
 
-    private final String resourceBundleBaseName = "lang.I18n";
-
+    public static final String resourceBundleBaseName = "lang.I18N";
     @Inject
     public I18nService(AppConfig appConfig) {
         this.appConfig = appConfig;
@@ -60,13 +60,13 @@ public class I18nService {
      * @param args 替换占位符的参数
      * @return 格式化后的字符串，如果找不到key则返回key本身
      */
-    public String getString(String key,Object... args) {
+    public String t(@PropertyKey(resourceBundle = resourceBundleBaseName) String key, Object... args) {
         try {
             return MessageFormat.format(resourceBundle.getString(key), args);
         }  catch (MissingResourceException e) {
-            log.error("Cannot find key {} in resource bundle", key, e);
+            log.error("Cannot find key {} in resource bundle, Using fallback.", key);
             return "[Missing: ]" + key;
-        } catch (IllegalFormatException e) {
+        } catch (IllegalArgumentException e) {
             log.error("Illegal format string, key={}, args={}", key, Arrays.toString(args), e);
             return "[Fail: ]" + key;
         }
@@ -76,10 +76,15 @@ public class I18nService {
     /**
      * 获取文本
      * @param key 资源文件中的键
-     * @return 对应key的字符串
+     * @return 对应key对应语言的字符串，找不到对应语言的key则回退到默认语言
      */
-    public String getString(String key) {
-        return getString(key, new Object[0]);
+    public String t(@PropertyKey(resourceBundle = resourceBundleBaseName) String key) {
+        try {
+            return resourceBundle.getString(key);
+        } catch (MissingResourceException e) {
+            log.error("Cannot find key {} in resource bundle, Using fallback.", key);
+            return "[Missing: ]" + key;
+        }
     }
 
 }

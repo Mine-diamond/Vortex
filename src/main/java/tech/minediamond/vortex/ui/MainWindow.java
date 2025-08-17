@@ -52,11 +52,11 @@ import java.util.Optional;
 
 @Slf4j
 public class MainWindow {
-    private AppConfig config;
-    private Injector injector;
-    private WindowAnimator windowAnimator;
-    private GetStageService getStageService;
-    private I18nService i18n;
+    private final AppConfig config;
+    private final Injector injector;
+    private final WindowAnimator windowAnimator;
+    private final GetStageService getStageService;
+    private final I18nService i18n;
 
     private static ContentPanel currentContentPanel;
 
@@ -123,14 +123,14 @@ public class MainWindow {
     public void initUIComponent() {
         pinBtn.setSelected(!config.getAutoCloseOnFocusLoss());
         BindingUtils.bindBidirectionalInverse(pinBtn.selectedProperty(), config.autoCloseOnFocusLossProperty());
-        SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("未固定").otherwise("已固定"));
-        SimpleHoverTooltip.setText(hideWindowBtn, i18n.getString("window.action.hide"));
+        SimpleHoverTooltip.textProperty(pinBtn).bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then(i18n.t("window.unpin")).otherwise(i18n.t("window.pin")));
+        SimpleHoverTooltip.setText(hideWindowBtn, i18n.t("window.action.hide"));
 
         SimpleHoverTooltip.textProperty(themeSwitchBtn).bind(Bindings.createStringBinding(() -> {
             Theme theme = config.getTheme();
             return switch (theme) {
-                case LIGHT -> i18n.getString("main.theme.tooltip.light");
-                case DARK -> i18n.getString("main.theme.tooltip.dark");
+                case LIGHT -> i18n.t("main.theme.tooltip.light");
+                case DARK -> i18n.t("main.theme.tooltip.dark");
             };
         }, config.themeProperty()));
 

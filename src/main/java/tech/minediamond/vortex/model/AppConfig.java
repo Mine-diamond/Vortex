@@ -33,7 +33,7 @@ public class AppConfig {
     private BooleanProperty autoCloseOnFocusLoss = new SimpleBooleanProperty(true);
     private ObjectProperty<Theme> theme = new SimpleObjectProperty<Theme>(Theme.LIGHT);
     private BooleanProperty ifCenterOnScreen = new SimpleBooleanProperty(true);
-    private ObjectProperty<SupportedLocales> userLocales = new SimpleObjectProperty<>(SupportedLocales.zh_CN);
+    private ObjectProperty<SupportedLocales> userLocales = new SimpleObjectProperty<>(SupportedLocales.AUTO);
 
     public AppConfig(){}
 

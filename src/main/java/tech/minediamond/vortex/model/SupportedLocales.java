@@ -27,24 +27,34 @@ import java.util.Locale;
  * 定义了受支持的语言，其中{@code auto}为选择系统语言，使用{@link #toLocale()}转换为{@code Locale}对象
  */
 public enum SupportedLocales {
-    zh_CN("zh", "CN","lang.zh_CN"),zh_TW("zh","TW","lang.zh_TW"), en("en","lang.en"), auto(null,"lang.auto");
+    ZH_CN(Locale.CHINA,"lang.zh_CN"),ZH_TW(Locale.TAIWAN,"lang.zh_TW"), EN(Locale.ENGLISH,"lang.en"),
+    AUTO(null,"lang.auto") {
+        @Override
+        public Locale toLocale() {
+            Locale locale = Locale.getDefault();
+            if ("zh".equals(locale.getLanguage())) {
+                String script = locale.getScript();
+                // 如果脚本是繁体中文 (Hant)，则映射到台湾地区
+                if ("Hant".equalsIgnoreCase(script)) {
+                    return Locale.TAIWAN;
+                }
+                // 如果脚本是简体中文 (Hans) 或没有指定脚本（通常也应视为简体），则映射到中国大陆地区
+                // 这样做可以覆盖 zh_SG (新加坡) 等情况
+                if ("Hans".equalsIgnoreCase(script) || script.isEmpty()) {
+                    return Locale.CHINA;
+                }
+            }
+            return locale;
+        }
+    };
 
     private final Locale locale;
     @Getter
     private final String i18nKey;
 
     // 构造函数
-    SupportedLocales(String language, String country, String i18nKey) {
-        this.locale = new Locale(language, country);
-        this.i18nKey = i18nKey;
-    }
-
-    SupportedLocales(String language, String i18nKey) {
-        if (language != null) {
-            this.locale = new Locale(language);
-        } else {
-            this.locale = null; // auto 的情况
-        }
+    SupportedLocales(Locale locale, String i18nKey) {
+        this.locale = locale;
         this.i18nKey = i18nKey;
     }
 

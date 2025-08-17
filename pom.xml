@@ -188,6 +188,13 @@
             <version>7.0.0</version> <!-- 与 Guice 版本保持一致 -->
         </dependency>
 
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>25.0.0</version> <!-- 你可以使用最新的版本 -->
+            <scope>provided</scope> <!-- 'provided' 表示该依赖只在编译和测试时需要，不会打包到最终产物中 -->
+        </dependency>
+
 
     </dependencies>
 

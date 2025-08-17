@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import java.lang.String?>
 <!--
   ~ Vortex
   ~ Copyright (C) 2025 Mine-diamond
@@ -24,43 +19,44 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tech.minediamond.vortex.ui.SettingPanel"
             prefHeight="400.0" prefWidth="600.0">
 
-    <ScrollPane fx:id="scrollPane"  fitToWidth="true" pickOnBounds="false" focusTraversable="false" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20" AnchorPane.bottomAnchor="0">
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" pickOnBounds="false" focusTraversable="false"
+                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"
+                AnchorPane.bottomAnchor="0">
         <VBox fx:id="settingList" spacing="5">
             <padding>
                 <Insets top="5" bottom="5" right="5" left="5"/>
             </padding>
             <HBox>
-                <Label text="显示窗口时"/>
+                <Label text="%setting.showWindow.label"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="showPlaceComboBox" value="居中显示">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="居中显示"/>
-                            <String fx:value="在隐藏时的位置显示"/>
-                        </FXCollections>
-                    </items>
+                <ComboBox fx:id="showPlaceComboBox" value="%setting.showWindow.comBox.center">
                 </ComboBox>
             </HBox>
             <HBox>
-                <Label text="%setting.lang"/>
+                <Label text="%setting.lang.label"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <ComboBox fx:id="userLanguageComBox" value="%lang.auto">
                 </ComboBox>
             </HBox>
             <HBox>
-                <Label text="官方网站"/>
+                <Label text="%setting.officialWebsite.label"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="前往" fx:id="openOfficialWebsiteBtn" onAction="#openWebsiteAction"/>
+                <Button text="%setting.officialWebsite.button.label" fx:id="openOfficialWebsiteBtn"
+                        onAction="#openWebsiteAction"/>
             </HBox>
             <HBox>
-                <Label text="关闭程序"/>
+                <Label text="%setting.closeSoftware.label"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Button text="关闭程序" fx:id="exitBtn" onAction="#exitBtnAction"/>
+                <Button text="%setting.closeSoftware.label" fx:id="exitBtn" onAction="#exitBtnAction"/>
             </HBox>
         </VBox>
     </ScrollPane>

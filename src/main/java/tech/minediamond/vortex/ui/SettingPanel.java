@@ -78,13 +78,13 @@ public class SettingPanel {
             @Override
             public String toString(Boolean value) {
                 // 将 Boolean 翻译成 String
-                return value != null && value ? "居中显示" : "在隐藏时的位置显示";
+                return value != null && value ? i18n.t("setting.showWindow.comBox.center") : i18n.t("setting.showWindow.comBox.onLeft");
             }
 
             @Override
             public Boolean fromString(String string) {
                 // 将 String 翻译回 Boolean
-                return "居中显示".equals(string);
+                return i18n.t("setting.showWindow.comBox.center").equals(string);
             }
         };
 
@@ -101,7 +101,7 @@ public class SettingPanel {
 
                 // 从 ResourceBundle 中获取对应的字符串值
                 // 如果找不到，为了程序不崩溃，可以返回一个默认值，比如 key 本身
-                return i18n.getString(key);
+                return i18n.t(key);
             }
 
             @Override
@@ -121,10 +121,15 @@ public class SettingPanel {
         };
 
         userLanguageComBox.setItems(FXCollections.observableArrayList(
-                i18n.getString("lang.auto"),
-                i18n.getString("lang.en"),
-                i18n.getString("lang.zh_CN"),
-                i18n.getString("lang.zh_TW")
+                i18n.t("lang.auto"),
+                i18n.t("lang.en"),
+                i18n.t("lang.zh_CN"),
+                i18n.t("lang.zh_TW")
+        ));
+
+        showPlaceComboBox.setItems(FXCollections.observableArrayList(
+                i18n.t("setting.showWindow.comBox.center"),
+                i18n.t("setting.showWindow.comBox.onLeft")
         ));
 
         Bindings.bindBidirectional(showPlaceComboBox.valueProperty(), appConfig.ifCenterOnScreenProperty(), showPlaceComboBoxconverter);

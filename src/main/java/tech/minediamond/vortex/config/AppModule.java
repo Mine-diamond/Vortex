@@ -41,6 +41,7 @@ public class AppModule extends AbstractModule {
         bind(MainWindow.class);
         bind(EditorPanel.class);
         bind(SettingPanel.class);
+        bind(TrayMenuService.class);
 
         bind(WindowAnimator.class).in(Scopes.SINGLETON);
 

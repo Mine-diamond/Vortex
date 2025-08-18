@@ -26,18 +26,15 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuItem;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.minediamond.vortex.config.AppModule;
-import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.service.*;
 import tech.minediamond.vortex.ui.MainWindow;
 
@@ -55,6 +52,7 @@ public class Main extends Application {
     static boolean isAutoStart = false;
     static FXTrayIcon icon;
     WindowAnimator windowAnimator;
+    TrayMenuService trayMenuService;
 
     public static void main(String[] args) {
         //初始化日志系统
@@ -117,7 +115,7 @@ public class Main extends Application {
         controller.setupGlobalKeyListener();
         controller.setupWindowListeners();
 
-        setupTrayMenu(primaryStage);
+        trayMenuService = injector.getInstance(TrayMenuService.class);//需要在themeManager.initialize(scene)之后调用
 
         if (!isAutoStart) {
             windowAnimator.showWindow(primaryStage,true);
@@ -140,7 +138,7 @@ public class Main extends Application {
         } catch (NativeHookException ex) {
             log.error("注销全局钩子出错, {}", ex.getMessage());
         }
-        icon.hide();
+        trayMenuService.closeTrayMenu();
         log.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
         super.stop();
     }
@@ -153,48 +151,4 @@ public class Main extends Application {
             System.out.println("🔌 Shutdown Hook 正在执行...还没有任何逻辑喵~");
         }));
     }
-
-    public void setupTrayMenu(Stage primaryStage) {
-        AppConfig config = injector.getInstance(AppConfig.class);
-        icon = new FXTrayIcon(primaryStage, getClass().getResource("/images/app_icon_x16.png"));
-        icon.setTooltip("Vortex 快捷面板");
-//        icon.setOnAction(event -> {
-//            if(primaryStage.isShowing()) {
-//                primaryStage.hide();
-//            } else {
-//                primaryStage.show();
-//            }
-//        });
-        MenuItem pinItem = new MenuItem();
-        pinItem.textProperty().bind(Bindings.when(config.autoCloseOnFocusLossProperty()).then("Close when loses focus").otherwise("Don't Close when loses focus"));
-        pinItem.setOnAction(event -> {
-            config.setAutoCloseOnFocusLoss(!config.getAutoCloseOnFocusLoss());
-        });
-
-        MenuItem openItem = new MenuItem();
-        openItem.setOnAction(event -> {
-            if (primaryStage.isShowing()) {
-                windowAnimator.hideWindow(primaryStage);
-            } else {
-                windowAnimator.showWindow(primaryStage, config.getIfCenterOnScreen());
-            }
-        });
-
-        openItem.textProperty().bind(Bindings.when(primaryStage.showingProperty()).then("close window").otherwise("open window"));
-        MenuItem exitItem = new MenuItem("exit");
-        exitItem.setOnAction(event -> {
-            if (primaryStage.isShowing()) {
-                windowAnimator.hideWindow(primaryStage, Platform::exit);
-            } else {
-                Platform.exit();
-            }
-        });
-
-        icon.addMenuItem(pinItem);
-        icon.addMenuItem(new MenuItem("-"));
-        icon.addMenuItem(openItem);
-        icon.addMenuItem(exitItem);
-        icon.show();
-    }
-
 }

@@ -23,12 +23,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.service.AppConfigProvider;
-import tech.minediamond.vortex.service.ConfigService;
+import tech.minediamond.vortex.service.*;
 import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
 import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
-import tech.minediamond.vortex.service.WindowAnimator;
-import tech.minediamond.vortex.service.GetStageService;
 import tech.minediamond.vortex.ui.EditorPanel;
 import tech.minediamond.vortex.ui.MainWindow;
 import tech.minediamond.vortex.ui.SettingPanel;
@@ -39,6 +36,7 @@ public class AppModule extends AbstractModule {
         bind(AppConfig.class).toProvider(AppConfigProvider.class).in(Scopes.SINGLETON);
         bind(ConfigService.class).in(Scopes.SINGLETON);
         bind(GetStageService.class).in(Scopes.SINGLETON);
+        bind(I18nService.class);
 
         bind(MainWindow.class);
         bind(EditorPanel.class);

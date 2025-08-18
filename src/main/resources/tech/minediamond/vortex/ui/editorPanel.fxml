@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import tech.minediamond.vortex.ui.SimpleHoverTooltip?>
-
-<?import javafx.geometry.Insets?>
-<?import org.fxmisc.richtext.CodeArea?>
-<?import org.fxmisc.flowless.VirtualizedScrollPane?>
-<?import com.gluonhq.richtextarea.RichTextArea?>
 <!--
   ~ Vortex
   ~ Copyright (C) 2025 Mine-diamond
@@ -26,6 +18,13 @@
   ~ with this program; if not, write to the Free Software Foundation, Inc.,
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
+
+<?import com.gluonhq.richtextarea.RichTextArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import tech.minediamond.vortex.ui.SimpleHoverTooltip?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"

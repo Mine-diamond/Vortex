@@ -27,28 +27,30 @@ import java.util.Locale;
  * 定义了受支持的语言，其中{@code auto}为选择系统语言，使用{@link #toLocale()}转换为{@code Locale}对象
  */
 public enum SupportedLocales {
-    ZH_CN(Locale.CHINA,"lang.zh_CN"),ZH_TW(Locale.TAIWAN,"lang.zh_TW"), EN(Locale.ENGLISH,"lang.en"),
-    AUTO(null,"lang.auto") {
+    ZH_CN(Locale.CHINA, "lang.zh_CN"), ZH_TW(Locale.TAIWAN, "lang.zh_TW"), EN(Locale.ENGLISH, "lang.en"),
+    AUTO(null, "lang.auto") {
         @Override
         public Locale toLocale() {
             Locale locale = Locale.getDefault();
-            if ("zh".equals(locale.getLanguage())) {
+            if ("zh".equals(locale.getLanguage())) { //如果是中文地区
                 String script = locale.getScript();
-                // 如果脚本是繁体中文 (Hant)，则映射到台湾地区
-                if ("Hant".equalsIgnoreCase(script)) {
+                String country = locale.getCountry();
+                // 如果脚本是繁体中文 (Hant)，或地区是HK/MO，则映射到台湾地区
+                if ("Hant".equalsIgnoreCase(script) || "HK".equalsIgnoreCase(country) || "MO".equalsIgnoreCase(country)) {
                     return Locale.TAIWAN;
                 }
-                // 如果脚本是简体中文 (Hans) 或没有指定脚本（通常也应视为简体），则映射到中国大陆地区
-                // 这样做可以覆盖 zh_SG (新加坡) 等情况
-                if ("Hans".equalsIgnoreCase(script) || script.isEmpty()) {
-                    return Locale.CHINA;
-                }
+                return Locale.CHINA; //否则返回大陆地区
             }
             return locale;
         }
     };
 
     private final Locale locale;
+    /**
+     * 用于获取此语言在界面上显示名称的国际化(i18n)键。
+     * <p>
+     * 例如，对于"ZH_CN"的i18nKey是 "lang.zh_CN"，对此调用 i18n 服务，可以获得 "简体中文" 这个字符串。
+     */
     @Getter
     private final String i18nKey;
 
@@ -65,6 +67,6 @@ public enum SupportedLocales {
      * @return a Locale instance.
      */
     public Locale toLocale() {
-        return this.locale == null ? Locale.getDefault() : this.locale;
+        return this.locale;
     }
 }

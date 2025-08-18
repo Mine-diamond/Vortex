@@ -43,15 +43,17 @@ public class I18nService {
     private final AppConfig appConfig;
 
     private final Locale locale;
-    @Getter
+    @Getter //fxml会获取这个resourceBundle进行i18n
     private final ResourceBundle resourceBundle;
 
-    public static final String resourceBundleBaseName = "lang.I18N";
+    private static final String MISSING_KEY_PREFIX = "[Missing] ";
+    private static final String FAILED_FORMAT_PREFIX = "[Fail] ";
+    private static final String RESOURCE_BUNDLE_BASE_NAME = "lang.I18N";
     @Inject
     public I18nService(AppConfig appConfig) {
         this.appConfig = appConfig;
         locale = appConfig.getUserLocales().toLocale();
-        resourceBundle = ResourceBundle.getBundle(resourceBundleBaseName,this.locale);
+        resourceBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE_BASE_NAME,this.locale);
     }
 
     /**
@@ -60,15 +62,15 @@ public class I18nService {
      * @param args 替换占位符的参数
      * @return 格式化后的字符串，如果找不到key则返回key本身
      */
-    public String t(@PropertyKey(resourceBundle = resourceBundleBaseName) String key, Object... args) {
+    public String t(@PropertyKey(resourceBundle = RESOURCE_BUNDLE_BASE_NAME) String key, Object... args) {
         try {
             return MessageFormat.format(resourceBundle.getString(key), args);
         }  catch (MissingResourceException e) {
-            log.error("Cannot find key {} in resource bundle, Using fallback.", key);
-            return "[Missing: ]" + key;
+            log.warn("Cannot find key {} in resource bundle, Using fallback.", key);
+            return MISSING_KEY_PREFIX + key;
         } catch (IllegalArgumentException e) {
             log.error("Illegal format string, key={}, args={}", key, Arrays.toString(args), e);
-            return "[Fail: ]" + key;
+            return FAILED_FORMAT_PREFIX + key;
         }
 
     }
@@ -78,12 +80,12 @@ public class I18nService {
      * @param key 资源文件中的键
      * @return 对应key对应语言的字符串，找不到对应语言的key则回退到默认语言
      */
-    public String t(@PropertyKey(resourceBundle = resourceBundleBaseName) String key) {
+    public String t(@PropertyKey(resourceBundle = RESOURCE_BUNDLE_BASE_NAME) String key) {
         try {
             return resourceBundle.getString(key);
         } catch (MissingResourceException e) {
-            log.error("Cannot find key {} in resource bundle, Using fallback.", key);
-            return "[Missing: ]" + key;
+            log.warn("Cannot find key {} in resource bundle, Using fallback.", key);
+            return MISSING_KEY_PREFIX + key;
         }
     }
 

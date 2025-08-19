@@ -34,8 +34,9 @@ public class AppModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(AppConfig.class).toProvider(AppConfigProvider.class).in(Scopes.SINGLETON);
-        bind(ConfigService.class).in(Scopes.SINGLETON);
-        bind(GetStageService.class).in(Scopes.SINGLETON);
+        bind(AppConfigProvider.class).asEagerSingleton();
+        bind(AppConfigService.class).in(Scopes.SINGLETON);
+        bind(StageProvider.class).in(Scopes.SINGLETON);
         bind(I18nService.class);
 
         bind(MainWindow.class);

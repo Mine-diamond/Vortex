@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 import tech.minediamond.vortex.model.AppConfig;
 
 /**
- * 应用托盘服务类，初始化是应确保{@link GetStageService} 初始化完成
+ * 应用托盘服务类，初始化是应确保{@link StageProvider} 初始化完成
  */
 @Singleton
 public class TrayMenuService {
@@ -37,19 +37,19 @@ public class TrayMenuService {
     private static final String X16_ICON_PATH = "/images/app_icon_x16.png";
 
     private final AppConfig appConfig;
-    private final GetStageService getStageService;
+    private final StageProvider stageProvider;
     private final WindowAnimator windowAnimator;
 
     private final Stage stage;
     private final FXTrayIcon icon;
 
     @Inject
-    public TrayMenuService(AppConfig appConfig, GetStageService getStageService, WindowAnimator windowAnimator) {
+    public TrayMenuService(AppConfig appConfig, StageProvider stageProvider, WindowAnimator windowAnimator) {
         this.appConfig = appConfig;
-        this.getStageService = getStageService;
+        this.stageProvider = stageProvider;
         this.windowAnimator = windowAnimator;
 
-        this.stage = getStageService.getStage();
+        this.stage = stageProvider.getStage();
         icon = new FXTrayIcon(stage, getClass().getResource(X16_ICON_PATH));
         setupTrayMenu();
     }

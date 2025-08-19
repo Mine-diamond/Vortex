@@ -19,7 +19,6 @@
 
 package tech.minediamond.vortex;
 
-import com.dustinredmond.fxtrayicon.FXTrayIcon;
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
 import com.google.inject.Guice;
@@ -36,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.service.*;
-import tech.minediamond.vortex.ui.MainWindow;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -49,30 +47,26 @@ import java.util.logging.LogManager;
 @Slf4j
 public class Main extends Application {
     private Injector injector;
-    static boolean isAutoStart = false;
-    static FXTrayIcon icon;
-    WindowAnimator windowAnimator;
-    TrayMenuService trayMenuService;
+    private TrayMenuService trayMenuService;
 
     public static void main(String[] args) {
+
+        log.info("""
+                
+                ------------------------------------------------------------------------
+                Starting vortex
+                ------------------------------------------------------------------------
+                """);
+
+
         //初始化日志系统
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
-        log.info("Starting vortex");
 
         //输出当前的JVM参数
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmArgs = runtimeMxBean.getInputArguments();
         log.info("JVM arguments: {}", jvmArgs);
-
-        // 检查命令行参数
-        for (String arg : args) {
-            if ("--autostart".equalsIgnoreCase(arg)) {
-                isAutoStart = true;
-                log.info("程序为开机自启动");
-                break;
-            }
-        }
 
         //执行start方法
         launch(args);
@@ -81,21 +75,20 @@ public class Main extends Application {
     @Override
     public void init() throws Exception {
         super.init();
+        Thread.setDefaultUncaughtExceptionHandler(new GlobalUncaughtExceptionHandler());
         this.injector = Guice.createInjector(new AppModule());
-
-        windowAnimator = injector.getInstance(WindowAnimator.class);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        //初始化GetStageService服务
-        GetStageService getStageService = injector.getInstance(GetStageService.class);
-        getStageService.setStage(primaryStage);
+        //初始化服务
+        StageProvider stageProvider = injector.getInstance(StageProvider.class);
+        stageProvider.setStage(primaryStage);
+        trayMenuService = injector.getInstance(TrayMenuService.class);//需要在themeManager.initialize(scene)之后调用
 
+        //初始化界面
         Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
-        setupShutDownHook();
-        primaryStage.initStyle(StageStyle.TRANSPARENT);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/tech/minediamond/vortex/ui/main-window.fxml"));
         loader.setControllerFactory(injector::getInstance);
         loader.setResources(injector.getInstance(I18nService.class).getResourceBundle());
@@ -103,52 +96,81 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
 
-        ThemeService themeManager = injector.getInstance(ThemeService.class);
-        themeManager.initialize(scene);
+        ThemeService themeService = injector.getInstance(ThemeService.class);
+        themeService.initialize(scene);
 
         primaryStage.setScene(scene);
 
-        MainWindow controller = loader.getController();
-        log.info("FXML加载成功");
-
-        controller.setupStageProperties();
-        controller.setupGlobalKeyListener();
-        controller.setupWindowListeners();
-
-        trayMenuService = injector.getInstance(TrayMenuService.class);//需要在themeManager.initialize(scene)之后调用
-
+        boolean isAutoStart = getParameters().getUnnamed().contains("--autostart");
+        WindowAnimator windowAnimator = injector.getInstance(WindowAnimator.class);
         if (!isAutoStart) {
-            windowAnimator.showWindow(primaryStage,true);
+            windowAnimator.showWindow(primaryStage, true);
             log.info("用户界面显示成功");
         } else {
-            log.info("程序加载成功");
+            log.info("程序加载成功，进入后台运行");
         }
     }
 
     /**
      * 当应用关闭时，这个方法会被调用
+     * <p>
+     * 当[JavaFX Application Thread]出现未捕获的错误时该方法也会执行
      */
     @Override
     public void stop() throws Exception {
-        ConfigService configService = injector.getInstance(ConfigService.class);
-        configService.save();
         try {
-            // 注销全局钩子，释放资源
+            AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
+            appConfigService.save();
+        } catch (Exception e) {
+            log.error("保存配置失败: {}", e.getMessage(), e);
+        }
+
+        try {
             GlobalScreen.unregisterNativeHook();
         } catch (NativeHookException ex) {
-            log.error("注销全局钩子出错, {}", ex.getMessage());
+            log.error("注销全局钩子出错: {}", ex.getMessage(), ex);
         }
-        trayMenuService.closeTrayMenu();
+
+        try {
+            trayMenuService.closeTrayMenu();
+        } catch (Exception e) {
+            log.error("关闭托盘菜单失败: {}", e.getMessage(), e);
+        }
         log.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
+
+        log.info("""
+                
+                ------------------------------------------------------------------------
+                vortex stopped
+                ------------------------------------------------------------------------
+                """);
+
         super.stop();
     }
 
     /**
-    * 创建并注册一个 Shutdown Hook，当程序正常或异常退出时总会执行
-    */
-    public void setupShutDownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("🔌 Shutdown Hook 正在执行...还没有任何逻辑喵~");
-        }));
+     * 自定义的全局未捕获异常处理器，这是在任何线程发生未捕获异常时都会执行的逻辑
+     * <p>
+     * 在[JavaFX Application Thread]，{@link #stop()}被调用后该异常处理器依旧会被调用
+     */
+    class GlobalUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+            log.error("捕获到未处理的异常！");
+            log.error("异常发生在线程: {}", t.getName());
+            log.error("异常类型: {}", e.getClass().getName());
+            log.error("异常信息: {}", e.getMessage());
+            log.error("堆栈信息:", e);
+
+            // 保存配置
+            try {
+                AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
+                appConfigService.save();
+            } catch (Exception e1) {
+                log.error("保存配置失败: {}", e1.getMessage(), e1);
+            }
+
+        }
     }
 }

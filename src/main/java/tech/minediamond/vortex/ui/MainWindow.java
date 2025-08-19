@@ -38,6 +38,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.model.ContentPanel;
@@ -55,7 +56,7 @@ public class MainWindow {
     private final AppConfig config;
     private final Injector injector;
     private final WindowAnimator windowAnimator;
-    private final GetStageService getStageService;
+    private final StageProvider stageProvider;
     private final I18nService i18n;
 
     private static ContentPanel currentContentPanel;
@@ -83,14 +84,19 @@ public class MainWindow {
     Stage stage;
 
     @Inject
-    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator, GetStageService getStageService, I18nService i18nService) {
+    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator, StageProvider stageProvider, I18nService i18nService) {
         this.config = config;
         this.injector = injector;
         this.windowAnimator = windowAnimator;
-        this.getStageService = getStageService;
+        this.stageProvider = stageProvider;
         this.i18n = i18nService;
 
-        this.stage = getStageService.getStage();
+        this.stage = stageProvider.getStage();
+
+
+        setupStageProperties();
+        setupGlobalKeyListener();
+        setupWindowListeners();
     }
 
     public void initialize() {
@@ -102,10 +108,11 @@ public class MainWindow {
         mainToggleGroup.selectToggle(quickEditBtn);
     }
 
-    //鼠标拖拽移动窗口功能
+    /**
+     * 鼠标拖拽移动窗口功能方法
+     */
     public void handleDragWindow() {
         mainWindow.setOnMousePressed(event -> {
-            //System.out.println("主界面被点击了");
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
@@ -154,8 +161,12 @@ public class MainWindow {
         });
     }
 
+    /**
+     * 设置主窗口的属性
+     */
     public void setupStageProperties() {
         stage.setTitle("Vortex");
+        stage.initStyle(StageStyle.TRANSPARENT);
         stage.setAlwaysOnTop(true);
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/app_icon_x510.png")));
@@ -232,8 +243,7 @@ public class MainWindow {
                 AnchorPane.setRightAnchor(view, 0.0);
                 log.info("原页面：{}，新页面：{}，从文件加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
             } catch (IOException e) {
-                log.error("加载 {} 页面出现错误: {}", fileName, e);
-                e.printStackTrace();
+                log.error("加载 {} 页面出现错误: ", fileName, e);
                 return;
             }
         } else {

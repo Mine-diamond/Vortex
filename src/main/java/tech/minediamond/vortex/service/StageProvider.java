@@ -27,12 +27,12 @@ import lombok.extern.slf4j.Slf4j;
  * 获取stage对象的服务，在 {@link tech.minediamond.vortex.Main#start(Stage)}中初始化并在需要的类中使用{@link #getStage()}获取
  */
 @Slf4j
-public class GetStageService {
+public class StageProvider {
 
     private Stage stage;
 
     @Inject
-    public GetStageService() {}
+    public StageProvider() {}
 
     public Stage getStage() {
         if (stage == null) {

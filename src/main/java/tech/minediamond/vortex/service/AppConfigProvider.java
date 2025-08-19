@@ -28,8 +28,12 @@ import tech.minediamond.vortex.model.AppConfig;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * 加载并提供AppConfig
+ * @see AppConfigService
+ */
 @Slf4j
-@Singleton // 这个 Provider 本身是无状态的，可以标记为 Singleton
+@Singleton
 public class AppConfigProvider implements Provider<AppConfig> {
 
     private static final File CONFIG_FILE = new File("config.json");

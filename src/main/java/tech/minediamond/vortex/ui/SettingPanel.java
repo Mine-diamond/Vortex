@@ -33,7 +33,7 @@ import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.model.SupportedLocales;
-import tech.minediamond.vortex.service.GetStageService;
+import tech.minediamond.vortex.service.StageProvider;
 import tech.minediamond.vortex.service.I18nService;
 import tech.minediamond.vortex.service.WindowAnimator;
 
@@ -59,17 +59,17 @@ public class SettingPanel {
     private ComboBox<String> userLanguageComBox;
 
     private AppConfig appConfig;
-    private GetStageService getStageService;
+    private StageProvider stageProvider;
     private I18nService i18n;
 
     StringConverter<Boolean> showPlaceComboBoxconverter;
     StringConverter<SupportedLocales> supportedLocalesConverter;
 
     @Inject
-    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig, GetStageService getStageService, I18nService i18n) {
+    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig, StageProvider stageProvider, I18nService i18n) {
         this.windowAnimator = windowAnimator;
         this.appConfig = appConfig;
-        this.getStageService = getStageService;
+        this.stageProvider = stageProvider;
         this.i18n = i18n;
     }
 
@@ -142,8 +142,8 @@ public class SettingPanel {
      * @param actionEvent
      */
     public void exitBtnAction(ActionEvent actionEvent) {
-        if (getStageService.getStage().isShowing()) {
-            windowAnimator.hideWindow(getStageService.getStage(), Platform::exit);
+        if (stageProvider.getStage().isShowing()) {
+            windowAnimator.hideWindow(stageProvider.getStage(), Platform::exit);
         }
     }
 

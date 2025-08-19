@@ -28,16 +28,20 @@ import tech.minediamond.vortex.model.AppConfig;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * 为AppConfig提供保存服务
+ * @see AppConfigProvider
+ */
 @Slf4j
-@Singleton // ConfigService 自身也应该是单例
-public class ConfigService {
+@Singleton
+public class AppConfigService {
     private static final File CONFIG_FILE = new File("config.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final AppConfig appConfig;
 
     @Inject
-    public ConfigService(AppConfig appConfig) {
+    public AppConfigService(AppConfig appConfig) {
         this.appConfig = appConfig;
     }
 

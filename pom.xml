@@ -49,6 +49,7 @@
     </licenses>
 
 
+
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
@@ -195,6 +196,11 @@
             <scope>provided</scope> <!-- 'provided' 表示该依赖只在编译和测试时需要，不会打包到最终产物中 -->
         </dependency>
 
+        <dependency>
+            <groupId>org.openani.jsystemthemedetector</groupId>
+            <artifactId>jSystemThemeDetector</artifactId>
+            <version>3.8</version>
+        </dependency>
 
     </dependencies>
 

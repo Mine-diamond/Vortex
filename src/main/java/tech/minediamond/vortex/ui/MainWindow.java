@@ -76,7 +76,7 @@ public class MainWindow {
     @FXML
     private Button hideWindowBtn;
     //缓存已经加载的视图
-    private Map<String, Parent> viewCache = new HashMap<>();
+    private final Map<String, Parent> viewCache = new HashMap<>();
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -119,7 +119,7 @@ public class MainWindow {
 
         mainWindow.setOnMouseDragged(event -> {
             stage.setX(event.getScreenX() - xOffset);
-            double y = event.getScreenY() - yOffset < Screen.getPrimary().getVisualBounds().getMaxY() - 50 ? event.getScreenY() - yOffset : Screen.getPrimary().getVisualBounds().getMaxY() - 50;
+            double y = Math.min(event.getScreenY() - yOffset, Screen.getPrimary().getVisualBounds().getMaxY() - 50);
             stage.setY(y);
         });
     }
@@ -138,6 +138,7 @@ public class MainWindow {
             return switch (theme) {
                 case LIGHT -> i18n.t("main.theme.tooltip.light");
                 case DARK -> i18n.t("main.theme.tooltip.dark");
+                case AUTO -> i18n.t("main.theme.tooltip.auto");
             };
         }, config.themeProperty()));
 
@@ -145,6 +146,8 @@ public class MainWindow {
             Theme theme = config.getTheme();
             if (theme == Theme.LIGHT) {
                 config.setTheme(Theme.DARK);
+            } else if (theme == Theme.DARK) {
+                config.setTheme(Theme.AUTO);
             } else {
                 config.setTheme(Theme.LIGHT);
             }
@@ -218,6 +221,7 @@ public class MainWindow {
 
     /**
      * 加载面板到区域
+     *
      * @param fxmlFileName 文件名
      */
     private void loadOrGetView(ContentPanel fxmlFileName) {

@@ -97,7 +97,7 @@ public class Main extends Application {
         scene.setFill(Color.TRANSPARENT);
 
         ThemeService themeService = injector.getInstance(ThemeService.class);
-        themeService.initialize(scene);
+        themeService.registerScene(scene);
 
         primaryStage.setScene(scene);
 

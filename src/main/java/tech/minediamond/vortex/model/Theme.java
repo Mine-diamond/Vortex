@@ -20,5 +20,5 @@
 package tech.minediamond.vortex.model;
 
 public enum Theme {
-    LIGHT,DARK,AUTO
+    LIGHT, DARK, AUTO
 }

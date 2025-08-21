@@ -189,6 +189,7 @@
             <version>7.0.0</version> <!-- 与 Guice 版本保持一致 -->
         </dependency>
 
+        <!-- annotations - IDEA智能分析库 -->
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
@@ -196,6 +197,10 @@
             <scope>provided</scope> <!-- 'provided' 表示该依赖只在编译和测试时需要，不会打包到最终产物中 -->
         </dependency>
 
+        <!--jSystemThemeDetector - 系统主题检测 -->
+        <!-- 原依赖链接 https://github.com/Dansoftowner/jSystemThemeDetector,
+        因为原依赖只支持JitPack仓库，这里用了fork库, 只支持3.8版本,
+        fork库说明 https://github.com/Dansoftowner/jSystemThemeDetector/issues/22#issuecomment-2561325912 -->
         <dependency>
             <groupId>org.openani.jsystemthemedetector</groupId>
             <artifactId>jSystemThemeDetector</artifactId>

@@ -19,17 +19,19 @@
 
 package tech.minediamond.vortex.service;
 
+import com.google.inject.Inject;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Slf4j
-public class AutoOperateManager {
+public class AutoOperateService {
 
-    public static void setAutoFocus(Stage stage, String nodeIdToFocus){
+    @Inject
+    public AutoOperateService() {}
+
+    public void setAutoFocus(Stage stage, String nodeIdToFocus){
         stage.setOnShown(event -> {
             Scene scene = stage.getScene();
             if (scene == null) {

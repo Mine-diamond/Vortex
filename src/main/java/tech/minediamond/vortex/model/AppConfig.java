@@ -31,7 +31,7 @@ public class AppConfig {
     private BooleanProperty showLineNum = new SimpleBooleanProperty(true);
     private BooleanProperty wordWarp = new SimpleBooleanProperty(true);
     private BooleanProperty autoCloseOnFocusLoss = new SimpleBooleanProperty(true);
-    private ObjectProperty<Theme> theme = new SimpleObjectProperty<Theme>(Theme.LIGHT);
+    private ObjectProperty<Theme> theme = new SimpleObjectProperty<Theme>(Theme.AUTO);
     private BooleanProperty ifCenterOnScreen = new SimpleBooleanProperty(true);
     private ObjectProperty<SupportedLocales> userLocales = new SimpleObjectProperty<>(SupportedLocales.AUTO);
 
@@ -44,8 +44,8 @@ public class AppConfig {
     public BooleanProperty ifCenterOnScreenProperty() { return ifCenterOnScreen; }
     public ObjectProperty<SupportedLocales> userLocalesProperty() { return userLocales; }
 
-    public void setshowLineNum(boolean showLineNum) {this.showLineNum.set(showLineNum);}
-    public boolean getshowLineNum() {return showLineNum.get();}
+    public void setShowLineNum(boolean showLineNum) {this.showLineNum.set(showLineNum);}
+    public boolean getShowLineNum() {return showLineNum.get();}
 
     public void setWordWarp(boolean wordWarp) {this.wordWarp.set(wordWarp);}
     public boolean getWordWarp() {return wordWarp.get();}

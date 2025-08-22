@@ -37,7 +37,9 @@ public class AppModule extends AbstractModule {
         bind(AppConfigProvider.class).asEagerSingleton();
         bind(AppConfigService.class).in(Scopes.SINGLETON);
         bind(StageProvider.class).in(Scopes.SINGLETON);
+        bind(AutoOperateService.class).in(Scopes.SINGLETON);
         bind(I18nService.class);
+
 
         bind(MainWindow.class);
         bind(EditorPanel.class);

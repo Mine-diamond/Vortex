@@ -56,8 +56,8 @@ public class MainWindow {
     private final AppConfig config;
     private final Injector injector;
     private final WindowAnimator windowAnimator;
-    private final StageProvider stageProvider;
     private final I18nService i18n;
+    private final AutoOperateService autoOperateService;
 
     private static ContentPanel currentContentPanel;
 
@@ -84,12 +84,12 @@ public class MainWindow {
     Stage stage;
 
     @Inject
-    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator, StageProvider stageProvider, I18nService i18nService) {
+    public MainWindow(AppConfig config, Injector injector, WindowAnimator windowAnimator, StageProvider stageProvider, I18nService i18nService, AutoOperateService autoOperateService) {
         this.config = config;
         this.injector = injector;
         this.windowAnimator = windowAnimator;
-        this.stageProvider = stageProvider;
         this.i18n = i18nService;
+        this.autoOperateService = autoOperateService;
 
         this.stage = stageProvider.getStage();
 
@@ -173,7 +173,7 @@ public class MainWindow {
         stage.setAlwaysOnTop(true);
         stage.setResizable(false);
         stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/app_icon_x510.png")));
-        AutoOperateManager.setAutoFocus(stage, "searchField");
+        autoOperateService.setAutoFocus(stage, "searchField");
     }
 
     //  这个方法将在 stage 被设置后，由 Main 类手动调用

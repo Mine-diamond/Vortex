@@ -40,6 +40,11 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.kordamp.ikonli.fluentui.FluentUiFilledAL;
+import org.kordamp.ikonli.fluentui.FluentUiFilledMZ;
+import org.kordamp.ikonli.fluentui.FluentUiRegularAL;
+import org.kordamp.ikonli.fluentui.FluentUiRegularMZ;
+import org.kordamp.ikonli.javafx.FontIcon;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.model.ContentPanel;
 import tech.minediamond.vortex.model.Theme;
@@ -50,6 +55,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static tech.minediamond.vortex.model.Theme.*;
 
 @Slf4j
 public class MainWindow {
@@ -80,6 +87,12 @@ public class MainWindow {
 
     private double xOffset = 0;
     private double yOffset = 0;
+
+    private static final FontIcon pinIcon = new FontIcon(FluentUiFilledMZ.PIN_20);
+    private static final FontIcon unpinIcon = new FontIcon(FluentUiRegularMZ.PIN_20);
+    private static final FontIcon lightThemeIcon = new FontIcon(FluentUiRegularMZ.WEATHER_SUNNY_24);
+    private static final FontIcon darkThemeIcon = new FontIcon(FluentUiRegularMZ.WEATHER_MOON_24);
+    private static final FontIcon autoThemeIcon = new FontIcon(FluentUiRegularAL.ARROW_REPEAT_ALL_24);
 
     Stage stage;
 
@@ -142,20 +155,23 @@ public class MainWindow {
             };
         }, config.themeProperty()));
 
-        themeSwitchBtn.setOnAction(event -> {
-            Theme theme = config.getTheme();
-            if (theme == Theme.LIGHT) {
-                config.setTheme(Theme.DARK);
-            } else if (theme == Theme.DARK) {
-                config.setTheme(Theme.AUTO);
-            } else {
-                config.setTheme(Theme.LIGHT);
-            }
-        });
+        themeSwitchBtn.setOnAction(event -> config.setTheme(switch (config.getTheme()) {
+                case LIGHT -> DARK;
+                case DARK  -> AUTO;
+                case AUTO  -> LIGHT;
+            }));
 
         hideWindowBtn.setOnAction(event -> {
             windowAnimator.hideWindow(stage);
         });
+
+        pinBtn.graphicProperty().bind(Bindings.when(pinBtn.selectedProperty()).then(pinIcon).otherwise(unpinIcon));
+
+        themeSwitchBtn.graphicProperty().bind(Bindings.createObjectBinding(() -> switch (config.getTheme()) {
+            case LIGHT -> lightThemeIcon;
+            case DARK -> darkThemeIcon;
+            case AUTO -> autoThemeIcon;
+        }, config.themeProperty()));
 
         mainToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {

@@ -176,7 +176,7 @@
             <version>2.0.17</version>
         </dependency>
         
-        <!-- 简单DI实现 -->
+        <!-- guice - 简单DI实现 -->
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
@@ -205,6 +205,20 @@
             <groupId>org.openani.jsystemthemedetector</groupId>
             <artifactId>jSystemThemeDetector</artifactId>
             <version>3.8</version>
+        </dependency>
+
+        <!-- Ikonli 的核心 JavaFX 支持库 - 图标字体库 -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.4.0</version> <!-- 使用当前最新版本 -->
+        </dependency>
+
+        <!-- ikonli-fluentui-pack - 微软 Fluent UI 图标  -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fluentui-pack</artifactId>
+            <version>12.4.0</version>
         </dependency>
 
     </dependencies>

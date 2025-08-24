@@ -22,6 +22,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="mainWindow"
@@ -36,15 +37,39 @@
     <TextField fx:id="searchField" promptText="%search.text" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
 
     <VBox alignment="CENTER" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="1070" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="70">
-        <ToggleButton text="%mainWindow.tab.quickEdit" fx:id="quickEditBtn" onAction="#showEditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
-        <ToggleButton text="%mainWindow.tab.search" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
-        <ToggleButton text="%mainWindow.tab.setting" fx:id="settingBtn" onAction="#showSettingPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup"/>
+        <ToggleButton text="%mainWindow.tab.quickEdit" fx:id="quickEditBtn" onAction="#showEditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup">
+            <graphic>
+                <FontIcon iconLiteral="fltral-document-edit-16"/>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton text="%mainWindow.tab.search" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup">
+            <graphic>
+                <FontIcon iconLiteral="fltfmz-search-20"/>
+            </graphic>
+        </ToggleButton>
+        <ToggleButton text="%mainWindow.tab.setting" fx:id="settingBtn" onAction="#showSettingPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup">
+            <graphic>
+                <FontIcon iconLiteral="fltrmz-settings-16"/>
+            </graphic>
+        </ToggleButton>
     </VBox>
 
     <HBox alignment="CENTER" AnchorPane.topAnchor="580" AnchorPane.rightAnchor="1050" AnchorPane.leftAnchor="5" AnchorPane.bottomAnchor="20">
-        <ToggleButton text="📌" fx:id="pinBtn" />
-        <Button text="🔁" fx:id="themeSwitchBtn" />
-        <Button text="-" fx:id="hideWindowBtn" />
+        <ToggleButton fx:id="pinBtn" >
+            <graphic>
+                <FontIcon iconLiteral="fltrmz-pin-off-20"/>
+            </graphic>
+        </ToggleButton>
+        <Button fx:id="themeSwitchBtn" >
+            <graphic>
+                <FontIcon iconLiteral="fltral-arrow-repeat-all-24"/>
+            </graphic>
+        </Button>
+        <Button fx:id="hideWindowBtn" >
+            <graphic>
+                <FontIcon iconLiteral="fltrmz-minimize-16"/>
+            </graphic>
+        </Button>
     </HBox>
 
     <AnchorPane fx:id="tabWindow" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="0" AnchorPane.leftAnchor="150" AnchorPane.bottomAnchor="20">

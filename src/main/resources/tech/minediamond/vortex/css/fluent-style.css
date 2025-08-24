@@ -81,6 +81,7 @@
 .button, .toggle-button{
     /*鼠标形状:手性*/
     -fx-cursor: hand;
+    -fx-graphic-text-gap: 2px;
 
     /* 形状与空间 */
     -fx-background-radius: 4px; /* 关键的圆角 */
@@ -100,6 +101,11 @@
 
     /* 对背景色和阴影效果的变化，应用一个0.15秒的缓动动画 */
     -fx-transition: -fx-background-color 0.15s ease-in-out, -fx-effect 0.15s ease-in-out;
+}
+
+.button .ikonli-font-icon, .toggle-button .ikonli-font-icon {
+    -fx-icon-color: -app-text-fill-color;
+    -fx-icon-size: 16;
 }
 
 .button:hover ,.toggle-button:hover{
@@ -344,8 +350,9 @@
 }
 
 /* ===特殊按钮=== */
-#pinBtn:selected {
-    -fx-text-fill: #46d346;
+#pinBtn:selected .ikonli-font-icon{
+    -fx-icon-color: #46d346;
+    -fx-fill: #46d346;
 }
 
 #settingList #exitBtn:hover {

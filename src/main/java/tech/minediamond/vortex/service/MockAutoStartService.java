@@ -17,22 +17,24 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.service.interfaces;
+package tech.minediamond.vortex.service;
 
+import com.google.inject.Inject;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import tech.minediamond.vortex.service.interfaces.IAutoStartService;
 
-/**
- * An interface for managing the application's auto-start functionality.
- * This abstracts the underlying implementation, allowing for different behaviors
- * in development vs. production environments.
- */
-public interface IAutoStartService {
+public class MockAutoStartService implements IAutoStartService {
 
-    /**
-     * The property representing the auto-start enabled state.
-     * UI components should bind to this property.
-     * @return A BooleanProperty that is true if auto-start is enabled.
-     */
-    BooleanProperty autoStartEnabledProperty();
+    private BooleanProperty autoStartEnabledProperty;
 
+    @Inject
+    public MockAutoStartService() {
+        autoStartEnabledProperty = new SimpleBooleanProperty(false);
+    }
+
+    @Override
+    public BooleanProperty autoStartEnabledProperty() {
+        return autoStartEnabledProperty;
+    }
 }

@@ -169,7 +169,6 @@ public class Main extends Application {
             } catch (Exception e1) {
                 log.error("保存配置失败: {}", e1.getMessage(), e1);
             }
-
         }
     }
 }

@@ -349,6 +349,28 @@
 
 }
 
+/* ===开关=== */
+
+.toggle-switch {
+    -thumb-move-animation-time: 80;
+}
+
+/* 默认样式，可以不设置，但这里为了完整性 */
+.toggle-switch .thumb {
+    -fx-background-color: #f8f6f6; /* 滑块颜色 */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1); /* 滑块阴影 */
+}
+
+
+/* --- 核心部分：定义 "开" 状态的样式 --- */
+.toggle-switch:selected .thumb-area {
+    -fx-background-color: #3c62b5; /* "开" 状态下背景条的颜色 (绿色) */
+}
+
+.toggle-switch .thumb-area {
+    -fx-background-color: #8e8c8a; /* 滑块颜色 */
+}
+
 /* ===特殊按钮=== */
 #pinBtn:selected .ikonli-font-icon{
     -fx-icon-color: #46d346;

@@ -31,6 +31,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.controlsfx.control.ToggleSwitch;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.model.SupportedLocales;
 import tech.minediamond.vortex.service.StageProvider;
@@ -57,6 +58,8 @@ public class SettingPanel {
     private ComboBox<String> showPlaceComboBox;
     @FXML
     private ComboBox<String> userLanguageComBox;
+    @FXML
+    private ToggleSwitch autoStartOnBootToggleSwitch;
 
     private AppConfig appConfig;
     private StageProvider stageProvider;
@@ -134,6 +137,10 @@ public class SettingPanel {
 
         Bindings.bindBidirectional(showPlaceComboBox.valueProperty(), appConfig.ifCenterOnScreenProperty(), showPlaceComboBoxconverter);
         Bindings.bindBidirectional(userLanguageComBox.valueProperty(),appConfig.userLocalesProperty(), supportedLocalesConverter);
+
+        autoStartOnBootToggleSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            //如何写？
+        });
     }
 
 

@@ -23,6 +23,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import org.controlsfx.control.ToggleSwitch?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tech.minediamond.vortex.ui.SettingPanel"
@@ -38,14 +39,17 @@
             <HBox>
                 <Label text="%setting.showWindow.label"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="showPlaceComboBox" value="%setting.showWindow.comBox.center">
-                </ComboBox>
+                <ComboBox fx:id="showPlaceComboBox" value="%setting.showWindow.comBox.center"/>
             </HBox>
             <HBox>
                 <Label text="%setting.lang.label"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="userLanguageComBox" value="%lang.auto">
-                </ComboBox>
+                <ComboBox fx:id="userLanguageComBox" value="%lang.auto"/>
+            </HBox>
+            <HBox>
+                <Label text="%setting.startOnBoot.label"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ToggleSwitch fx:id="autoStartOnBootToggleSwitch"/>
             </HBox>
             <HBox>
                 <Label text="%setting.officialWebsite.label"/>

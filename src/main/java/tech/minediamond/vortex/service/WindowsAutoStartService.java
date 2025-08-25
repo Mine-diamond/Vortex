@@ -21,9 +21,11 @@ package tech.minediamond.vortex.service;
 
 import com.google.inject.Inject;
 import javafx.beans.property.BooleanProperty;
+import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.service.interfaces.IAutoStartService;
 
+@Slf4j
 public class WindowsAutoStartService implements IAutoStartService {
 
     private final BooleanProperty autoStartEnabledProperty;
@@ -31,6 +33,10 @@ public class WindowsAutoStartService implements IAutoStartService {
     @Inject
     public WindowsAutoStartService(AppConfig appConfig) {
         autoStartEnabledProperty = appConfig.autoStartEnabledProperty();
+
+        autoStartEnabledProperty.addListener((obs, oldValue, newValue) -> {
+            log.info("开机自启动启用: {}", newValue);
+        });
     }
 
     @Override

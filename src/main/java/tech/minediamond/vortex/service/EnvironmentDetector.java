@@ -19,33 +19,43 @@
 
 package tech.minediamond.vortex.service;
 
+import lombok.Getter;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 
+/**
+ * 教程程序是运行在开发环境下还是生产环境下的工具类
+ */
 public class EnvironmentDetector {
 
+    @Getter
     private static final Environment environment = detectMode();
 
     public enum Environment {
         DEVELOPMENT, PRODUCTION
     }
 
+    /**
+     * 检测运行环境的核心方法
+     * @return 目前的运行环境
+     */
     private static Environment detectMode(){
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         Environment environment;
-        if(runtimeMXBean.getInputArguments().contains("-DAPP_ENV=dev")){
-            environment = Environment.DEVELOPMENT;
-        } else {
+        if(runtimeMXBean.getInputArguments().contains("-DAPP_ENV=prod")){
             environment = Environment.PRODUCTION;
+        } else {
+            environment = Environment.DEVELOPMENT;
         }
 
         return environment;
     }
 
-    public static Environment getAppMode() {
-        return environment;
-    }
-
+    /**
+     *
+     * @return 返回目前是否是生产环境
+     */
     public static boolean isProduction() {
         return environment.equals(Environment.PRODUCTION);
     }

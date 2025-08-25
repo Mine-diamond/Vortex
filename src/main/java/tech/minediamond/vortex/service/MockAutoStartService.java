@@ -22,15 +22,21 @@ package tech.minediamond.vortex.service;
 import com.google.inject.Inject;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.service.interfaces.IAutoStartService;
 
+@Slf4j
 public class MockAutoStartService implements IAutoStartService {
 
-    private BooleanProperty autoStartEnabledProperty;
+    private final BooleanProperty autoStartEnabledProperty;
 
     @Inject
     public MockAutoStartService() {
         autoStartEnabledProperty = new SimpleBooleanProperty(false);
+
+        autoStartEnabledProperty.addListener((obs, oldValue, newValue) -> {
+            log.info("[DEV]开机自启动启用: {}", newValue);
+        });
     }
 
     @Override

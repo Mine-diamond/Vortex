@@ -26,6 +26,7 @@ import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.service.*;
 import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
 import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
+import tech.minediamond.vortex.service.interfaces.IAutoStartService;
 import tech.minediamond.vortex.ui.EditorPanel;
 import tech.minediamond.vortex.ui.MainWindow;
 import tech.minediamond.vortex.ui.SettingPanel;
@@ -47,6 +48,12 @@ public class AppModule extends AbstractModule {
         bind(TrayMenuService.class);
 
         bind(WindowAnimator.class).in(Scopes.SINGLETON);
+
+        if(EnvironmentDetector.isProduction()){//根据程序是在开发环境还是打包环境选择不同的类
+            bind(IAutoStartService.class).to(WindowsAutoStartService.class).in(Scopes.SINGLETON);
+        } else {
+            bind(IAutoStartService.class).to(MockAutoStartService.class).in(Scopes.SINGLETON);
+        }
 
         // 安装 AssistedInject 工厂模块
         install(new FactoryModuleBuilder()

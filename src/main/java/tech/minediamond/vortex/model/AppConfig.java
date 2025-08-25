@@ -34,6 +34,7 @@ public class AppConfig {
     private ObjectProperty<Theme> theme = new SimpleObjectProperty<Theme>(Theme.AUTO);
     private BooleanProperty ifCenterOnScreen = new SimpleBooleanProperty(true);
     private ObjectProperty<SupportedLocales> userLocales = new SimpleObjectProperty<>(SupportedLocales.AUTO);
+    private BooleanProperty autoStartEnabledProperty = new SimpleBooleanProperty(true);
 
     public AppConfig(){}
 
@@ -43,6 +44,7 @@ public class AppConfig {
     public ObjectProperty<Theme> themeProperty() { return theme; }
     public BooleanProperty ifCenterOnScreenProperty() { return ifCenterOnScreen; }
     public ObjectProperty<SupportedLocales> userLocalesProperty() { return userLocales; }
+    public BooleanProperty autoStartEnabledProperty() { return autoStartEnabledProperty; }
 
     public void setShowLineNum(boolean showLineNum) {this.showLineNum.set(showLineNum);}
     public boolean getShowLineNum() {return showLineNum.get();}
@@ -63,4 +65,7 @@ public class AppConfig {
 
     public void setUserLocales(SupportedLocales userLocales) {this.userLocales.set(userLocales);}
     public SupportedLocales getUserLocales() {return userLocales.get();}
+
+    public void setAutoStartEnabledProperty(boolean autoStartEnabledProperty) {this.autoStartEnabledProperty.set(autoStartEnabledProperty);}
+    public boolean getAutoStartEnabledProperty() {return autoStartEnabledProperty.get();}
 }

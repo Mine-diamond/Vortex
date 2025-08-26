@@ -115,8 +115,8 @@ public class WindowsAutoStartService implements IAutoStartService {
                 appConfig.setAutoStartEnabledProperty(false);
                 return;
             }
-            // 格式化命令，确保路径被引号包裹，并添加 --autostart 参数（如果需要）
-            String valueData = String.format("\"%s\" --autostart", exePath);
+            // 格式化命令，确保路径被引号包裹，内部引号加反斜杠，并添加 --autostart 参数
+            String valueData = String.format("\"\\\"%s\\\" --autostart\"", exePath);
             ProcessBuilder pb = new ProcessBuilder(
                     "reg", "add", RUN_KEY, "/v", APP_NAME, "/t", "REG_SZ", "/d", valueData, "/f"
             );
@@ -166,22 +166,6 @@ public class WindowsAutoStartService implements IAutoStartService {
      */
     private String getExecutablePath() {
         try {
-//            // 这段代码可以可靠地找到 .jar 文件或在 IDE 中运行时的 classes 目录
-//            File sourceFile = new File(WindowsAutoStartService.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-//
-//            // 如果应用是通过 jpackage 打包的，可执行文件通常与 app 目录在同一级别或上一级
-//            // 这里我们做一个合理的假设，实际路径可能需要根据你的打包结构进行微调
-//            // 对于一个典型的 jpackage 安装，jar 文件在 app/your-app.jar
-//            // .exe 文件在根目录
-//            if(sourceFile.getPath().endsWith(".jar")) {
-//                File exeFile = new File(sourceFile.getParentFile().getParentFile(), APP_NAME + ".exe");
-//                if(exeFile.exists()) {
-//                    return exeFile.getAbsolutePath();
-//                }
-//            }
-//
-//            // 作为备选，直接返回 jar/class 路径。这在某些情况下也可能工作。
-//            return Paths.get(sourceFile.toURI()).toString();
             String programPath = System.getProperty("jpackage.app-path");
             log.info("程序路径：{}", programPath);
             return Paths.get(programPath).toFile().getAbsolutePath();

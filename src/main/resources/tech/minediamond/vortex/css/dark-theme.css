@@ -36,6 +36,12 @@
     -button-bg-color-pressed: #5a5a5a; /* 按下时更深一点 */
     -button-selected-bg-color: #7c7c7c; /* 选中后的按钮背景 */
     -button-text-fill-color-disabled: #afaeae;/*禁用按钮时的文字颜色*/
+
+    /*开关按钮样式*/
+    -toggle-switch-thumb-bg-color:#f8f6f6;/*滑块颜色*/
+    -toggle-switch-thumb-area-bg-color-selected:#3c62b5;/*开启时轨道颜色*/
+    -toggle-switch-thumb-area-bg-color-unselected:#8e8c8a;/*关闭时轨道颜色*/
+
     /*文本框样式*/
     -textField-bg-color: #202020;/*文本框背景颜色*/
     -textField-bg-color-focused: #494848;/*聚焦时文本框背景颜色*/

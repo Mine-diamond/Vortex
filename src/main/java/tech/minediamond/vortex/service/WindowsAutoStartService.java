@@ -25,11 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
 import tech.minediamond.vortex.service.interfaces.IAutoStartService;
 
-import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 @Slf4j
@@ -47,11 +43,11 @@ public class WindowsAutoStartService implements IAutoStartService {
         autoStartEnabledProperty = appConfig.autoStartEnabledProperty();
         log.info("WindowsAutoStartService 已初始化。开始将注册表状态与 AppConfig 同步。");
 
-        // 1. 从注册表读取真实的、当前的自启动状态。
+        //从注册表读取真实的、当前的自启动状态。
         boolean isEnabledInRegistry = readStateFromRegistry();
         log.info("从注册表读取到当前实际的自启动状态为: {}", isEnabledInRegistry);
 
-        // 2. 将 AppConfig 的状态与注册表状态同步。
+        // 将 AppConfig 的状态与注册表状态同步。
         // 这可以覆盖从配置文件加载的旧状态，确保 UI 显示的是最新情况。
         if (autoStartEnabledProperty.get() != isEnabledInRegistry) {
             log.warn("AppConfig 中的状态 ({}) 与注册表中的实际状态 ({}) 不符。将以注册表为准进行同步。",
@@ -59,7 +55,7 @@ public class WindowsAutoStartService implements IAutoStartService {
             autoStartEnabledProperty.set(isEnabledInRegistry);
         }
 
-        // 3. 监听变化：当 AppConfig 中的属性变化时，自动更新注册表
+        // 监听变化：当 AppConfig 中的属性变化时，自动更新注册表
         this.autoStartEnabledProperty().addListener((obs, oldVal, newVal) -> {
             log.info("检测到 AppConfig 自启动状态变化 -> {}。正在同步注册表...", newVal);
             synchronizeStateToRegistry(newVal);
@@ -73,6 +69,7 @@ public class WindowsAutoStartService implements IAutoStartService {
 
     /**
      * 新增方法：从注册表读取当前的自启动状态。
+     *
      * @return 如果注册表中存在应用的自启动项，则返回 true；否则返回 false。
      */
     private boolean readStateFromRegistry() {
@@ -143,7 +140,7 @@ public class WindowsAutoStartService implements IAutoStartService {
     /**
      * 执行具体的命令行进程。
      *
-     * @param pb      配置好的 ProcessBuilder
+     * @param pb         配置好的 ProcessBuilder
      * @param actionName 操作名称，用于日志记录（如 "启用" 或 "禁用"）
      */
     private void executeCommand(ProcessBuilder pb, String actionName) throws InterruptedException, IOException {

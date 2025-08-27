@@ -257,6 +257,9 @@
                             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                 <mainClass>tech.minediamond.vortex.Launcher</mainClass>
                             </transformer>
+
+                            <!-- 添加这个 transformer 来正确合并 services 文件 -->
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                         </transformers>
                         <shadedArtifactAttached>false</shadedArtifactAttached>
                         <finalName>${project.artifactId}-${project.version}</finalName>   <!-- 与 git tag 一致 -->

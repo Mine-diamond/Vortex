@@ -44,6 +44,12 @@
     -button-bg-color-pressed: #e1e2e3; /* 按下时更深一点 */
     -button-selected-bg-color: #e3e4e4; /* 选中后的按钮背景 */
     -button-text-fill-color-disabled: #2e2b2b;/*禁用按钮时的文字颜色*/
+
+    /*开关按钮样式*/
+    -toggle-switch-thumb-bg-color:#f8f6f6;/*滑块颜色*/
+    -toggle-switch-thumb-area-bg-color-selected: #4570cd;/*开启时轨道颜色*/
+    -toggle-switch-thumb-area-bg-color-unselected: #a5a3a1;/*关闭时轨道颜色*/
+
     /*文本框样式*/
     -textField-bg-color: #f2f3f4;/*文本框背景颜色*/
     -textField-bg-color-focused: #fdfdfd;/*聚焦时文本框背景颜色*/
@@ -125,6 +131,29 @@
 .toggle-button:selected {
     -fx-background-color: -button-selected-bg-color;
     -fx-effect: dropshadow(gaussian, -button-selected-bg-color, 3, 0, 0, 0);
+}
+
+/* ===切换开关样式=== */
+
+.toggle-switch {
+    -thumb-move-animation-time: 80;
+}
+
+/* 圆形滑块样式 */
+.toggle-switch .thumb {
+    -fx-background-color: -toggle-switch-thumb-bg-color; /* 滑块颜色 */
+    -fx-background-insets: 2.5; /* 背景距离边框的距离 */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1); /* 滑块阴影 */
+}
+
+
+/* 轨道样式 */
+.toggle-switch:selected .thumb-area {
+    -fx-background-color: -toggle-switch-thumb-area-bg-color-selected; /* 开启时轨道的颜色 */
+}
+
+.toggle-switch .thumb-area {
+    -fx-background-color: -toggle-switch-thumb-area-bg-color-unselected;
 }
 
 /*创建textField样式*/
@@ -349,27 +378,6 @@
 
 }
 
-/* ===开关=== */
-
-.toggle-switch {
-    -thumb-move-animation-time: 80;
-}
-
-/* 默认样式，可以不设置，但这里为了完整性 */
-.toggle-switch .thumb {
-    -fx-background-color: #f8f6f6; /* 滑块颜色 */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1); /* 滑块阴影 */
-}
-
-
-/* --- 核心部分：定义 "开" 状态的样式 --- */
-.toggle-switch:selected .thumb-area {
-    -fx-background-color: #3c62b5; /* "开" 状态下背景条的颜色 (绿色) */
-}
-
-.toggle-switch .thumb-area {
-    -fx-background-color: #8e8c8a; /* 滑块颜色 */
-}
 
 /* ===特殊按钮=== */
 #pinBtn:selected .ikonli-font-icon{

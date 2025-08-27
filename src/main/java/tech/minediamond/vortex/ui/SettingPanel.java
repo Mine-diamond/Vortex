@@ -37,6 +37,7 @@ import tech.minediamond.vortex.model.SupportedLocales;
 import tech.minediamond.vortex.service.StageProvider;
 import tech.minediamond.vortex.service.I18nService;
 import tech.minediamond.vortex.service.WindowAnimator;
+import tech.minediamond.vortex.service.interfaces.IAutoStartService;
 
 import java.awt.*;
 import java.net.URI;
@@ -61,23 +62,25 @@ public class SettingPanel {
     @FXML
     private ToggleSwitch autoStartOnBootToggleSwitch;
 
-    private AppConfig appConfig;
-    private StageProvider stageProvider;
-    private I18nService i18n;
+    private final AppConfig appConfig;
+    private final StageProvider stageProvider;
+    private final I18nService i18n;
+    private final IAutoStartService autoStartService;
 
-    StringConverter<Boolean> showPlaceComboBoxconverter;
+    StringConverter<Boolean> showPlaceComboBoxConverter;
     StringConverter<SupportedLocales> supportedLocalesConverter;
 
     @Inject
-    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig, StageProvider stageProvider, I18nService i18n) {
+    public SettingPanel(WindowAnimator windowAnimator, AppConfig appConfig, StageProvider stageProvider, I18nService i18n, IAutoStartService autoStartService) {
         this.windowAnimator = windowAnimator;
         this.appConfig = appConfig;
         this.stageProvider = stageProvider;
         this.i18n = i18n;
+        this.autoStartService = autoStartService;
     }
 
     public void initialize() {
-        showPlaceComboBoxconverter = new StringConverter<>() {
+        showPlaceComboBoxConverter = new StringConverter<>() {
             @Override
             public String toString(Boolean value) {
                 // 将 Boolean 翻译成 String
@@ -135,12 +138,9 @@ public class SettingPanel {
                 i18n.t("setting.showWindow.comBox.onLeft")
         ));
 
-        Bindings.bindBidirectional(showPlaceComboBox.valueProperty(), appConfig.ifCenterOnScreenProperty(), showPlaceComboBoxconverter);
+        Bindings.bindBidirectional(showPlaceComboBox.valueProperty(), appConfig.ifCenterOnScreenProperty(), showPlaceComboBoxConverter);
         Bindings.bindBidirectional(userLanguageComBox.valueProperty(),appConfig.userLocalesProperty(), supportedLocalesConverter);
-
-        autoStartOnBootToggleSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            //如何写？
-        });
+        Bindings.bindBidirectional(autoStartOnBootToggleSwitch.selectedProperty(),autoStartService.autoStartEnabledProperty());
     }
 
 

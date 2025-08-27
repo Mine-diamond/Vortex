@@ -47,8 +47,8 @@
 
     /*开关按钮样式*/
     -toggle-switch-thumb-bg-color:#f8f6f6;/*滑块颜色*/
-    -toggle-switch-thumb-area-bg-color-selected:#3c62b5;/*开启时轨道颜色*/
-    -toggle-switch-thumb-area-bg-color-unselected:#8e8c8a;/*关闭时轨道颜色*/
+    -toggle-switch-thumb-area-bg-color-selected: #4570cd;/*开启时轨道颜色*/
+    -toggle-switch-thumb-area-bg-color-unselected: #a5a3a1;/*关闭时轨道颜色*/
 
     /*文本框样式*/
     -textField-bg-color: #f2f3f4;/*文本框背景颜色*/
@@ -133,7 +133,7 @@
     -fx-effect: dropshadow(gaussian, -button-selected-bg-color, 3, 0, 0, 0);
 }
 
-/* ===开关按钮=== */
+/* ===切换开关样式=== */
 
 .toggle-switch {
     -thumb-move-animation-time: 80;
@@ -147,7 +147,7 @@
 }
 
 
-/* --- 核心部分：定义 "开" 状态的样式 --- */
+/* 轨道样式 */
 .toggle-switch:selected .thumb-area {
     -fx-background-color: -toggle-switch-thumb-area-bg-color-selected; /* 开启时轨道的颜色 */
 }

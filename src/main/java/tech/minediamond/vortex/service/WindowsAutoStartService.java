@@ -57,7 +57,7 @@ public class WindowsAutoStartService implements IAutoStartService {
 
         // 监听变化：当 AppConfig 中的属性变化时，自动更新注册表
         this.autoStartEnabledProperty().addListener((obs, oldVal, newVal) -> {
-            log.info("检测到 AppConfig 自启动状态变化 -> {}。正在同步注册表...", newVal);
+            log.info("检测到 autoStartEnabledProperty 自启动状态变化 -> {}。正在同步注册表...", newVal);
             synchronizeStateToRegistry(newVal);
         });
     }

@@ -35,7 +35,7 @@ public class MockAutoStartService implements IAutoStartService {
         autoStartEnabledProperty = new SimpleBooleanProperty(false);
 
         autoStartEnabledProperty.addListener((obs, oldValue, newValue) -> {
-            log.info("[DEV]开机自启动启用: {}", newValue);
+            log.info("[MOCK]开机自启动启用: {}", newValue);
         });
     }
 

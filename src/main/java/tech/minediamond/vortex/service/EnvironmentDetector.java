@@ -25,7 +25,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 
 /**
- * 教程程序是运行在开发环境下还是生产环境下的工具类
+ * 用于检测程序运行环境的工具类
  */
 public class EnvironmentDetector {
 

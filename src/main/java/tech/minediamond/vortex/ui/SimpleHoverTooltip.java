@@ -91,8 +91,6 @@ public class SimpleHoverTooltip {
      */
     private void updateText(String newText) {
         this.textLabel.setText(newText);
-        // ✅ [代码简化] 不再需要在这里手动调用 positionPopup()。
-        // 文本更新导致的尺寸变化会自动被 width/height 监听器捕获。
     }
 
     /**
@@ -104,7 +102,7 @@ public class SimpleHoverTooltip {
             // 防止在 owner 窗口不可见时执行定位
             return;
         }
-        Bounds ownerBounds = this.owner.localToScreen(this.owner.getBoundsInLocal());
+        Bounds ownerBounds = this.owner.localToScreen(this.owner.getLayoutBounds());
         // 计算目标位置，使 tooltip 水平居中于 owner 之上
         double targetX = ownerBounds.getCenterX() - popup.getWidth() / 2;
         double targetY = ownerBounds.getMinY() - popup.getHeight() - GAP_FROM_OWNER;

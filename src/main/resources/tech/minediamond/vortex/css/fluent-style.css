@@ -136,6 +136,7 @@
 /* ===切换开关样式=== */
 
 .toggle-switch {
+    -fx-cursor: hand;
     -thumb-move-animation-time: 80;
 }
 
@@ -301,28 +302,21 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-    -fx-pick-on-bounds: false;
 }
 
 .scroll-pane {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-    -fx-pick-on-bounds: false;
 }
-
 
 /* 显示实际内容的 viewport */
-.scroll-pane .viewport {
-    -fx-background-color: transparent ;
-    -fx-pick-on-bounds: false;
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }
 
-/* 两条滚动条交汇处的小方块 */
-.scroll-pane .corner {
-    -fx-background-color: transparent ;
-    -fx-pick-on-bounds: false;
-}
 
 /* ==ComboBox== */
 .combo-box {

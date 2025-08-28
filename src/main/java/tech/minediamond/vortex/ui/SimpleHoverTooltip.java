@@ -35,7 +35,6 @@ import javafx.stage.Popup;
  * 新版本使用 JavaFX 原生的 Popup 实现，并完全支持 JavaFX 属性绑定。
  * 支持通过 FXML 附加属性进行声明式使用。
  *
- * @version 2.1 - Fixed positioning issue on text update by listening to size changes.
  */
 public class SimpleHoverTooltip {
 

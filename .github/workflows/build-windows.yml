@@ -62,6 +62,7 @@ jobs:
             --dest build\app `
             --icon packaging\windows\app_icon.ico `
             --app-version "${{ env.APP_VERSION }}" `
+            --app-content  everything `
             --module-path "$env:JAVA_HOME\jmods" `
             --add-modules ALL-MODULE-PATH `
             --java-options "-DAPP_ENV=prod" 

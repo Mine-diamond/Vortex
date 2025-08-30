@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.service;
+package tech.minediamond.vortex.service.interfaces;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -55,6 +55,9 @@ public interface Everything extends Library {
     boolean Everything_GetResultSize(int nIndex, LongByReference lpFileSize);
     boolean Everything_GetResultDateModified(int nIndex, FILETIME lpFileTime);
     boolean Everything_GetResultDateCreated(int nIndex, FILETIME lpFileTime);
+
+    // --- exit ---
+    void Everything_Exit();
 
     /**
      * JNA mapping for the Windows FILETIME structure.

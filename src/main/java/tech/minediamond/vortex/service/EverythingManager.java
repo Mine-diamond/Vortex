@@ -26,6 +26,7 @@ import tech.minediamond.vortex.model.EverythingResult;
 import tech.minediamond.vortex.model.RequestFlag;
 import tech.minediamond.vortex.model.ResultType;
 import tech.minediamond.vortex.model.SearchMode;
+import tech.minediamond.vortex.service.interfaces.Everything;
 
 import java.nio.file.Path;
 import java.util.*;

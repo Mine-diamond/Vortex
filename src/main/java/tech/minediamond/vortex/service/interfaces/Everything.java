@@ -56,8 +56,10 @@ public interface Everything extends Library {
     boolean Everything_GetResultDateModified(int nIndex, FILETIME lpFileTime);
     boolean Everything_GetResultDateCreated(int nIndex, FILETIME lpFileTime);
 
-    // --- exit ---
+    // --- other ---
     void Everything_Exit();
+    void Everything_SetInstanceNameW(char[] lpString);
+
 
     /**
      * JNA mapping for the Windows FILETIME structure.

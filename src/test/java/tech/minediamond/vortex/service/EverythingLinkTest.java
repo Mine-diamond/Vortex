@@ -19,38 +19,12 @@
 
 package tech.minediamond.vortex.service;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import tech.minediamond.vortex.model.EverythingQuery;
-import tech.minediamond.vortex.model.EverythingResult;
-import tech.minediamond.vortex.service.interfaces.Everything3;
+import tech.minediamond.vortex.service.interfaces.Everything;
 
-import java.util.List;
+public class EverythingLinkTest {
+    private static final Everything lib = Everything.INSTANCE;
 
-@Singleton
-public class EverythingService {
-
-    @Inject
-    public EverythingService() {
-        StartEverything();
+    public static void main(final String[] args) {
+        lib.Everything_SetInstanceNameW("vortex_backend".toCharArray());
     }
-
-    private final Everything3 lib = Everything3.INSTANCE;
-
-    public EverythingQueryBuilder newBuilder() {
-        return new EverythingQueryBuilder(this);
-    }
-
-    public void StartEverything() {
-
-    }
-
-    public void endEverything() {
-
-    }
-
-    public List<EverythingResult> query(EverythingQuery query) {
-        return null;
-    }
-
 }

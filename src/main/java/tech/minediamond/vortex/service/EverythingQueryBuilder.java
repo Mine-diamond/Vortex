@@ -32,7 +32,6 @@ public class EverythingQueryBuilder {
 
     EverythingService everythingService;
 
-    // 状态字段保持不变
     private String query;
     private SearchMode searchMode = SearchMode.ALL;
     private List<Path> targetFolders = Collections.emptyList();
@@ -42,12 +41,23 @@ public class EverythingQueryBuilder {
         this.everythingService = everythingService;
     }
 
-    // Fluent API 方法保持不变
-    public EverythingQueryBuilder searchFor(String query) { this.query = query; return this; }
-    public EverythingQueryBuilder inFolders(List<Path> folders) { this.targetFolders = folders; return this; }
-    public EverythingQueryBuilder mode(SearchMode mode) { this.searchMode = mode; return this; }
+    // Fluent API
+    public EverythingQueryBuilder searchFor(String query) {
+        this.query = query; return this;
+    }
 
-    // 新增一个 build 方法，用于创建配置对象
+    public EverythingQueryBuilder inFolders(List<Path> folders) {
+        this.targetFolders = (folders == null) ? Collections.emptyList() : folders;
+        return this;
+
+    }
+
+    public EverythingQueryBuilder mode(SearchMode mode) {
+        this.searchMode = (mode == null) ? SearchMode.ALL : mode;
+        return this;
+    }
+
+    // build 方法，用于创建配置对象
     public EverythingQuery build() {
         return new EverythingQuery(query, Optional.ofNullable(searchMode), Optional.ofNullable(targetFolders));
     }

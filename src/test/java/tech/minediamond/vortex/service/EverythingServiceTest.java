@@ -44,13 +44,13 @@ public class EverythingServiceTest {
     public static void main(String[] args) throws IOException, InterruptedException {
         Injector injector = Guice.createInjector(new AppModule());
         EverythingServiceTest everythingServiceTest =injector.getInstance(EverythingServiceTest.class);
-        //everythingServiceTest.service.StartEverything();//不需要
+        //everythingServiceTest.service.StartEverythingInstance();//不需要
         TimeUnit.SECONDS.sleep(10);
         ArrayList<Path> folders = new ArrayList<>();
         folders.add(Paths.get("D:\\myDounment"));
         folders.add(Paths.get("F:\\software_play_in_F"));
         List<EverythingResult> results = everythingServiceTest.service.QueryBuilder()
-                .searchFor("aa bb cc")
+                .searchFor("aa")
                 .inFolders(folders)
                 .mode(SearchMode.ALL)
                 .query();

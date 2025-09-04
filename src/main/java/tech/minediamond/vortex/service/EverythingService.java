@@ -44,21 +44,19 @@ import java.util.stream.Collectors;
 public class EverythingService {
 
     // --- 常量 ---
-    private static final int MAX_PATH = 260;
+    private static final int MAX_PATH = 32767;
     private static final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
 
-    Everything3.EverythingClient client;
-    Everything3.EverythingSearchState searchState;
-    Everything3.EverythingResultList resultList;
+    private Everything3.EverythingClient client = null;
 
     @Inject
     public EverythingService() throws IOException, InterruptedException {
-        StartEverything();
-        Thread t1 = new Thread(() -> {
+        StartEverythingInstance();
+        Thread linkEverythingThread = new Thread(() -> {
             try {
                 TimeUnit.SECONDS.sleep(1);
                 for (int i = 0; i < 20; i++) {
-                    client = LinkEverything();
+                    client = LinkEverythingInstance();
                     if (client != null) {
                         log.info("everything连接成功");
                         return;
@@ -71,7 +69,8 @@ public class EverythingService {
                 throw new RuntimeException(e);
             }
         });
-        t1.start();
+        linkEverythingThread.setName("Link Everything Instance Thread");
+        linkEverythingThread.start();
     }
 
     private final Everything3 lib = Everything3.INSTANCE;
@@ -80,7 +79,7 @@ public class EverythingService {
         return new EverythingQueryBuilder(this);
     }
 
-    public void StartEverything() throws IOException {
+    public void StartEverythingInstance() throws IOException {
         ProcessBuilder pb = new ProcessBuilder(EVERYTHING_PATH, "-instance", "vortex_backend");
         pb.redirectErrorStream(true);
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
@@ -88,7 +87,7 @@ public class EverythingService {
         pb.start();
     }
 
-    public void StopEverything() throws IOException {
+    public void StopEverythingInstance() throws IOException {
         if (client != null) {
             lib.Everything3_DestroyClient(client);
         }
@@ -99,7 +98,7 @@ public class EverythingService {
         pb.start();
     }
 
-    public Everything3.EverythingClient LinkEverything() {
+    public Everything3.EverythingClient LinkEverythingInstance() {
         client = lib.Everything3_ConnectW(new WString("vortex_backend"));
         return client;
     }
@@ -109,9 +108,11 @@ public class EverythingService {
         // 防御性检查
         if (client == null) {
             log.error("Cannot perform query: Everything service is not connected.");
-            return Collections.emptyList(); // 或者抛出异常
+            return Collections.emptyList();
         }
 
+        Everything3.EverythingSearchState searchState = null;
+        Everything3.EverythingResultList resultList = null;
         List<EverythingResult> results = new ArrayList<>();
         try {
             // 创建和配置搜索条件
@@ -124,19 +125,19 @@ public class EverythingService {
             String finalQueryString = queryKeywords;
             // 设置返回结果的最大数量
             lib.Everything3_SetSearchViewportCount(searchState, new WinDef.DWORD(200));
+            //设置搜索内容
+            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FULL_PATH.getID()); // full_path
+            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.SIZE.getID()); // size
+            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FILE_NAME.getID()); // fileName
 
-            lib.Everything3_AddSearchPropertyRequest(searchState, new WinDef.DWORD(240)); // full_path
-            lib.Everything3_AddSearchPropertyRequest(searchState, new WinDef.DWORD(2)); // size
-            lib.Everything3_AddSearchPropertyRequest(searchState, new WinDef.DWORD(0)); // fileName
-
-            //文件夹范围
+            //生成文件夹字符串
             String pathQueryPart = "";
             if (query.targetFolders().isPresent()) {
                 pathQueryPart = buildPathQueryPart(query);
 
             }
 
-            //搜索模式
+            //生成搜索模式字符串
             String searchModeQueryPart = "";
             if (query.searchMode().isPresent()) {
                 searchModeQueryPart = buildSearchModeQueryPart(query);
@@ -160,20 +161,19 @@ public class EverythingService {
             char[] buffer = new char[MAX_PATH];
             for (int i = 0; i < numResults.intValue(); i++) {
                 EverythingResult everythingResult = new EverythingResult();
-                //lib.Everything3_GetResultFullPathNameW(resultList, new WinDef.DWORD(i), buffer, new WinDef.DWORD(MAX_PATH));
-                lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), new WinDef.DWORD(240), buffer, new WinDef.DWORD(MAX_PATH));
+                //获取搜索结果的完整路径
+                lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), Everything3.PropertyType.FULL_PATH.getID(), buffer, new WinDef.DWORD(MAX_PATH));
                 String pathname = Native.toString(buffer);
-                log.debug(pathname);
                 everythingResult.setFullPath(pathname);
 
-                //lib.Everything3_GetResultFilelistFilenameW(resultList, new WinDef.DWORD(i), buffer, new WinDef.DWORD(MAX_PATH));
-                lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), new WinDef.DWORD(0), buffer, new WinDef.DWORD(MAX_PATH));
+                //获取搜索结果的名称
+                lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), Everything3.PropertyType.FILE_NAME.getID(), buffer, new WinDef.DWORD(MAX_PATH));
                 String filename = Native.toString(buffer);
-                log.debug(filename);
                 everythingResult.setFileName(filename);
 
+                //获取搜索结果的大小(单位:Byte)
+                //这里直接将返回的无符号int64转换为long，但是考虑到无符号int64达到最大位需要文件8EB以上的大小，因此直接赋值问题不大
                 long size = lib.Everything3_GetResultSize(resultList, new WinDef.DWORD(i));
-                log.debug(String.valueOf(size));
                 everythingResult.setSize(size);
 
                 results.add(everythingResult);
@@ -186,21 +186,23 @@ public class EverythingService {
                 lib.Everything3_DestroySearchState(searchState);
             }
         }
+        log.info(results.toString());
         return results;
     }
 
-    public String buildPathQueryPart(EverythingQuery query) {
+    private String buildPathQueryPart(EverythingQuery query) {
         List<Path> targetFolders = query.targetFolders().orElseGet(() -> new ArrayList<>());
         String body = targetFolders.stream()
                 .map(Path::toString)
                 .collect(Collectors.joining("|"));
         String pathQueryPart = "ancestor:" + body;
-        log.debug(pathQueryPart);
+        log.debug("pathQueryPart: {}",pathQueryPart);
         return pathQueryPart;
     }
 
-    public String buildSearchModeQueryPart(EverythingQuery query) {
+    private String buildSearchModeQueryPart(EverythingQuery query) {
         SearchMode searchMode = query.searchMode().orElseGet(() -> SearchMode.ALL);
+        log.debug("searchModeQueryPart: {}",searchMode.getQueryPrefix());
         return searchMode.getQueryPrefix();
     }
 

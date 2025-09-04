@@ -19,18 +19,13 @@
 
 package tech.minediamond.vortex.service.interfaces;
 
-import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.PointerType;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.win32.StdCallLibrary;
 
-import com.sun.jna.Native;
-import com.sun.jna.PointerType;
-import com.sun.jna.WString;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.win32.StdCallLibrary;
+import lombok.Getter;
 
 /**
  * Everything SDK v3 (适用于 Everything 1.5) 的 JNA 接口。
@@ -38,6 +33,19 @@ import com.sun.jna.win32.StdCallLibrary;
  * 为了与 Java 的 Unicode 兼容，它主要使用宽字符（W）版本的函数。
  */
 public interface Everything3 extends StdCallLibrary {
+
+    @Getter
+    enum PropertyType{
+        FILE_NAME(0),
+        SIZE(2),
+        FULL_PATH(240);
+
+        final WinDef.DWORD ID;
+
+        PropertyType(long ID){
+            this.ID = new WinDef.DWORD(ID);
+        }
+    }
 
     // --- 加载 DLL ---
     // JNA 会自动寻找 "Everything3_x64.dll"

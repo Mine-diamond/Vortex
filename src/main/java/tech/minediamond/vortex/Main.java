@@ -142,7 +142,7 @@ public class Main extends Application {
 
         try {
             EverythingService everythingService = injector.getInstance(EverythingService.class);
-            everythingService.StopEverything();
+            everythingService.StopEverythingInstance();
             log.info("Everything 已退出");
         } catch (Exception e) {
             log.error("关闭everything失败: {}", e.getMessage(), e);

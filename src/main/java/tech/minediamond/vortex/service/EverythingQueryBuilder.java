@@ -21,11 +21,12 @@ package tech.minediamond.vortex.service;
 
 import tech.minediamond.vortex.model.EverythingQuery;
 import tech.minediamond.vortex.model.EverythingResult;
-import tech.minediamond.vortex.model.RequestFlag;
 import tech.minediamond.vortex.model.SearchMode;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class EverythingQueryBuilder {
 

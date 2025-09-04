@@ -88,7 +88,7 @@ public class EverythingService {
         pb.start();
     }
 
-    public void EndEverything() throws IOException {
+    public void StopEverything() throws IOException {
         if (client != null) {
             lib.Everything3_DestroyClient(client);
         }

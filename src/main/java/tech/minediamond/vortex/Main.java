@@ -117,25 +117,38 @@ public class Main extends Application {
      */
     @Override
     public void stop() throws Exception {
+        log.info("vortex 即将退出，正在保存和清理资源...");
         try {
             AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
             appConfigService.save();
+            log.info("配置文件已保存");
         } catch (Exception e) {
             log.error("保存配置失败: {}", e.getMessage(), e);
         }
 
         try {
             GlobalScreen.unregisterNativeHook();
+            log.info("JNativeHook 已注销");
         } catch (NativeHookException ex) {
             log.error("注销全局钩子出错: {}", ex.getMessage(), ex);
         }
 
         try {
             trayMenuService.closeTrayMenu();
+            log.info("FXTrayIcon 已注销");
         } catch (Exception e) {
             log.error("关闭托盘菜单失败: {}", e.getMessage(), e);
         }
-        log.info("JNativeHook 已注销，FXTrayIcon 已注销，程序退出。");
+
+        try {
+            EverythingService everythingService = injector.getInstance(EverythingService.class);
+            everythingService.StopEverything();
+            log.info("Everything 已退出");
+        } catch (Exception e) {
+            log.error("关闭everything失败: {}", e.getMessage(), e);
+        }
+
+        log.info("程序退出。");
 
         log.info("""
                 

@@ -27,14 +27,17 @@ import com.sun.jna.platform.win32.WinDef;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.EverythingQuery;
 import tech.minediamond.vortex.model.EverythingResult;
+import tech.minediamond.vortex.model.SearchMode;
 import tech.minediamond.vortex.service.interfaces.Everything3;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Singleton
 @Slf4j
@@ -86,7 +89,7 @@ public class EverythingService {
     }
 
     public void EndEverything() throws IOException {
-        if(client != null) {
+        if (client != null) {
             lib.Everything3_DestroyClient(client);
         }
         ProcessBuilder pb = new ProcessBuilder(EVERYTHING_PATH, "-exit", "-instance", "vortex_backend");
@@ -117,7 +120,8 @@ public class EverythingService {
                 log.error("创建搜索状态失败。");
             }
             // 设置搜索关键字
-            String queryKeywords = query.query();
+            String queryKeywords = "\"" + query.query() + "\"";
+            String finalQueryString = queryKeywords;
             // 设置返回结果的最大数量
             lib.Everything3_SetSearchViewportCount(searchState, new WinDef.DWORD(200));
 
@@ -125,9 +129,25 @@ public class EverythingService {
             lib.Everything3_AddSearchPropertyRequest(searchState, new WinDef.DWORD(2)); // size
             lib.Everything3_AddSearchPropertyRequest(searchState, new WinDef.DWORD(0)); // fileName
 
+            //文件夹范围
+            String pathQueryPart = "";
+            if (query.targetFolders().isPresent()) {
+                pathQueryPart = buildPathQueryPart(query);
+
+            }
+
+            //搜索模式
+            String searchModeQueryPart = "";
+            if (query.searchMode().isPresent()) {
+                searchModeQueryPart = buildSearchModeQueryPart(query);
+            }
+
+            finalQueryString = pathQueryPart + " "+ searchModeQueryPart + queryKeywords;
+
             //执行搜索
             log.info("正在执行搜索 '{}'...", query);
-            lib.Everything3_SetSearchTextW(searchState, new WString(queryKeywords));
+            log.info("搜索词: {}", finalQueryString);
+            lib.Everything3_SetSearchTextW(searchState, new WString(finalQueryString));
             resultList = lib.Everything3_Search(client, searchState);
             if (resultList == null) {
                 log.error("搜索执行失败。");
@@ -152,7 +172,7 @@ public class EverythingService {
                 log.debug(filename);
                 everythingResult.setFileName(filename);
 
-                long size = lib.Everything3_GetResultSize(resultList,new WinDef.DWORD(i));
+                long size = lib.Everything3_GetResultSize(resultList, new WinDef.DWORD(i));
                 log.debug(String.valueOf(size));
                 everythingResult.setSize(size);
 
@@ -167,6 +187,21 @@ public class EverythingService {
             }
         }
         return results;
+    }
+
+    public String buildPathQueryPart(EverythingQuery query) {
+        List<Path> targetFolders = query.targetFolders().orElseGet(() -> new ArrayList<>());
+        String body = targetFolders.stream()
+                .map(Path::toString)
+                .collect(Collectors.joining("|"));
+        String pathQueryPart = "ancestor:" + body;
+        log.debug(pathQueryPart);
+        return pathQueryPart;
+    }
+
+    public String buildSearchModeQueryPart(EverythingQuery query) {
+        SearchMode searchMode = query.searchMode().orElseGet(() -> SearchMode.ALL);
+        return searchMode.getQueryPrefix();
     }
 
 }

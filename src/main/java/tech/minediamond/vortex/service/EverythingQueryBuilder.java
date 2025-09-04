@@ -25,10 +25,7 @@ import tech.minediamond.vortex.model.RequestFlag;
 import tech.minediamond.vortex.model.SearchMode;
 
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class EverythingQueryBuilder {
 
@@ -53,7 +50,7 @@ public class EverythingQueryBuilder {
 
     // 新增一个 build 方法，用于创建配置对象
     public EverythingQuery build() {
-        return new EverythingQuery(query, searchMode, requestFlags, targetFolders);
+        return new EverythingQuery(query, Optional.ofNullable(searchMode), requestFlags, Optional.ofNullable(targetFolders));
     }
 
     public List<EverythingResult> query() {

@@ -24,8 +24,12 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.model.EverythingResult;
+import tech.minediamond.vortex.model.SearchMode;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -42,8 +46,13 @@ public class EverythingServiceTest {
         EverythingServiceTest everythingServiceTest =injector.getInstance(EverythingServiceTest.class);
         //everythingServiceTest.service.StartEverything();//不需要
         TimeUnit.SECONDS.sleep(10);
+        ArrayList<Path> folders = new ArrayList<>();
+        folders.add(Paths.get("D:\\myDounment"));
+        folders.add(Paths.get("F:\\software_play_in_F"));
         List<EverythingResult> results = everythingServiceTest.service.QueryBuilder()
-                .searchFor("ChatGPT Image 2025年3月30日 23_17_56.png")
+                .searchFor("aa bb cc")
+                .inFolders(folders)
+                .mode(SearchMode.ALL)
                 .query();
         System.out.println(results);
     }

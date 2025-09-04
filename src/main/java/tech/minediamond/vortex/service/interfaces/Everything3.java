@@ -103,6 +103,14 @@ public interface Everything3 extends StdCallLibrary {
      */
     void Everything3_SetSearchViewportCount(EverythingSearchState search_state, WinDef.DWORD count);
 
+    void Everything3_AddSearchPropertyRequest(EverythingSearchState searchState, WinDef.DWORD propertyID);
+
+    long Everything3_GetResultSize(EverythingResultList result_list, WinDef.DWORD result_index);
+
+    void Everything3_GetResultFilelistFilenameW(EverythingResultList result_list, WinDef.DWORD result_index, char[] filename, WinDef.DWORD filename_size_in_wchars);
+
+    void Everything3_GetResultPropertyTextW(EverythingResultList resultList, WinDef.DWORD result_index, WinDef.DWORD propertyID, char[] buffer, WinDef.DWORD filename_size_in_wchars);
+
     // === 3. 执行搜索与结果处理 ===
 
     /**

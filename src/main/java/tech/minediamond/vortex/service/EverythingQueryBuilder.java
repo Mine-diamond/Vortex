@@ -34,7 +34,6 @@ public class EverythingQueryBuilder {
     // 状态字段保持不变
     private String query;
     private SearchMode searchMode = SearchMode.ALL;
-    private Set<RequestFlag> requestFlags = new HashSet<>();
     private List<Path> targetFolders = Collections.emptyList();
 
     // 构造函数接收 Service
@@ -46,11 +45,10 @@ public class EverythingQueryBuilder {
     public EverythingQueryBuilder searchFor(String query) { this.query = query; return this; }
     public EverythingQueryBuilder inFolders(List<Path> folders) { this.targetFolders = folders; return this; }
     public EverythingQueryBuilder mode(SearchMode mode) { this.searchMode = mode; return this; }
-    public EverythingQueryBuilder request(Set<RequestFlag> requestFlags) { this.requestFlags = requestFlags; return this; }
 
     // 新增一个 build 方法，用于创建配置对象
     public EverythingQuery build() {
-        return new EverythingQuery(query, Optional.ofNullable(searchMode), requestFlags, Optional.ofNullable(targetFolders));
+        return new EverythingQuery(query, Optional.ofNullable(searchMode), Optional.ofNullable(targetFolders));
     }
 
     public List<EverythingResult> query() {

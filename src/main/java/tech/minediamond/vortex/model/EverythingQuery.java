@@ -27,7 +27,6 @@ import java.util.Set;
 public record EverythingQuery(
         String query,
         Optional<SearchMode> searchMode,
-        Set<RequestFlag> requestFlags,
         Optional<List<Path>> targetFolders) {
     
 }

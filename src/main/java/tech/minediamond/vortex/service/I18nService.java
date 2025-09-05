@@ -43,6 +43,7 @@ public class I18nService {
     private final AppConfig appConfig;
 
     private final Locale locale;
+
     @Getter //fxml会获取这个resourceBundle进行i18n
     private final ResourceBundle resourceBundle;
 

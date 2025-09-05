@@ -48,11 +48,10 @@ public enum SearchMode {
 
     /**
      * 获取要添加到搜索查询中的前缀。
-     * @return a search prefix string, for example "file: ".
+     * @return a search prefix string, for example "file:".
      */
     public String getQueryPrefix() {
-        // 如果前缀不为空，则在后面加一个空格，以分隔实际的查询内容
-        return prefix.isEmpty() ? "" : prefix + " ";
+        return prefix;
     }
 }
 

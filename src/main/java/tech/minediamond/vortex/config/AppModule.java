@@ -41,6 +41,7 @@ public class AppModule extends AbstractModule {
         bind(AutoOperateService.class).in(Scopes.SINGLETON);
         bind(I18nService.class);
         bind(EverythingService.class).asEagerSingleton();
+        bind(OpenResourceService.class);
 
 
         bind(MainWindow.class);

@@ -34,20 +34,41 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * 提供与Everything搜索引擎的交互功能的服务类。
+ * <p>
+ * 该服务负责启动、连接和查询Everything实例，使应用能够利用Everything的高效文件搜索能力。
+ * 服务会在初始化时自动启动并连接到一个独立的Everything实例。
+ * <p>
+ * 使用示例：
+ * <pre>
+ * EverythingService service = injector.getInstance(EverythingServiceTest.class);
+ * List&lt;EverythingResult&gt; results = service.QueryBuilder()
+ *     .searchFor("document")
+ *     .inFolders(List.of(Path.of("C:/Users")))
+ *     .mode(SearchMode.FILES_ONLY)
+ *     .query();
+ * </pre>
+ *
+ * @see EverythingQueryBuilder
+ * @see EverythingResult
+ */
 @Singleton
 @Slf4j
 public class EverythingService {
 
-    // --- 常量 ---
     private static final int MAX_PATH = 32767;
     private static final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
 
     private Everything3.EverythingClient client = null;
+    private final Everything3 lib = Everything3.INSTANCE;
 
     @Inject
     public EverythingService() throws IOException, InterruptedException {
@@ -73,12 +94,23 @@ public class EverythingService {
         linkEverythingThread.start();
     }
 
-    private final Everything3 lib = Everything3.INSTANCE;
 
+    /**
+     * 创建并返回一个查询构建器，用于构建搜索请求。
+     *
+     * @return 一个新的EverythingQueryBuilder实例，支持流式API
+     */
     public EverythingQueryBuilder QueryBuilder() {
         return new EverythingQueryBuilder(this);
     }
 
+    /**
+     * 启动一个独立的Everything实例。
+     * <p>
+     * 该实例使用"vortex_backend"作为唯一标识符。
+     *
+     * @throws IOException 启动进程失败时抛出
+     */
     public void StartEverythingInstance() throws IOException {
         ProcessBuilder pb = new ProcessBuilder(EVERYTHING_PATH, "-instance", "vortex_backend");
         pb.redirectErrorStream(true);
@@ -87,6 +119,13 @@ public class EverythingService {
         pb.start();
     }
 
+    /**
+     * 停止并关闭Everything实例。
+     * <p>
+     * 如果已连接到实例，会先销毁客户端连接，然后关闭实例。
+     *
+     * @throws IOException 执行关闭命令失败时抛出
+     */
     public void StopEverythingInstance() throws IOException {
         if (client != null) {
             lib.Everything3_DestroyClient(client);
@@ -98,6 +137,11 @@ public class EverythingService {
         pb.start();
     }
 
+    /**
+     * 连接到正在运行的Everything实例。
+     *
+     * @return Everything客户端句柄，连接失败时返回null
+     */
     public Everything3.EverythingClient LinkEverythingInstance() {
         client = lib.Everything3_ConnectW(new WString("vortex_backend"));
         return client;
@@ -107,7 +151,12 @@ public class EverythingService {
 
         // 防御性检查
         if (client == null) {
-            log.error("Cannot perform query: Everything service is not connected.");
+            log.error("无法执行查询：Everything 服务未连接。");
+            return Collections.emptyList();
+        }
+
+        if (!lib.Everything3_IsDBLoaded(client)) {
+            log.error("无法执行查询：Everything数据库未加载。");
             return Collections.emptyList();
         }
 
@@ -118,17 +167,26 @@ public class EverythingService {
             // 创建和配置搜索条件
             searchState = lib.Everything3_CreateSearchState();
             if (searchState == null) {
-                log.error("创建搜索状态失败。");
+                log.error("创建搜索失败。");
             }
             // 设置搜索关键字
-            String queryKeywords = "\"" + query.query() + "\"";
-            String finalQueryString = queryKeywords;
+            String finalQueryString;
             // 设置返回结果的最大数量
             lib.Everything3_SetSearchViewportCount(searchState, new WinDef.DWORD(200));
             //设置搜索内容
-            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FULL_PATH.getID()); // full_path
-            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.SIZE.getID()); // size
-            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FILE_NAME.getID()); // fileName
+            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FULL_PATH.getID());
+            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.SIZE.getID());
+            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FILE_NAME.getID());
+
+            //生成搜索词字符串
+            String queryKeywords = "\"" + query.query() + "\"";
+            //去除部分关键字
+            List<String> forbiddenChar = Arrays.asList("\"", "*", "?", "<", ">", "|");
+            String regex = forbiddenChar.stream()
+                    .map(Pattern::quote) // 使用Pattern.quote处理特殊字符
+                    .collect(Collectors.joining("|"));
+
+            queryKeywords = queryKeywords.replaceAll(regex, "");
 
             //生成文件夹字符串
             String pathQueryPart = "";
@@ -190,8 +248,9 @@ public class EverythingService {
         return results;
     }
 
+    //构建搜索路径部分字符串
     private String buildPathQueryPart(EverythingQuery query) {
-        List<Path> targetFolders = query.targetFolders().orElseGet(() -> new ArrayList<>());
+        List<Path> targetFolders = query.targetFolders().orElseGet(ArrayList::new);
         String body = targetFolders.stream()
                 .map(Path::toString)
                 .collect(Collectors.joining("|"));
@@ -200,8 +259,9 @@ public class EverythingService {
         return pathQueryPart;
     }
 
+    //构建搜索描述部分字符串
     private String buildSearchModeQueryPart(EverythingQuery query) {
-        SearchMode searchMode = query.searchMode().orElseGet(() -> SearchMode.ALL);
+        SearchMode searchMode = query.searchMode().orElse(SearchMode.ALL);
         log.debug("searchModeQueryPart: {}",searchMode.getQueryPrefix());
         return searchMode.getQueryPrefix();
     }

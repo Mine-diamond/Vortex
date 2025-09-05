@@ -34,33 +34,40 @@ import lombok.Getter;
  */
 public interface Everything3 extends StdCallLibrary {
 
+    /**
+     * 定义了everything3搜索需要的属性值
+     */
     @Getter
-    enum PropertyType{
+    enum PropertyType {
         FILE_NAME(0),
         SIZE(2),
         FULL_PATH(240);
 
         final WinDef.DWORD ID;
 
-        PropertyType(long ID){
+        PropertyType(long ID) {
             this.ID = new WinDef.DWORD(ID);
         }
     }
 
-    // --- 加载 DLL ---
-    // JNA 会自动寻找 "Everything3_x64.dll"
+    // 加载 DLL
     Everything3 INSTANCE = Native.load("Everything3_x64", Everything3.class);
 
     // --- 常量 ---
     int MAX_PATH = 260; // 从 WinDef.MAX_PATH 也可以获取
 
-    // --- 类型安全的指针定义 ---
+    // 类型安全的指针定义
     // 使用 PointerType 的子类可以防止将一种类型的句柄错误地传递给需要另一种类型句柄的函数。
-    class EverythingClient extends PointerType {}
-    class EverythingSearchState extends PointerType {}
-    class EverythingResultList extends PointerType {}
+    class EverythingClient extends PointerType {
+    }
 
-    // --- 函数映射 ---
+    class EverythingSearchState extends PointerType {
+    }
+
+    class EverythingResultList extends PointerType {
+    }
+
+    // 函数映射
 
     // === 1. 连接与客户端管理 ===
 
@@ -78,6 +85,14 @@ public interface Everything3 extends StdCallLibrary {
      * @param client 要销毁的客户端句柄。
      */
     void Everything3_DestroyClient(EverythingClient client);
+
+    /**
+     * 获取Everything是否已完成构建引索的状况
+     *
+     * @param client 客户端句柄
+     * @return 是否完成构建引索
+     */
+    boolean Everything3_IsDBLoaded(EverythingClient client);
 
     // === 2. 搜索配置 ===
 
@@ -107,19 +122,50 @@ public interface Everything3 extends StdCallLibrary {
      * 设置视口中要返回的最大结果数。
      *
      * @param search_state 搜索状态句柄。
-     * @param count 要请求的结果数量。
+     * @param count        要请求的结果数量。
      */
     void Everything3_SetSearchViewportCount(EverythingSearchState search_state, WinDef.DWORD count);
 
+    /**
+     * 添加搜索时要获取的属性 ,属性见{@link PropertyType}
+     *
+     * @param searchState 搜索状态句柄。
+     * @param propertyID  属性类型
+     */
     void Everything3_AddSearchPropertyRequest(EverythingSearchState searchState, WinDef.DWORD propertyID);
 
+    // === 3. 执行搜索与结果处理 ===
+
+    /**
+     * 获取搜索结果中的文件大小
+     *
+     * @param result_list  结果列表句柄
+     * @param result_index 结果的从零开始的索引。
+     * @return 文件大小（单位: Byte）
+     */
     long Everything3_GetResultSize(EverythingResultList result_list, WinDef.DWORD result_index);
 
+    /**
+     * 获取指定索引处结果的完整名称。
+     *
+     * @param result_list             结果列表句柄。
+     * @param result_index            结果的从零开始的索引。
+     * @param filename                用于接收文件名的字符缓冲区。
+     * @param filename_size_in_wchars 缓冲区的宽字符大小 (在 Java 中是 char)。
+     */
     void Everything3_GetResultFilelistFilenameW(EverythingResultList result_list, WinDef.DWORD result_index, char[] filename, WinDef.DWORD filename_size_in_wchars);
 
+    /**
+     * 根据属性值获取结果的特定属性
+     *
+     * @param resultList 结果列表句柄。
+     * @param result_index 结果的从零开始的索引。
+     * @param propertyID 需要获取的属性的属性值
+     * @param buffer 用于接收内容的字符缓冲区。
+     * @param filename_size_in_wchars 缓冲区的宽字符大小 (在 Java 中是 char)。
+     */
     void Everything3_GetResultPropertyTextW(EverythingResultList resultList, WinDef.DWORD result_index, WinDef.DWORD propertyID, char[] buffer, WinDef.DWORD filename_size_in_wchars);
 
-    // === 3. 执行搜索与结果处理 ===
 
     /**
      * 使用给定的客户端和搜索状态执行搜索。
@@ -164,15 +210,11 @@ public interface Everything3 extends StdCallLibrary {
 
         try {
             // --- 步骤 1: 连接到 Everything 服务 ---
-            System.out.println("正在尝试连接到默认的 Everything 实例...");
-            client = INSTANCE.Everything3_ConnectW(null);
-            if (client == null) {
-                System.out.println("失败。正在尝试连接到 '1.5a' 实例...");
-                client = INSTANCE.Everything3_ConnectW(new WString("1.5a"));
-            }
+            System.out.println("正在尝试连接到 'vortex_backend' 的 Everything 实例...");
+            client = INSTANCE.Everything3_ConnectW(new WString("vortex_backend"));
 
             if (client == null) {
-                System.err.println("无法连接到任何 Everything 实例。请确保 Everything 1.5 正在运行。");
+                System.err.println("无法连接到任何 'vortex_backend' Everything 实例。请确保 Everything 1.5 正在运行。");
                 return;
             }
             System.out.println("成功连接到 Everything。");

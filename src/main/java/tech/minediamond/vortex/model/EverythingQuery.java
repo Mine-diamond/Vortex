@@ -23,6 +23,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 作为{@link tech.minediamond.vortex.service.EverythingService#query(EverythingQuery)}的传入参数，由 {@link tech.minediamond.vortex.service.EverythingQueryBuilder}构造
+ *
+ * @param query 搜索关键词
+ * @param searchMode 搜索模式（文件/文件夹/全部）
+ * @param targetFolders 在哪个文件夹搜索
+ */
 public record EverythingQuery(
         String query,
         Optional<SearchMode> searchMode,

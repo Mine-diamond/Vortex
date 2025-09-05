@@ -50,10 +50,15 @@ public class EverythingServiceTest {
         folders.add(Paths.get("D:\\myDounment"));
         folders.add(Paths.get("F:\\software_play_in_F"));
         List<EverythingResult> results = everythingServiceTest.service.QueryBuilder()
-                .searchFor("aa")
+                .searchFor("C:\\Program Files\\\"My App\"\\run*.* > log.txt | more")
                 .inFolders(folders)
                 .mode(SearchMode.ALL)
                 .query();
         System.out.println(results);
+        OpenResourceService openResourceService = injector.getInstance(OpenResourceService.class);
+        if (results.size() > 0) {
+            //openResourceService.OpenFile(results.get(0));
+        }
+
     }
 }

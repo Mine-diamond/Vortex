@@ -23,8 +23,6 @@ package tech.minediamond.vortex.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Objects;
 

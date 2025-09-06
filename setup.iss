@@ -46,36 +46,3 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; \
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#AppName}}"; \
   Flags: nowait postinstall skipifsilent
 
-[Code]
-var
-  DataPage: TInputOptionWizardPage;
-  RemoveDataCheckBox: TNewCheckBox;
-
-procedure InitializeUninstall();
-begin
-  DataPage := CreateInputOptionPage(wpUninstallConfirm,
-    '卸载选项', '请选择卸载模式',
-    '您可以选择是否要彻底删除应用程序及其所有数据。',
-    True, False);
-
-  RemoveDataCheckBox := TNewCheckBox.Create(DataPage);
-  RemoveDataCheckBox.Parent := DataPage.Surface;
-  // 修改提示文字，更准确地描述行为
-  RemoveDataCheckBox.Caption := '是，删除所有数据和设置（将彻底移除整个安装文件夹）。';
-  RemoveDataCheckBox.Checked := False;
-end;
-
-function ShouldRemoveData(): Boolean;
-begin
-  Result := RemoveDataCheckBox.Checked;
-end;
-
-[UninstallDelete]
-// Type: 指定删除类型
-// Name: 指定要删除的路径
-// Check: 关联我们的判断函数
-
-// 核心指令：删除整个应用程序文件夹
-// Type: filesandordirs 表示删除目标文件夹以及里面的所有文件和子文件夹
-// Name: {app} 就是我们想要删除的安装目录本身
-Type: filesandordirs; Name: "{app}"; Check: ShouldRemoveData

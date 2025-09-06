@@ -13,6 +13,7 @@ DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 OutputDir=Output
 OutputBaseFilename={#AppName}-Setup
+MinVersion=10.0
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -44,3 +45,4 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; \
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#AppName}}"; \
   Flags: nowait postinstall skipifsilent
+

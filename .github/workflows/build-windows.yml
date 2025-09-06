@@ -52,10 +52,19 @@ jobs:
       - name: jpackage – create app-image
         shell: pwsh
         run: |
+          # 创建一个干净的临时目录用于 jpackage 输入
+          $stagingDir = "staging"
+          New-Item -ItemType Directory -Force -Path $stagingDir
+          
+          # 只复制需要的 fat-jar 到该目录
+          Copy-Item -Path "target\${{ env.MAIN_JAR }}" -Destination $stagingDir
+          
+          # 创建 app-image 的输出目录
           New-Item -ItemType Directory -Force -Path build\app
+          
           jpackage `
             --name "${{ env.APP_NAME }}" `
-            --input target `
+            --input $stagingDir `
             --main-jar "${{ env.MAIN_JAR }}" `
             --main-class "${{ env.MAIN_CLASS }}" `
             --type app-image `
@@ -63,6 +72,8 @@ jobs:
             --icon packaging\windows\app_icon.ico `
             --app-version "${{ env.APP_VERSION }}" `
             --app-content  everything `
+            --app-content  README.md `
+            --app-content  LICENSE `
             --module-path "$env:JAVA_HOME\jmods" `
             --add-modules ALL-MODULE-PATH `
             --java-options "-DAPP_ENV=prod" 

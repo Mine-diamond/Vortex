@@ -53,7 +53,7 @@ var
 
 procedure InitializeUninstall();
 begin
-  DataPage := CreateInputOptionPage(UninstallProgressForm.Page,
+  DataPage := CreateInputOptionPage(wpUninstallConfirm,
     '卸载选项', '请选择卸载模式',
     '您可以选择是否要彻底删除应用程序及其所有数据。',
     True, False);

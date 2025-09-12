@@ -42,6 +42,7 @@ public class AppModule extends AbstractModule {
         bind(I18nService.class);
         bind(EverythingService.class).asEagerSingleton();
         bind(OpenResourceService.class);
+        bind(GlobalUncaughtExceptionHandlerService.class).in(Scopes.SINGLETON);
 
 
         bind(MainWindow.class);

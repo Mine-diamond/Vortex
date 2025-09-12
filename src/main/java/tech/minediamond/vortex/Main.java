@@ -58,9 +58,7 @@ public class Main extends Application {
 
     private boolean resourceLoaded = false;
 
-    // 端口号
-    private static final int SINGLE_INSTANCE_PORT = 38727;
-    // 定义一个通信协议
+    private static final int SINGLE_INSTANCE_PORT = 38727;// 端口号
     private static final String FOCUS_COMMAND = "VORTEX::FOCUS_WINDOW";
     private ServerSocket singleInstanceSocket;
 
@@ -102,13 +100,12 @@ public class Main extends Application {
 
         //在所有检查之后加载服务和错误处理器
         this.injector = Guice.createInjector(new AppModule());
-        Thread.setDefaultUncaughtExceptionHandler(new GlobalUncaughtExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(injector.getInstance(GlobalUncaughtExceptionHandlerService.class));
 
         //初始化服务
         StageProvider stageProvider = injector.getInstance(StageProvider.class);
         stageProvider.setStage(primaryStage);
         trayMenuService = injector.getInstance(TrayMenuService.class);//应确保在stageProvider.setStage()之后调用
-
 
 
         //初始化界面
@@ -327,29 +324,4 @@ public class Main extends Application {
         }
     }
 
-
-    /**
-     * 自定义的全局未捕获异常处理器，这是在任何线程发生未捕获异常时都会执行的逻辑
-     * <p>
-     * 在[JavaFX Application Thread]，{@link #stop()}被调用后该异常处理器依旧会被调用
-     */
-    class GlobalUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
-
-        @Override
-        public void uncaughtException(Thread t, Throwable e) {
-            log.error("捕获到未处理的异常！");
-            log.error("异常发生在线程: {}", t.getName());
-            log.error("异常类型: {}", e.getClass().getName());
-            log.error("异常信息: {}", e.getMessage());
-            log.error("堆栈信息:", e);
-
-            // 保存配置
-            try {
-                AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
-                appConfigService.save();
-            } catch (Exception e1) {
-                log.error("保存配置失败: {}", e1.getMessage(), e1);
-            }
-        }
-    }
 }

@@ -53,13 +53,14 @@ import java.util.logging.LogManager;
  */
 @Slf4j
 public class Main extends Application {
+
+    private static final int SINGLE_INSTANCE_PORT = 38727;// 端口号
+    private static final String FOCUS_COMMAND = "VORTEX::FOCUS_WINDOW";
+
     private Injector injector;
     private TrayMenuService trayMenuService;
 
     private boolean resourceLoaded = false;
-
-    private static final int SINGLE_INSTANCE_PORT = 38727;// 端口号
-    private static final String FOCUS_COMMAND = "VORTEX::FOCUS_WINDOW";
     private ServerSocket singleInstanceSocket;
 
     public static void main(String[] args) {
@@ -83,7 +84,6 @@ public class Main extends Application {
         log.info("系统版本: {}", System.getProperty("os.name"));
         log.info("执行环境：{}",runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod") ? "发行版运行" : "源码运行");
         log.info("运行路径: {}",runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod") ? System.getProperty("jpackage.app-path"):System.getProperty("user.dir"));
-        System.getProperty("jpackage.app-path");
 
         //执行start方法
         launch(args);
@@ -148,35 +148,11 @@ public class Main extends Application {
         if (resourceLoaded) {
             log.info("vortex 即将退出，正在保存和清理资源...");
 
-            try {
-                AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
-                appConfigService.save();
-                log.info("配置文件已保存");
-            } catch (Exception e) {
-                log.error("保存配置失败: {}", e.getMessage(), e);
-            }
+            runSafely("保存配置文件",()-> {injector.getInstance(AppConfigService.class).save();});
+            runSafely("注销JNativeHook",()-> {GlobalScreen.unregisterNativeHook();});
+            runSafely("注销FXTrayIcon",()->{trayMenuService.closeTrayMenu();});
+            runSafely("退出Everything",()->{injector.getInstance(EverythingService.class).stopEverythingInstance();});
 
-            try {
-                GlobalScreen.unregisterNativeHook();
-                log.info("JNativeHook 已注销");
-            } catch (NativeHookException ex) {
-                log.error("注销全局钩子出错: {}", ex.getMessage(), ex);
-            }
-
-            try {
-                trayMenuService.closeTrayMenu();
-                log.info("FXTrayIcon 已注销");
-            } catch (Exception e) {
-                log.error("关闭托盘菜单失败: {}", e.getMessage(), e);
-            }
-
-            try {
-                EverythingService everythingService = injector.getInstance(EverythingService.class);
-                everythingService.StopEverythingInstance();
-                log.info("Everything 已退出");
-            } catch (Exception e) {
-                log.error("关闭everything失败: {}", e.getMessage(), e);
-            }
         }
 
         log.info("程序退出。");
@@ -189,6 +165,22 @@ public class Main extends Application {
                 """);
 
         super.stop();
+    }
+
+    //其实这个类的作用是stop()方法中不需要再写特别多的try...catch，更漂亮和清晰一些
+    private void runSafely(String action,CheckedRunnable r) {
+        try {
+            r.run();
+            log.info("{}成功", action);
+        } catch (Throwable t) {
+            log.error("{}失败: {}", action, t.getMessage(), t);
+        }
+    }
+
+    //避免在Runnable中写try...catch
+    @FunctionalInterface
+    interface CheckedRunnable {
+        void run() throws Exception;
     }
 
     private boolean checkEnvironment() {

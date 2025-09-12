@@ -126,7 +126,7 @@ public class EverythingService {
      *
      * @throws IOException 执行关闭命令失败时抛出
      */
-    public void StopEverythingInstance() throws IOException {
+    public void stopEverythingInstance() throws IOException {
         if (client != null) {
             lib.Everything3_DestroyClient(client);
         }

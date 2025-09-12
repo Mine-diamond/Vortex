@@ -52,6 +52,8 @@ public class Main extends Application {
     private Injector injector;
     private TrayMenuService trayMenuService;
 
+    private boolean checkEnvironmentPassed = false;
+
     public static void main(String[] args) {
 
         log.info("""
@@ -79,26 +81,37 @@ public class Main extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        Thread.setDefaultUncaughtExceptionHandler(new GlobalUncaughtExceptionHandler());
-        this.injector = Guice.createInjector(new AppModule());
+        //即将删除
+
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        //检查操作系统
-        if (!checkSystem()) {
-            return;
-        }
+        try {
+            //检查操作系统
+            if (!checkSystem()) {
+                return;
+            }
 
-        //检查无头环境
-        if (!checkHeadlessEnvironment()) {
-            return;
-        }
+            //检查无头环境
+            if (!checkHeadlessEnvironment()) {
+                return;
+            }
 
-        if (!checkEverythingFileExist()) {
-            return;
+            //检查everything文件
+            if (!checkEverythingFileExist()) {
+                return;
+            }
+        } catch (Exception e) {
+            log.error("在检查环境时出错: {}", e.getMessage(), e);
+            Platform.exit();
         }
+        checkEnvironmentPassed = true;
+
+        //在所有检查之后加载服务和错误处理器
+        this.injector = Guice.createInjector(new AppModule());
+        Thread.setDefaultUncaughtExceptionHandler(new GlobalUncaughtExceptionHandler());
 
         //初始化服务
         StageProvider stageProvider = injector.getInstance(StageProvider.class);
@@ -136,35 +149,38 @@ public class Main extends Application {
      */
     @Override
     public void stop() throws Exception {
-        log.info("vortex 即将退出，正在保存和清理资源...");
-        try {
-            AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
-            appConfigService.save();
-            log.info("配置文件已保存");
-        } catch (Exception e) {
-            log.error("保存配置失败: {}", e.getMessage(), e);
-        }
 
-        try {
-            GlobalScreen.unregisterNativeHook();
-            log.info("JNativeHook 已注销");
-        } catch (NativeHookException ex) {
-            log.error("注销全局钩子出错: {}", ex.getMessage(), ex);
-        }
+        if (checkEnvironmentPassed) {
+            log.info("vortex 即将退出，正在保存和清理资源...");
+            try {
+                AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
+                appConfigService.save();
+                log.info("配置文件已保存");
+            } catch (Exception e) {
+                log.error("保存配置失败: {}", e.getMessage(), e);
+            }
 
-        try {
-            trayMenuService.closeTrayMenu();
-            log.info("FXTrayIcon 已注销");
-        } catch (Exception e) {
-            log.error("关闭托盘菜单失败: {}", e.getMessage(), e);
-        }
+            try {
+                GlobalScreen.unregisterNativeHook();
+                log.info("JNativeHook 已注销");
+            } catch (NativeHookException ex) {
+                log.error("注销全局钩子出错: {}", ex.getMessage(), ex);
+            }
 
-        try {
-            EverythingService everythingService = injector.getInstance(EverythingService.class);
-            everythingService.StopEverythingInstance();
-            log.info("Everything 已退出");
-        } catch (Exception e) {
-            log.error("关闭everything失败: {}", e.getMessage(), e);
+            try {
+                trayMenuService.closeTrayMenu();
+                log.info("FXTrayIcon 已注销");
+            } catch (Exception e) {
+                log.error("关闭托盘菜单失败: {}", e.getMessage(), e);
+            }
+
+            try {
+                EverythingService everythingService = injector.getInstance(EverythingService.class);
+                everythingService.StopEverythingInstance();
+                log.info("Everything 已退出");
+            } catch (Exception e) {
+                log.error("关闭everything失败: {}", e.getMessage(), e);
+            }
         }
 
         log.info("程序退出。");
@@ -182,7 +198,9 @@ public class Main extends Application {
     //true为pass,false为not pass
     private boolean checkSystem() {
         if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
-            alertAndStop();
+            alertStop();
+            log.error("系统不支持");
+            Platform.exit();
             return false;
         }
         return true;
@@ -191,6 +209,7 @@ public class Main extends Application {
     private boolean checkHeadlessEnvironment() {
         if (GraphicsEnvironment.isHeadless()) {
             log.error("环境为无头环境");
+            System.err.println("Please run in Environment that support UI");
             Platform.exit();
             return false;
         }
@@ -208,15 +227,12 @@ public class Main extends Application {
         return true;
     }
 
-    private void alertAndStop() {
-        I18nService i18n = injector.getInstance(I18nService.class);
+    private void alertStop() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(i18n.t("alert.exit.title"));
-        alert.setHeaderText(i18n.t("alert.exit.headText"));
-        alert.setContentText(i18n.t("alert.exit.contentText"));
+        alert.setTitle("error");
+        alert.setHeaderText("System not supported");
+        alert.setContentText("Vortex only supports running on Windows systems\nIt does not support running on Linux, Mac, or other\nsystems");
         alert.showAndWait();
-
-        Platform.exit();
     }
 
     /**

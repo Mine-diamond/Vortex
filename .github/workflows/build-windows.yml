@@ -81,7 +81,7 @@ jobs:
       - name: Install Inno Setup
         shell: pwsh
         run: |
-          winget install --id Jrsoftware.InnoSetup -e --source winget --accept-package-agreements --accept-source-agreements
+          winget install --id JRSoftware.InnoSetup -e --source winget --accept-package-agreements --accept-source-agreements
           where iscc
 
       # 6. 使用 Minionguyjpro/Inno-Setup-Action 编译安装包

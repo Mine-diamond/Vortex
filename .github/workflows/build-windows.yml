@@ -78,6 +78,12 @@ jobs:
             --add-modules ALL-MODULE-PATH `
             --java-options "-DAPP_ENV=prod" 
 
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          winget install --id Jrsoftware.InnoSetup -e --accept-package-agreements --accept-source-agreements
+          where iscc
+
       # 6. 使用 Minionguyjpro/Inno-Setup-Action 编译安装包
       - name: Compile Installer with Inno Setup Action
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2

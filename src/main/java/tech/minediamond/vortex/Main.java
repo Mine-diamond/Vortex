@@ -198,7 +198,7 @@ public class Main extends Application {
     //true为pass,false为not pass
     private boolean checkSystem() {
         if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
-            alertStop();
+            systemAlertStop();
             log.error("系统不支持");
             Platform.exit();
             return false;
@@ -220,6 +220,7 @@ public class Main extends Application {
         final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
         File file = new File(EVERYTHING_PATH);
         if (!file.exists()) {
+            EverythingAlertStop();
             log.error("引索程序未找到");
             Platform.exit();
             return false;
@@ -227,11 +228,19 @@ public class Main extends Application {
         return true;
     }
 
-    private void alertStop() {
+    private void systemAlertStop() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("error");
         alert.setHeaderText("System not supported");
         alert.setContentText("Vortex only supports running on Windows systems\nIt does not support running on Linux, Mac, or other\nsystems");
+        alert.showAndWait();
+    }
+
+    private void EverythingAlertStop(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("error");
+        alert.setHeaderText("File indexing service not found");
+        alert.setContentText("Try redownload and reinstall Vortex to resolve the issue.");
         alert.showAndWait();
     }
 

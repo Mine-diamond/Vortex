@@ -68,46 +68,24 @@ public class Main extends Application {
         LogManager.getLogManager().reset();
         SLF4JBridgeHandler.install();
 
-        //输出当前的JVM参数
+        //输出当前的环境参数
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmArgs = runtimeMxBean.getInputArguments();
-        log.info("JVM arguments: {}", jvmArgs);
+        log.info("JVM 参数: {}", jvmArgs);
         log.info("系统版本: {}", System.getProperty("os.name"));
+        log.info("执行环境：{}",runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod") ? "发行版运行" : "源码运行");
+        log.info("运行路径: {}",runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod") ? System.getProperty("jpackage.app-path"):System.getProperty("user.dir"));
+        System.getProperty("jpackage.app-path");
 
         //执行start方法
         launch(args);
     }
 
     @Override
-    public void init() throws Exception {
-        super.init();
-        //即将删除
-
-    }
-
-    @Override
     public void start(Stage primaryStage) throws Exception {
 
-        try {
-            //检查操作系统
-            if (!checkSystem()) {
-                return;
-            }
-
-            //检查无头环境
-            if (!checkHeadlessEnvironment()) {
-                return;
-            }
-
-            //检查everything文件
-            if (!checkEverythingFileExist()) {
-                return;
-            }
-        } catch (Exception e) {
-            log.error("在检查环境时出错: {}", e.getMessage(), e);
-            Platform.exit();
-        }
-        checkEnvironmentPassed = true;
+        //检查运行环境
+        checkEnvironment();
 
         //在所有检查之后加载服务和错误处理器
         this.injector = Guice.createInjector(new AppModule());
@@ -116,7 +94,7 @@ public class Main extends Application {
         //初始化服务
         StageProvider stageProvider = injector.getInstance(StageProvider.class);
         stageProvider.setStage(primaryStage);
-        trayMenuService = injector.getInstance(TrayMenuService.class);
+        trayMenuService = injector.getInstance(TrayMenuService.class);//应确保在stageProvider.setStage()之后调用
 
         //初始化界面
         Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
@@ -195,7 +173,30 @@ public class Main extends Application {
         super.stop();
     }
 
-    //true为pass,false为not pass
+    private void checkEnvironment() {
+        try {
+            //检查操作系统
+            if (!checkSystem()) {
+                return;
+            }
+
+            //检查无头环境
+            if (!checkHeadlessEnvironment()) {
+                return;
+            }
+
+            //检查everything文件
+            if (!checkEverythingFileExist()) {
+                return;
+            }
+        } catch (Exception e) {
+            log.error("在检查环境时出错: {}", e.getMessage(), e);
+            Platform.exit();
+        }
+        checkEnvironmentPassed = true;
+    }
+
+    //以下的check方法均为返回true为pass,false为not pass
     private boolean checkSystem() {
         if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
             systemAlertStop();
@@ -209,7 +210,7 @@ public class Main extends Application {
     private boolean checkHeadlessEnvironment() {
         if (GraphicsEnvironment.isHeadless()) {
             log.error("环境为无头环境");
-            System.err.println("Please run in Environment that support UI");
+            System.err.println("Please run in Environment that support UI environment");
             Platform.exit();
             return false;
         }
@@ -220,7 +221,7 @@ public class Main extends Application {
         final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
         File file = new File(EVERYTHING_PATH);
         if (!file.exists()) {
-            EverythingAlertStop();
+            everythingAlertStop();
             log.error("引索程序未找到");
             Platform.exit();
             return false;
@@ -236,7 +237,7 @@ public class Main extends Application {
         alert.showAndWait();
     }
 
-    private void EverythingAlertStop(){
+    private void everythingAlertStop(){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("error");
         alert.setHeaderText("File indexing service not found");

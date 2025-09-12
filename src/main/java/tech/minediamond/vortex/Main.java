@@ -28,6 +28,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +36,11 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.service.*;
 
+import java.awt.*;
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.LogManager;
 
@@ -66,6 +70,7 @@ public class Main extends Application {
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
         List<String> jvmArgs = runtimeMxBean.getInputArguments();
         log.info("JVM arguments: {}", jvmArgs);
+        log.info("系统版本: {}", System.getProperty("os.name"));
 
         //执行start方法
         launch(args);
@@ -81,10 +86,24 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        //检查操作系统
+        if (!checkSystem()) {
+            return;
+        }
+
+        //检查无头环境
+        if (!checkHeadlessEnvironment()) {
+            return;
+        }
+
+        if (!checkEverythingFileExist()) {
+            return;
+        }
+
         //初始化服务
         StageProvider stageProvider = injector.getInstance(StageProvider.class);
         stageProvider.setStage(primaryStage);
-        trayMenuService = injector.getInstance(TrayMenuService.class);//需要在themeManager.initialize(scene)之后调用
+        trayMenuService = injector.getInstance(TrayMenuService.class);
 
         //初始化界面
         Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
@@ -158,6 +177,46 @@ public class Main extends Application {
                 """);
 
         super.stop();
+    }
+
+    //true为pass,false为not pass
+    private boolean checkSystem() {
+        if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
+            alertAndStop();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkHeadlessEnvironment() {
+        if (GraphicsEnvironment.isHeadless()) {
+            log.error("环境为无头环境");
+            Platform.exit();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkEverythingFileExist() {
+        final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
+        File file = new File(EVERYTHING_PATH);
+        if (!file.exists()) {
+            log.error("引索程序未找到");
+            Platform.exit();
+            return false;
+        }
+        return true;
+    }
+
+    private void alertAndStop() {
+        I18nService i18n = injector.getInstance(I18nService.class);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(i18n.t("alert.exit.title"));
+        alert.setHeaderText(i18n.t("alert.exit.headText"));
+        alert.setContentText(i18n.t("alert.exit.contentText"));
+        alert.showAndWait();
+
+        Platform.exit();
     }
 
     /**

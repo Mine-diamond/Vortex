@@ -59,6 +59,6 @@ public class EverythingServiceTest {
         if (results.size() > 0) {
             //openResourceService.OpenFile(results.get(0));
         }
-        everythingServiceTest.service.StopEverythingInstance();
+        everythingServiceTest.service.stopEverythingInstance();
     }
 }

@@ -37,9 +37,13 @@ import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.service.*;
 
 import java.awt.*;
-import java.io.File;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.LogManager;
@@ -52,7 +56,13 @@ public class Main extends Application {
     private Injector injector;
     private TrayMenuService trayMenuService;
 
-    private boolean checkEnvironmentPassed = false;
+    private boolean resourceLoaded = false;
+
+    // 端口号
+    private static final int SINGLE_INSTANCE_PORT = 38727;
+    // 定义一个通信协议
+    private static final String FOCUS_COMMAND = "VORTEX::FOCUS_WINDOW";
+    private ServerSocket singleInstanceSocket;
 
     public static void main(String[] args) {
 
@@ -84,8 +94,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        //检查运行环境
-        checkEnvironment();
+        //检查运行环境和单例
+        if (!checkEnvironment()) {return;}
+        if (!singleInstanceSocket()) {return;}
+
+        resourceLoaded = true;
 
         //在所有检查之后加载服务和错误处理器
         this.injector = Guice.createInjector(new AppModule());
@@ -95,6 +108,8 @@ public class Main extends Application {
         StageProvider stageProvider = injector.getInstance(StageProvider.class);
         stageProvider.setStage(primaryStage);
         trayMenuService = injector.getInstance(TrayMenuService.class);//应确保在stageProvider.setStage()之后调用
+
+
 
         //初始化界面
         Platform.setImplicitExit(false);//所有窗口关闭后程序不会关闭
@@ -128,8 +143,14 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
 
-        if (checkEnvironmentPassed) {
+        if (singleInstanceSocket != null && !singleInstanceSocket.isClosed()) {
+            singleInstanceSocket.close();
+            log.info("已关闭端口监听");
+        }
+
+        if (resourceLoaded) {
             log.info("vortex 即将退出，正在保存和清理资源...");
+
             try {
                 AppConfigService appConfigService = injector.getInstance(AppConfigService.class);
                 appConfigService.save();
@@ -173,27 +194,27 @@ public class Main extends Application {
         super.stop();
     }
 
-    private void checkEnvironment() {
+    private boolean checkEnvironment() {
         try {
             //检查操作系统
             if (!checkSystem()) {
-                return;
+                return false;
             }
 
             //检查无头环境
             if (!checkHeadlessEnvironment()) {
-                return;
+                return false;
             }
 
             //检查everything文件
             if (!checkEverythingFileExist()) {
-                return;
+                return false;
             }
         } catch (Exception e) {
             log.error("在检查环境时出错: {}", e.getMessage(), e);
             Platform.exit();
         }
-        checkEnvironmentPassed = true;
+        return true;
     }
 
     //以下的check方法均为返回true为pass,false为not pass
@@ -244,6 +265,68 @@ public class Main extends Application {
         alert.setContentText("Try redownload and reinstall Vortex to resolve the issue.");
         alert.showAndWait();
     }
+
+    private boolean singleInstanceSocket() {
+        try {
+            singleInstanceSocket = new ServerSocket(SINGLE_INSTANCE_PORT, 10, InetAddress.getLoopbackAddress());
+            startInstanceListener();
+            log.info("已连接端口");
+            return true;
+        } catch (IOException e) {
+            log.warn("端口已被占用");
+            sendFocusCommandToFirstInstance();
+            Platform.exit();
+            return false;
+        }
+    }
+
+    private void startInstanceListener() {
+        Thread listenerThread = new Thread(() -> {
+            while (!singleInstanceSocket.isClosed()) {
+                try (Socket clientSocket = singleInstanceSocket.accept();
+                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
+
+                    String command = in.readLine();
+                    if (FOCUS_COMMAND.equals(command)) {
+                        // 收到唤醒命令，需要在 JavaFX 应用线程中操作 UI
+                        Platform.runLater(() -> {
+                            log.info("已接收命令，将窗口带入前台。");
+                            if(injector!=null){
+                                injector.getInstance(WindowAnimator.class).showMainWindow();
+                            }
+                        });
+                    }
+                } catch (IOException e) {
+                    // ServerSocket 关闭时会抛出异常，这是正常的退出方式
+                    if (singleInstanceSocket.isClosed()) {
+                        log.info("实例监听器线程关闭");
+                        break;
+                    }
+                    log.error(e.getMessage(), e);
+                }
+            }
+        });
+
+        // 设置为守护线程，这样它不会阻止 JVM 退出
+        listenerThread.setDaemon(true);
+        listenerThread.setName("Vortex Instance Listener");
+        listenerThread.start();
+    }
+
+    private void sendFocusCommandToFirstInstance() {
+        try (Socket clientSocket = new Socket(InetAddress.getLocalHost(), SINGLE_INSTANCE_PORT);
+             OutputStream out = clientSocket.getOutputStream()) {
+
+            out.write((FOCUS_COMMAND + "\n").getBytes(StandardCharsets.UTF_8));
+            out.flush();
+            log.info("聚焦指令发送成功。即将退出。");
+
+        } catch (IOException e) {
+            log.error("发送聚焦指令失败");
+            log.error(e.getMessage(), e);
+        }
+    }
+
 
     /**
      * 自定义的全局未捕获异常处理器，这是在任何线程发生未捕获异常时都会执行的逻辑

@@ -19,6 +19,7 @@
 
 package tech.minediamond.vortex.service;
 
+import com.google.inject.Inject;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -26,6 +27,7 @@ import javafx.animation.Timeline;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import tech.minediamond.vortex.model.AppConfig;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,9 +46,13 @@ public class WindowAnimator {
 
     // 用于存储每个窗口的动画上下文
     private final Map<Stage, WindowAnimationContext> windowContexts = new ConcurrentHashMap<>();
+    private final StageProvider stageProvider;
+    private final AppConfig appConfig;
 
-    // 私有构造函数
-    public WindowAnimator() {
+    @Inject
+    public WindowAnimator(StageProvider stageProvider, AppConfig appConfig) {
+        this.stageProvider = stageProvider;
+        this.appConfig = appConfig;
     }
 
     /**
@@ -155,6 +161,12 @@ public class WindowAnimator {
 
     public void showWindow(Stage stage, boolean ifCenterOnScreen) {
         playShowAnimation(stage,ifCenterOnScreen);
+    }
+
+    public void showMainWindow(){
+        if(stageProvider.isStageAvailable()) {
+            showWindow(stageProvider.getStage(),appConfig.getIfCenterOnScreen());
+        }
     }
 
     /**

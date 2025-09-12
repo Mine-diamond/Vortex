@@ -27,7 +27,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -35,15 +34,8 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.service.*;
 
-import java.awt.*;
-import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.logging.LogManager;
 
 /**
@@ -52,14 +44,13 @@ import java.util.logging.LogManager;
 @Slf4j
 public class Main extends Application {
 
-    private static final int SINGLE_INSTANCE_PORT = 38727;// 端口号
-    private static final String FOCUS_COMMAND = "VORTEX::FOCUS_WINDOW";
+    private static final String AUTO_START = "--autostart";
+    private static final String APP_ENV_PROD_FLAG = "-DAPP_ENV=prod";
 
     private Injector injector;
     private TrayMenuService trayMenuService;
 
     private boolean resourceLoaded = false;
-    private ServerSocket singleInstanceSocket;
 
     public static void main(String[] args) {
 
@@ -76,7 +67,7 @@ public class Main extends Application {
 
         //输出当前的环境参数
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-        boolean isProd = runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod");
+        boolean isProd = runtimeMxBean.getInputArguments().contains(APP_ENV_PROD_FLAG);
         String runPath = isProd ? System.getProperty("jpackage.app-path") : System.getProperty("user.dir");
         log.info("JVM 参数: {}", runtimeMxBean.getInputArguments());
         log.info("系统版本: {}", System.getProperty("os.name"));
@@ -91,8 +82,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         //检查运行环境和单例
-        if (!checkEnvironment()) {return;}
-        //if (!singleInstanceSocket()) {return;}
+        if (!EnvironmentChecker.check()) {return;}
         if (!SingleInstanceSocketManager.startSocket()) {return;}
 
         resourceLoaded = true;
@@ -117,12 +107,11 @@ public class Main extends Application {
         Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
 
-        ThemeService themeService = injector.getInstance(ThemeService.class);
-        themeService.registerScene(scene);
+        injector.getInstance(ThemeService.class).registerScene(scene);//注册主题服务
 
         primaryStage.setScene(scene);
 
-        boolean isAutoStart = getParameters().getUnnamed().contains("--autostart");
+        boolean isAutoStart = getParameters().getUnnamed().contains(AUTO_START);
         WindowAnimator windowAnimator = injector.getInstance(WindowAnimator.class);
         if (!isAutoStart) {
             windowAnimator.showWindow(primaryStage, true);
@@ -140,18 +129,15 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
 
-        if (singleInstanceSocket != null && !singleInstanceSocket.isClosed()) {
-            singleInstanceSocket.close();
-            log.info("已关闭端口监听");
-        }
+        SingleInstanceSocketManager.closeSocket();
 
         if (resourceLoaded) {
             log.info("vortex 即将退出，正在保存和清理资源...");
 
-            runSafely("保存配置文件",()-> {injector.getInstance(AppConfigService.class).save();});
-            runSafely("注销JNativeHook",()-> {GlobalScreen.unregisterNativeHook();});
-            runSafely("注销FXTrayIcon",()->{trayMenuService.closeTrayMenu();});
-            runSafely("退出Everything",()->{injector.getInstance(EverythingService.class).stopEverythingInstance();});
+            runSafely("保存配置文件",()-> injector.getInstance(AppConfigService.class).save());
+            runSafely("注销JNativeHook", GlobalScreen::unregisterNativeHook);
+            runSafely("注销FXTrayIcon",()-> trayMenuService.closeTrayMenu());
+            runSafely("退出Everything",()-> injector.getInstance(EverythingService.class).stopEverythingInstance());
 
         }
 
@@ -167,7 +153,7 @@ public class Main extends Application {
         super.stop();
     }
 
-    //其实这个类的作用是stop()方法中不需要再写特别多的try...catch，更漂亮和清晰一些
+    //这个类的作用是stop()方法中不需要再写特别多的try...catch，更漂亮和清晰一些
     private void runSafely(String action,CheckedRunnable r) {
         try {
             r.run();
@@ -181,67 +167,6 @@ public class Main extends Application {
     @FunctionalInterface
     interface CheckedRunnable {
         void run() throws Exception;
-    }
-
-    private boolean checkEnvironment() {
-        try {
-            return checkSystem()
-                    && checkHeadless()
-                    && checkEverythingExecutableExists();
-        } catch (Exception e) {
-            log.error("在检查环境时出错: {}", e.getMessage(), e);
-            Platform.exit();
-            return false;
-        }
-    }
-
-    //以下的check方法均为返回true为pass,false为not pass
-    private boolean checkSystem() {
-        if (!System.getProperty("os.name").toLowerCase().contains("windows")) {
-            systemAlertStop();
-            log.error("系统不支持");
-            Platform.exit();
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkHeadless() {
-        if (GraphicsEnvironment.isHeadless()) {
-            log.error("环境为无头环境");
-            System.err.println("Error: This is a GUI application and cannot be run in a headless environment. Please run it on a system with a graphical user interface.");
-            Platform.exit();
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkEverythingExecutableExists() {
-        final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
-        File file = new File(EVERYTHING_PATH);
-        if (!file.exists()) {
-            everythingAlertStop();
-            log.error("引索程序未找到，期待的位置：{}", EVERYTHING_PATH);
-            Platform.exit();
-            return false;
-        }
-        return true;
-    }
-
-    private void systemAlertStop() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("error");
-        alert.setHeaderText("System not supported");
-        alert.setContentText("Vortex only supports running on Windows systems\nIt does not support running on Linux, Mac, or other\nsystems");
-        alert.showAndWait();
-    }
-
-    private void everythingAlertStop(){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("error");
-        alert.setHeaderText("File indexing service not found");
-        alert.setContentText("Try redownload and reinstall Vortex to resolve the issue.");
-        alert.showAndWait();
     }
 
 }

@@ -20,7 +20,6 @@
 package tech.minediamond.vortex;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
-import com.github.kwhat.jnativehook.NativeHookException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import javafx.application.Application;
@@ -45,7 +44,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.logging.LogManager;
 
 /**
@@ -65,6 +63,10 @@ public class Main extends Application {
 
     public static void main(String[] args) {
 
+        //初始化日志系统
+        LogManager.getLogManager().reset();
+        SLF4JBridgeHandler.install();
+
         log.info("""
                 
                 ------------------------------------------------------------------------
@@ -72,18 +74,14 @@ public class Main extends Application {
                 ------------------------------------------------------------------------
                 """);
 
-
-        //初始化日志系统
-        LogManager.getLogManager().reset();
-        SLF4JBridgeHandler.install();
-
         //输出当前的环境参数
         RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
-        List<String> jvmArgs = runtimeMxBean.getInputArguments();
-        log.info("JVM 参数: {}", jvmArgs);
+        boolean isProd = runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod");
+        String runPath = isProd ? System.getProperty("jpackage.app-path") : System.getProperty("user.dir");
+        log.info("JVM 参数: {}", runtimeMxBean.getInputArguments());
         log.info("系统版本: {}", System.getProperty("os.name"));
-        log.info("执行环境：{}",runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod") ? "发行版运行" : "源码运行");
-        log.info("运行路径: {}",runtimeMxBean.getInputArguments().contains("-DAPP_ENV=prod") ? System.getProperty("jpackage.app-path"):System.getProperty("user.dir"));
+        log.info("执行环境：{}",isProd ? "发行版运行" : "源码运行");
+        log.info("运行路径: {}",runPath);
 
         //执行start方法
         launch(args);
@@ -94,7 +92,8 @@ public class Main extends Application {
 
         //检查运行环境和单例
         if (!checkEnvironment()) {return;}
-        if (!singleInstanceSocket()) {return;}
+        //if (!singleInstanceSocket()) {return;}
+        if (!SingleInstanceSocketManager.startSocket()) {return;}
 
         resourceLoaded = true;
 
@@ -106,6 +105,7 @@ public class Main extends Application {
         StageProvider stageProvider = injector.getInstance(StageProvider.class);
         stageProvider.setStage(primaryStage);
         trayMenuService = injector.getInstance(TrayMenuService.class);//应确保在stageProvider.setStage()之后调用
+        SingleInstanceSocketManager.setStageReady(injector.getInstance(WindowAnimator.class));
 
 
         //初始化界面
@@ -185,25 +185,14 @@ public class Main extends Application {
 
     private boolean checkEnvironment() {
         try {
-            //检查操作系统
-            if (!checkSystem()) {
-                return false;
-            }
-
-            //检查无头环境
-            if (!checkHeadlessEnvironment()) {
-                return false;
-            }
-
-            //检查everything文件
-            if (!checkEverythingFileExist()) {
-                return false;
-            }
+            return checkSystem()
+                    && checkHeadless()
+                    && checkEverythingExecutableExists();
         } catch (Exception e) {
             log.error("在检查环境时出错: {}", e.getMessage(), e);
             Platform.exit();
+            return false;
         }
-        return true;
     }
 
     //以下的check方法均为返回true为pass,false为not pass
@@ -217,22 +206,22 @@ public class Main extends Application {
         return true;
     }
 
-    private boolean checkHeadlessEnvironment() {
+    private boolean checkHeadless() {
         if (GraphicsEnvironment.isHeadless()) {
             log.error("环境为无头环境");
-            System.err.println("Please run in Environment that support UI environment");
+            System.err.println("Error: This is a GUI application and cannot be run in a headless environment. Please run it on a system with a graphical user interface.");
             Platform.exit();
             return false;
         }
         return true;
     }
 
-    private boolean checkEverythingFileExist() {
+    private boolean checkEverythingExecutableExists() {
         final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
         File file = new File(EVERYTHING_PATH);
         if (!file.exists()) {
             everythingAlertStop();
-            log.error("引索程序未找到");
+            log.error("引索程序未找到，期待的位置：{}", EVERYTHING_PATH);
             Platform.exit();
             return false;
         }
@@ -253,67 +242,6 @@ public class Main extends Application {
         alert.setHeaderText("File indexing service not found");
         alert.setContentText("Try redownload and reinstall Vortex to resolve the issue.");
         alert.showAndWait();
-    }
-
-    private boolean singleInstanceSocket() {
-        try {
-            singleInstanceSocket = new ServerSocket(SINGLE_INSTANCE_PORT, 10, InetAddress.getLoopbackAddress());
-            startInstanceListener();
-            log.info("已连接端口");
-            return true;
-        } catch (IOException e) {
-            log.warn("端口已被占用");
-            sendFocusCommandToFirstInstance();
-            Platform.exit();
-            return false;
-        }
-    }
-
-    private void startInstanceListener() {
-        Thread listenerThread = new Thread(() -> {
-            while (!singleInstanceSocket.isClosed()) {
-                try (Socket clientSocket = singleInstanceSocket.accept();
-                     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))) {
-
-                    String command = in.readLine();
-                    if (FOCUS_COMMAND.equals(command)) {
-                        // 收到唤醒命令，需要在 JavaFX 应用线程中操作 UI
-                        Platform.runLater(() -> {
-                            log.info("已接收命令，将窗口带入前台。");
-                            if(injector!=null){
-                                injector.getInstance(WindowAnimator.class).showMainWindow();
-                            }
-                        });
-                    }
-                } catch (IOException e) {
-                    // ServerSocket 关闭时会抛出异常，这是正常的退出方式
-                    if (singleInstanceSocket.isClosed()) {
-                        log.info("实例监听器线程关闭");
-                        break;
-                    }
-                    log.error(e.getMessage(), e);
-                }
-            }
-        });
-
-        // 设置为守护线程，这样它不会阻止 JVM 退出
-        listenerThread.setDaemon(true);
-        listenerThread.setName("Vortex Instance Listener");
-        listenerThread.start();
-    }
-
-    private void sendFocusCommandToFirstInstance() {
-        try (Socket clientSocket = new Socket(InetAddress.getLocalHost(), SINGLE_INSTANCE_PORT);
-             OutputStream out = clientSocket.getOutputStream()) {
-
-            out.write((FOCUS_COMMAND + "\n").getBytes(StandardCharsets.UTF_8));
-            out.flush();
-            log.info("聚焦指令发送成功。即将退出。");
-
-        } catch (IOException e) {
-            log.error("发送聚焦指令失败");
-            log.error(e.getMessage(), e);
-        }
     }
 
 }

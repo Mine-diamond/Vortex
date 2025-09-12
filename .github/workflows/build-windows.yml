@@ -78,11 +78,11 @@ jobs:
             --add-modules ALL-MODULE-PATH `
             --java-options "-DAPP_ENV=prod" 
 
-      # 新增步骤：安装Inno Setup
+      # 6. 安装Inno Setup
       - name: Install Inno Setup
         run: choco install innosetup -y
 
-      # 6. 使用 Minionguyjpro/Inno-Setup-Action 编译安装包
+      # 7. 使用 Minionguyjpro/Inno-Setup-Action 编译安装包
       - name: Compile Installer with Inno Setup Action
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
@@ -91,7 +91,7 @@ jobs:
           # 通过 options 参数把动态变量传给 Inno Setup
           options: /DAppName="${{ env.APP_NAME }}" /DAppVersion="${{ env.APP_VERSION }}"
 
-      # 7. 上传产物
+      # 8. 上传产物
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:

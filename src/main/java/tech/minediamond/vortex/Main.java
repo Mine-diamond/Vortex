@@ -92,8 +92,7 @@ public class Main extends Application {
         Thread.setDefaultUncaughtExceptionHandler(injector.getInstance(GlobalUncaughtExceptionHandlerService.class));
 
         //初始化服务
-        StageProvider stageProvider = injector.getInstance(StageProvider.class);
-        stageProvider.setStage(primaryStage);
+        injector.getInstance(StageProvider.class).setStage(primaryStage);
         trayMenuService = injector.getInstance(TrayMenuService.class);//应确保在stageProvider.setStage()之后调用
         SingleInstanceSocketManager.setStageReady(injector.getInstance(WindowAnimator.class));
 
@@ -129,10 +128,12 @@ public class Main extends Application {
     @Override
     public void stop() throws Exception {
 
+        log.info("vortex 即将退出");
+
         SingleInstanceSocketManager.closeSocket();
 
         if (resourceLoaded) {
-            log.info("vortex 即将退出，正在保存和清理资源...");
+            log.info("正在保存和清理资源...");
 
             runSafely("保存配置文件",()-> injector.getInstance(AppConfigService.class).save());
             runSafely("注销JNativeHook", GlobalScreen::unregisterNativeHook);

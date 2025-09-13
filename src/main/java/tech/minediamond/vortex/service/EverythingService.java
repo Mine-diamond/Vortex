@@ -69,11 +69,12 @@ public class EverythingService {
 
     private Everything3.EverythingClient client = null;
     private final Everything3 lib = Everything3.INSTANCE;
+    Thread linkEverythingThread;
 
     @Inject
     public EverythingService() throws IOException, InterruptedException {
         StartEverythingInstance();
-        Thread linkEverythingThread = new Thread(() -> {
+        linkEverythingThread = new Thread(() -> {
             try {
                 TimeUnit.SECONDS.sleep(1);
                 for (int i = 0; i < 20; i++) {
@@ -87,7 +88,7 @@ public class EverythingService {
                 }
                 log.warn("连接失败");
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                log.warn("linkEverythingThread被中断");
             }
         });
         linkEverythingThread.setName("Link Everything Instance Thread");
@@ -126,9 +127,12 @@ public class EverythingService {
      *
      * @throws IOException 执行关闭命令失败时抛出
      */
-    public void StopEverythingInstance() throws IOException {
+    public void stopEverythingInstance() throws IOException {
         if (client != null) {
             lib.Everything3_DestroyClient(client);
+        }
+        if (linkEverythingThread != null && linkEverythingThread.isAlive()) {
+            linkEverythingThread.interrupt();
         }
         ProcessBuilder pb = new ProcessBuilder(EVERYTHING_PATH, "-exit", "-instance", "vortex_backend");
         pb.redirectErrorStream(true);

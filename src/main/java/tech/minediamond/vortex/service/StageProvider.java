@@ -45,4 +45,8 @@ public class StageProvider {
         if (this.stage == null) this.stage = stage;
         log.debug("Stage已被设置：{}", stage);
     }
+
+    public boolean isStageAvailable(){
+        return stage != null;
+    }
 }

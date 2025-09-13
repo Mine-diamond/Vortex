@@ -17,20 +17,18 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.model;
+package tech.minediamond.vortex.ui;
 
-public enum ContentPanel {
-    EDITORPANEL("editorPanel.fxml"),
-    SETTINGPANEL("settingPanel.fxml"),
-    SETTINGPANEL2("settingPanel2.fxml");
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 
-    private final String fileName;
+public class SettingPanel2 {
 
-    ContentPanel(String fileName) {
-        this.fileName = fileName;
-    }
+    @FXML
+    private ComponentList settingList;
 
-    public String getFileName(){
-        return this.fileName;
+    public void insertButton(ActionEvent actionEvent) {
+        settingList.content.add(2,new Button("新按钮"));
     }
 }

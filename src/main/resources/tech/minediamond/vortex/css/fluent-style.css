@@ -386,3 +386,13 @@
 #settingList #exitBtn:pressed {
     -fx-background-color:-fx-exit-button-bg-color-pressed;
 }
+
+/* ===ComponentList=== */
+
+.component-list .component-list-item:first {
+    -fx-background-radius: 1 1 0 0;
+}
+
+.component-list .component-list-item:last {
+    -fx-background-radius: 0 0 1 1;
+}

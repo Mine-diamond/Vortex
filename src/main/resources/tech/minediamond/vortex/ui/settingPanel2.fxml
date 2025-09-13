@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  ~ Vortex
+  ~ Copyright (C) 2025 Mine-diamond
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<?import tech.minediamond.vortex.ui.ComponentList?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tech.minediamond.vortex.ui.SettingPanel2"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" pickOnBounds="false" focusTraversable="false"
+                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"
+                AnchorPane.bottomAnchor="0">
+
+        <ComponentList fx:id="settingList">
+            <HBox>
+                <Button text="a" onAction="#insertButton"/>
+            </HBox>
+            <Button text="b"/>
+            <HBox>
+                <Button text="c"/>
+                <Button text="d"/>
+            </HBox>
+            <HBox>
+                <Button text="e"/>
+            </HBox>
+        </ComponentList>
+    </ScrollPane>
+
+</AnchorPane>

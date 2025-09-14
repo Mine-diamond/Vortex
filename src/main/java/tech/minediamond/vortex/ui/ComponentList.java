@@ -70,7 +70,7 @@ public class ComponentList extends Control {
 
     // 创建并返回此控件的默认皮肤（Skin）
     @Override
-    protected Skin<?> createDefaultSkin() {
+    protected Skin createDefaultSkin() {
         return new Skin(this);
     }
 
@@ -85,12 +85,10 @@ public class ComponentList extends Control {
         return null;
     }
 
-    private static final class Skin<T> extends SkinBase<ComponentList> {
+    private static final class Skin extends SkinBase<ComponentList> {
 
         private static final PseudoClass PSEUDO_CLASS_FIRST = PseudoClass.getPseudoClass("first");// 标记列表中第一个节点
         private static final PseudoClass PSEUDO_CLASS_LAST = PseudoClass.getPseudoClass("last");// 标记列表中之后一个节点
-
-        private final VBox vBox = new VBox();
 
         /**
          * 皮肤的构造函数。
@@ -99,13 +97,14 @@ public class ComponentList extends Control {
          *
          * @param control 与此皮肤关联的 ComponentList 控件。
          */
-        protected Skin(ComponentList control) {
+        public Skin(ComponentList control) {
             super(control);
             // 获取控件的原始节点列表
             ObservableList<Node> content = control.content;
 
             //创建一个映射列表，将原始列表中的每个 Node 映射（包装）到一个新的 StackPane 中，并添加到vBox的内容中
             ObservableList<StackPane> stackPaneContent = new MappedList<>(content, nodeToStackPaneMapper);
+            VBox vBox = new VBox();
             Bindings.bindContent(vBox.getChildren(), stackPaneContent);
 
             // 动态更新第一个和最后一个元素的伪类状态

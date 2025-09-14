@@ -115,7 +115,7 @@ public class MappedList<S, T> extends TransformationList<T, S> {
                     // 发出一个语义上更精确的 replace 事件。
                     nextReplace(from, from + adds.size(), removed);
 
-                } else { // 处理单纯的删除或添加
+                } else { // 处理单纯地删除或添加
                     if (c.wasRemoved()) { // 单纯移除
                         mapped.subList(from, from + c.getRemovedSize()).clear();
                         nextRemove(from, removed);

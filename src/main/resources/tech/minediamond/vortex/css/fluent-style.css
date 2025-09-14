@@ -270,10 +270,12 @@
 
 /* ===设置界面=== */
 
+/*noinspection CssInvalidPseudoSelector*/
 #settingList .component-list-item:first  {
     -fx-background-radius: 4 4 0 0;
 }
 
+/*noinspection CssInvalidPseudoSelector*/
 #settingList .component-list-item:last  {
     -fx-background-radius: 0 0 4 4;
     -fx-border-width: 0 0 0 0;

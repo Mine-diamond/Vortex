@@ -21,8 +21,7 @@ package tech.minediamond.vortex.model;
 
 public enum ContentPanel {
     EDITORPANEL("editorPanel.fxml"),
-    SETTINGPANEL("settingPanel.fxml"),
-    SETTINGPANEL2("settingPanel2.fxml");
+    SETTINGPANEL("settingPanel.fxml");
 
     private final String fileName;
 

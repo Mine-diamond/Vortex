@@ -275,7 +275,6 @@
     -fx-border-radius: 4px;     /* 边框也需要圆角 */
 
     -fx-background-color: -fx-settinf-list-bg-color;
-    -fx-effect: dropshadow(gaussian, -fx-settinf-list-bg-color, 3, 0, 0, 0);
 
     -fx-spacing: 5;
     -fx-padding: 5 5 5 5;
@@ -389,17 +388,17 @@
 
 /* ===ComponentList=== */
 
-#settingList2 .component-list-item:first  {
+#settingList .component-list-item:first  {
     -fx-background-radius: 4 4 0 0;
 }
 
-#settingList2 .component-list-item:last  {
+#settingList .component-list-item:last  {
     -fx-background-radius: 0 0 4 4;
     -fx-border-width: 0 0 0 0;
 }
 
 
-#settingList2 .component-list-item{
+#settingList .component-list-item{
     -fx-background-color: -fx-settinf-list-bg-color;
     -fx-border-width: 0 0 1 0;
     -fx-border-color: #888888;

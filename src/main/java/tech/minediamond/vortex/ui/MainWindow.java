@@ -282,6 +282,6 @@ public class MainWindow {
     }
 
     public void showSettingPanel2(ActionEvent actionEvent) {
-        loadOrGetView(ContentPanel.SETTINGPANEL2);
+
     }
 }

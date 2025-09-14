@@ -48,7 +48,7 @@ public class SettingPanel {
     private WindowAnimator windowAnimator;
 
     @FXML
-    private VBox settingList;
+    private ComponentList settingList;
     @FXML
     private Button exitBtn;
     @FXML

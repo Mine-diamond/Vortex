@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+
 <!--
   ~ Vortex
   ~ Copyright (C) 2025 Mine-diamond
@@ -19,10 +20,9 @@
   ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
   -->
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-
+<?import tech.minediamond.vortex.ui.ComponentList?>
 <?import org.controlsfx.control.ToggleSwitch?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -32,10 +32,8 @@
     <ScrollPane fx:id="scrollPane" fitToWidth="true" pickOnBounds="false" focusTraversable="false"
                 AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"
                 AnchorPane.bottomAnchor="0">
-        <VBox fx:id="settingList" spacing="5">
-            <padding>
-                <Insets top="5" bottom="5" right="5" left="5"/>
-            </padding>
+
+        <ComponentList fx:id="settingList">
             <HBox>
                 <Label text="%setting.showWindow.label"/>
                 <Region HBox.hgrow="ALWAYS"/>
@@ -62,7 +60,7 @@
                 <Region HBox.hgrow="ALWAYS"/>
                 <Button text="%setting.closeSoftware.label" fx:id="exitBtn" onAction="#exitBtnAction"/>
             </HBox>
-        </VBox>
+        </ComponentList>
     </ScrollPane>
 
 </AnchorPane>

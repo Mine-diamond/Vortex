@@ -88,7 +88,7 @@ public class ComponentList extends Control {
     private static final class Skin extends SkinBase<ComponentList> {
 
         private static final PseudoClass PSEUDO_CLASS_FIRST = PseudoClass.getPseudoClass("first");// 标记列表中第一个节点
-        private static final PseudoClass PSEUDO_CLASS_LAST = PseudoClass.getPseudoClass("last");// 标记列表中之后一个节点
+        private static final PseudoClass PSEUDO_CLASS_LAST = PseudoClass.getPseudoClass("last");// 标记列表中最后一个节点
 
         /**
          * 皮肤的构造函数。

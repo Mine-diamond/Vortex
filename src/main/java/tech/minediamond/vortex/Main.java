@@ -31,6 +31,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import tech.minediamond.vortex.bootstrap.EnvironmentChecker;
+import tech.minediamond.vortex.bootstrap.SingleInstanceSocketManager;
 import tech.minediamond.vortex.config.AppModule;
 import tech.minediamond.vortex.service.*;
 

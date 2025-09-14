@@ -63,7 +63,8 @@
     -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
 
     /*设置面板样式*/
-    -fx-settinf-list-bg-color: #e1e1e3;/*设置条目背景颜色*/
+    -fx-setting-list-bg-color: #e1e1e3;/*设置条目背景颜色*/
+    -fx-setting-list-separator-line-color: #b2b2b2;/*设置分隔线背景颜色*/
     -fx-setting-list-button-bg-color:#cdcdd2;/*设置条目按钮颜色*/
     -fx-setting-list-button-bg-color-hover:#c1c1c7;/*设置条目悬浮时按钮颜色*/
     -fx-setting-list-button-bg-color-pressed:#b9b9be;/*设置条目按下时按钮颜色*/
@@ -268,13 +269,31 @@
 }
 
 /* ===设置界面=== */
+
+#settingList .component-list-item:first  {
+    -fx-background-radius: 4 4 0 0;
+}
+
+#settingList .component-list-item:last  {
+    -fx-background-radius: 0 0 4 4;
+    -fx-border-width: 0 0 0 0;
+}
+
+
+#settingList .component-list-item{
+    -fx-background-color: -fx-setting-list-bg-color;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: -fx-setting-list-separator-line-color;
+}
+
+/* 设置页面各个HBox样式 */
 #settingList HBox {
     -fx-min-height: 40;
     -fx-alignment: CENTER_LEFT;
     -fx-background-radius: 4px; /* 圆角 */
     -fx-border-radius: 4px;     /* 边框也需要圆角 */
 
-    -fx-background-color: -fx-settinf-list-bg-color;
+    -fx-background-color: -fx-setting-list-bg-color;
 
     -fx-spacing: 5;
     -fx-padding: 5 5 5 5;
@@ -386,20 +405,3 @@
     -fx-background-color:-fx-exit-button-bg-color-pressed;
 }
 
-/* ===ComponentList=== */
-
-#settingList .component-list-item:first  {
-    -fx-background-radius: 4 4 0 0;
-}
-
-#settingList .component-list-item:last  {
-    -fx-background-radius: 0 0 4 4;
-    -fx-border-width: 0 0 0 0;
-}
-
-
-#settingList .component-list-item{
-    -fx-background-color: -fx-settinf-list-bg-color;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #888888;
-}

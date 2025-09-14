@@ -55,7 +55,8 @@
     -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
 
     /*设置面板样式*/
-    -fx-settinf-list-bg-color: #414141;/*设置条目背景颜色*/
+    -fx-setting-list-bg-color: #414141;/*设置条目背景颜色*/
+    -fx-setting-list-separator-line-color: #626262;/*设置分隔线背景颜色*/
     -fx-setting-list-button-bg-color:#4f4f4f;/*设置条目按钮颜色*/
     -fx-setting-list-button-bg-color-hover:#5a5a5a;/*设置条目悬浮时按钮颜色*/
     -fx-setting-list-button-bg-color-pressed:#5f5f5f;/*设置条目按下时按钮颜色*/

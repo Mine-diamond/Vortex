@@ -280,4 +280,5 @@ public class MainWindow {
     public void showSettingPanel(ActionEvent actionEvent) {
         loadOrGetView(ContentPanel.SETTINGPANEL);
     }
+
 }

@@ -389,10 +389,18 @@
 
 /* ===ComponentList=== */
 
-.component-list .component-list-item:first {
-    -fx-background-radius: 1 1 0 0;
+#settingList2 .component-list-item:first  {
+    -fx-background-radius: 4 4 0 0;
 }
 
-.component-list .component-list-item:last {
-    -fx-background-radius: 0 0 1 1;
+#settingList2 .component-list-item:last  {
+    -fx-background-radius: 0 0 4 4;
+    -fx-border-width: 0 0 0 0;
+}
+
+
+#settingList2 .component-list-item{
+    -fx-background-color: -fx-settinf-list-bg-color;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #888888;
 }

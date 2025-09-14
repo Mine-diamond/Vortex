@@ -47,31 +47,64 @@ public class MappedList<S, T> extends TransformationList<T, S> {
             if (c.wasPermutated()) {
                 int from = c.getFrom();
                 int to = c.getTo();
+
+                // 先根据 permutation 重排 mapped（基于快照）
+                List<T> oldSeg = new ArrayList<>(mapped.subList(from, to));
+                for (int i = from; i < to; i++) {
+                    int dest = c.getPermutation(i); // 绝对索引
+                    T val = oldSeg.get(i - from);
+                    mapped.set(dest, val);
+                }
+
+                // 再构造并发送 permutation 事件
                 int[] perm = new int[to - from];
                 for (int i = from; i < to; i++) {
                     perm[i - from] = c.getPermutation(i);
                 }
                 nextPermutation(from, to, perm);
+
             } else if (c.wasUpdated()) {
                 for (int i = c.getFrom(); i < c.getTo(); i++) {
                     mapped.set(i, mapper.apply(getSource().get(i)));
                     nextUpdate(i);
                 }
+
             } else {
+                int from = c.getFrom();
+                // 预先构造 removed 列表（如果有）
+                List<T> removed = null;
                 if (c.wasRemoved()) {
-                    List<T> removed = new ArrayList<>(mapped.subList(c.getFrom(), c.getFrom() + c.getRemovedSize()));
-                    for (int i = 0; i < c.getRemovedSize(); i++) {
-                        mapped.remove(c.getFrom());
-                    }
-                    nextRemove(c.getFrom(), removed);
+                    removed = new ArrayList<>(mapped.subList(from, from + c.getRemovedSize()));
                 }
-                if (c.wasAdded()) {
-                    List<T> adds = new ArrayList<>();
+
+                if (c.wasAdded() && c.wasRemoved()) {
+                    // 替换：先用新增内容覆盖原区间
+                    List<T> adds = new ArrayList<>(c.getAddedSize());
                     for (int i = c.getFrom(); i < c.getTo(); i++) {
                         adds.add(mapper.apply(getSource().get(i)));
                     }
-                    mapped.addAll(c.getFrom(), adds);
-                    nextAdd(c.getFrom(), c.getTo());
+                    // 先清掉原区间，再插入 adds
+                    mapped.subList(from, from + c.getRemovedSize()).clear();
+                    mapped.addAll(from, adds);
+
+                    // 发出一次 replace 事件（语义正确）
+                    nextReplace(from, from + adds.size(), removed);
+
+                } else {
+                    if (c.wasRemoved()) {
+                        // 单纯移除
+                        mapped.subList(from, from + c.getRemovedSize()).clear();
+                        nextRemove(from, removed);
+                    }
+                    if (c.wasAdded()) {
+                        // 单纯新增
+                        List<T> adds = new ArrayList<>(c.getAddedSize());
+                        for (int i = c.getFrom(); i < c.getTo(); i++) {
+                            adds.add(mapper.apply(getSource().get(i)));
+                        }
+                        mapped.addAll(from, adds);
+                        nextAdd(from, from + adds.size());
+                    }
                 }
             }
         }

@@ -26,9 +26,9 @@ import javafx.scene.control.Button;
 public class SettingPanel2 {
 
     @FXML
-    private ComponentList settingList;
+    private ComponentList settingList2;
 
     public void insertButton(ActionEvent actionEvent) {
-        settingList.content.add(2,new Button("新按钮"));
+        settingList2.getContent().add(settingList2.getContent().size(),new Button("新按钮"));
     }
 }

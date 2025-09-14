@@ -34,15 +34,30 @@ import lombok.Getter;
 
 import java.util.function.Function;
 
+/**
+ * 为各个不同的node应用统一的样式，并以将node以列表形式展示
+ */
 @DefaultProperty("content")
 public class ComponentList extends Control {
 
     @Getter
-    public final ObservableList<Node> content = FXCollections.observableArrayList();
+    private final ObservableList<Node> content = FXCollections.observableArrayList();
 
     public ComponentList() {
         // 设置控件的默认样式类
         getStyleClass().add("component-list");
+    }
+
+    public void addNode(Node node) {
+        content.add(node);
+    }
+
+    public void removeNode(Node node) {
+        content.remove(node);
+    }
+
+    public int size(){
+        return content.size();
     }
 
     //默认皮肤
@@ -61,9 +76,7 @@ public class ComponentList extends Control {
         private static final PseudoClass PSEUDO_CLASS_FIRST = PseudoClass.getPseudoClass("first");
         private static final PseudoClass PSEUDO_CLASS_LAST = PseudoClass.getPseudoClass("last");
 
-        VBox vBox = new VBox();
-        private final ObjectBinding<StackPane> firstItem;
-        private final ObjectBinding<StackPane> lastItem;
+        private final VBox vBox = new VBox();
 
         /**
          * Constructor for all SkinBase instances.
@@ -78,7 +91,7 @@ public class ComponentList extends Control {
 
             Bindings.bindContent(vBox.getChildren(), stackPaneContent);
 
-            firstItem = Bindings.valueAt(stackPaneContent, 0);
+            ObjectBinding<StackPane> firstItem = Bindings.valueAt(stackPaneContent, 0);
             firstItem.addListener((observable, oldValue, newValue) -> {
                 if (newValue != null)
                     newValue.pseudoClassStateChanged(PSEUDO_CLASS_FIRST, true);
@@ -86,7 +99,7 @@ public class ComponentList extends Control {
                     oldValue.pseudoClassStateChanged(PSEUDO_CLASS_FIRST, false);
             });
 
-            lastItem = Bindings.valueAt(stackPaneContent, Bindings.subtract(Bindings.size(stackPaneContent), 1));
+            ObjectBinding<StackPane> lastItem = Bindings.valueAt(stackPaneContent, Bindings.subtract(Bindings.size(stackPaneContent), 1));
             lastItem.addListener((observable, oldValue, newValue) -> {
                 if (newValue != null)
                     newValue.pseudoClassStateChanged(PSEUDO_CLASS_LAST, true);
@@ -106,13 +119,11 @@ public class ComponentList extends Control {
 
         }
 
-        Function<Node, StackPane> nodeToStackPaneMapper = node -> {
+        static final Function<Node, StackPane> nodeToStackPaneMapper = node -> {
             StackPane stackPane = new StackPane(node);
             stackPane.getStyleClass().add("component-list-item");
             return stackPane;
         };
-
     }
-
 
 }

@@ -22,14 +22,24 @@ package tech.minediamond.vortex.config;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.service.*;
-import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
-import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
-import tech.minediamond.vortex.service.interfaces.IAutoStartService;
-import tech.minediamond.vortex.ui.EditorPanel;
-import tech.minediamond.vortex.ui.MainWindow;
-import tech.minediamond.vortex.ui.SettingPanel;
+import tech.minediamond.vortex.model.appConfig.AppConfig;
+import tech.minediamond.vortex.service.appConfig.AppConfigProvider;
+import tech.minediamond.vortex.service.appConfig.AppConfigService;
+import tech.minediamond.vortex.service.autoStart.MockAutoStartService;
+import tech.minediamond.vortex.service.autoStart.WindowsAutoStartService;
+import tech.minediamond.vortex.service.ui.ShowStageListenerFactory;
+import tech.minediamond.vortex.service.autoStart.IAutoStartService;
+import tech.minediamond.vortex.service.i18n.I18nService;
+import tech.minediamond.vortex.service.search.EverythingService;
+import tech.minediamond.vortex.service.ui.AutoOperateService;
+import tech.minediamond.vortex.service.ui.StageProvider;
+import tech.minediamond.vortex.service.ui.TrayMenuService;
+import tech.minediamond.vortex.service.ui.WindowAnimator;
+import tech.minediamond.vortex.service.uncaughtExceptionHandle.GlobalUncaughtExceptionHandlerService;
+import tech.minediamond.vortex.ui.controller.EditorPanel;
+import tech.minediamond.vortex.ui.controller.MainWindow;
+import tech.minediamond.vortex.ui.controller.SettingPanel;
+import tech.minediamond.vortex.util.EnvironmentDetector;
 
 public class AppModule extends AbstractModule {
     @Override
@@ -41,7 +51,6 @@ public class AppModule extends AbstractModule {
         bind(AutoOperateService.class).in(Scopes.SINGLETON);
         bind(I18nService.class);
         bind(EverythingService.class).asEagerSingleton();
-        bind(OpenResourceService.class);
         bind(GlobalUncaughtExceptionHandlerService.class).in(Scopes.SINGLETON);
 
 
@@ -67,6 +76,6 @@ public class AppModule extends AbstractModule {
                 // 告诉 Guice，这个工厂的实现是基于 ShowStageListenerFactory 接口
                 .build(ShowStageListenerFactory.class));
 
-        install(new FactoryModuleBuilder().build(DynamicLineNumberFactoryFactory.class));
+
     }
 }

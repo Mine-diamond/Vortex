@@ -31,8 +31,17 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import tech.minediamond.vortex.bootstrap.EnvironmentChecker;
+import tech.minediamond.vortex.bootstrap.SingleInstanceSocketManager;
 import tech.minediamond.vortex.config.AppModule;
-import tech.minediamond.vortex.service.*;
+import tech.minediamond.vortex.service.appConfig.AppConfigService;
+import tech.minediamond.vortex.service.i18n.I18nService;
+import tech.minediamond.vortex.service.search.EverythingService;
+import tech.minediamond.vortex.service.ui.StageProvider;
+import tech.minediamond.vortex.service.ui.ThemeService;
+import tech.minediamond.vortex.service.ui.TrayMenuService;
+import tech.minediamond.vortex.service.ui.WindowAnimator;
+import tech.minediamond.vortex.service.uncaughtExceptionHandle.GlobalUncaughtExceptionHandlerService;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;

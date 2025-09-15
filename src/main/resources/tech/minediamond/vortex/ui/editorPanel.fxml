@@ -24,11 +24,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import tech.minediamond.vortex.ui.SimpleHoverTooltip?>
+<?import tech.minediamond.vortex.ui.component.SimpleHoverTooltip?>
 
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="tech.minediamond.vortex.ui.EditorPanel"
+      fx:controller="tech.minediamond.vortex.ui.controller.EditorPanel"
       spacing="10" prefWidth="300">
     <padding>
         <Insets top="10" right="20" left="10" bottom="10"/>

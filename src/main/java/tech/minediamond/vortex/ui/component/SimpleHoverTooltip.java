@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.ui;
+package tech.minediamond.vortex.ui.component;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

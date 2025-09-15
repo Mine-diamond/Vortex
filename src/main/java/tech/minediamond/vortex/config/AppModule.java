@@ -27,9 +27,9 @@ import tech.minediamond.vortex.service.*;
 import tech.minediamond.vortex.service.factory.DynamicLineNumberFactoryFactory;
 import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
 import tech.minediamond.vortex.service.interfaces.IAutoStartService;
-import tech.minediamond.vortex.ui.EditorPanel;
-import tech.minediamond.vortex.ui.MainWindow;
-import tech.minediamond.vortex.ui.SettingPanel;
+import tech.minediamond.vortex.ui.controller.EditorPanel;
+import tech.minediamond.vortex.ui.controller.MainWindow;
+import tech.minediamond.vortex.ui.controller.SettingPanel;
 import tech.minediamond.vortex.util.EnvironmentDetector;
 
 public class AppModule extends AbstractModule {

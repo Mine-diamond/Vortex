@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.ui;
+package tech.minediamond.vortex.ui.controller;
 
 
 import com.gluonhq.richtextarea.RichTextArea;
@@ -35,6 +35,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.AppConfig;
+import tech.minediamond.vortex.ui.component.SimpleHoverTooltip;
 
 import java.util.List;
 

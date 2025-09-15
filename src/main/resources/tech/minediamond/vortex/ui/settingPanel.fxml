@@ -21,11 +21,11 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import tech.minediamond.vortex.ui.ComponentList?>
+<?import tech.minediamond.vortex.ui.component.ComponentList?>
 <?import org.controlsfx.control.ToggleSwitch?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="tech.minediamond.vortex.ui.SettingPanel"
+            fx:controller="tech.minediamond.vortex.ui.controller.SettingPanel"
             prefHeight="400.0" prefWidth="600.0">
 
     <ScrollPane fx:id="scrollPane" fitToWidth="true" pickOnBounds="false" focusTraversable="false"

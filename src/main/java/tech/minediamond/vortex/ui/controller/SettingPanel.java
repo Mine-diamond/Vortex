@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.ui;
+package tech.minediamond.vortex.ui.controller;
 
 import com.google.inject.Inject;
 import javafx.application.Platform;
@@ -28,7 +28,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.ToggleSwitch;
@@ -38,6 +37,7 @@ import tech.minediamond.vortex.service.StageProvider;
 import tech.minediamond.vortex.service.I18nService;
 import tech.minediamond.vortex.service.WindowAnimator;
 import tech.minediamond.vortex.service.interfaces.IAutoStartService;
+import tech.minediamond.vortex.ui.component.ComponentList;
 
 import java.awt.*;
 import java.net.URI;

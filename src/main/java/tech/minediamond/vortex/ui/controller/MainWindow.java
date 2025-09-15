@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.ui;
+package tech.minediamond.vortex.ui.controller;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
@@ -49,6 +49,7 @@ import tech.minediamond.vortex.model.ContentPanel;
 import tech.minediamond.vortex.model.Theme;
 import tech.minediamond.vortex.service.*;
 import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
+import tech.minediamond.vortex.ui.component.SimpleHoverTooltip;
 import tech.minediamond.vortex.util.BindingUtils;
 
 import java.io.IOException;

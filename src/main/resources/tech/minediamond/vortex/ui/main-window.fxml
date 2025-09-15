@@ -26,7 +26,7 @@
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="mainWindow"
-            fx:controller="tech.minediamond.vortex.ui.MainWindow"
+            fx:controller="tech.minediamond.vortex.ui.controller.MainWindow"
             prefHeight="650.0" prefWidth="1200.0">
 
     <!-- 它是一个不可见对象，可以放在 <fx:define> 标签里，或者直接放在布局的任何位置 -->

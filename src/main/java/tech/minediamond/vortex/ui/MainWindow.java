@@ -49,6 +49,7 @@ import tech.minediamond.vortex.model.ContentPanel;
 import tech.minediamond.vortex.model.Theme;
 import tech.minediamond.vortex.service.*;
 import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
+import tech.minediamond.vortex.util.BindingUtils;
 
 import java.io.IOException;
 import java.util.HashMap;

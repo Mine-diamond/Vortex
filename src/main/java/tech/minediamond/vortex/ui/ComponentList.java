@@ -31,6 +31,7 @@ import javafx.scene.control.SkinBase;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
+import tech.minediamond.vortex.util.MappedList;
 
 import java.util.function.Function;
 

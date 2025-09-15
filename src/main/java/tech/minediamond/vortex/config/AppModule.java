@@ -30,6 +30,7 @@ import tech.minediamond.vortex.service.interfaces.IAutoStartService;
 import tech.minediamond.vortex.ui.EditorPanel;
 import tech.minediamond.vortex.ui.MainWindow;
 import tech.minediamond.vortex.ui.SettingPanel;
+import tech.minediamond.vortex.util.EnvironmentDetector;
 
 public class AppModule extends AbstractModule {
     @Override

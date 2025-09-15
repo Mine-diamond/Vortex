@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.service;
+package tech.minediamond.vortex.util;
 
 import lombok.Getter;
 

@@ -20,7 +20,7 @@
 package tech.minediamond.vortex.service.program;
 
 import tech.minediamond.vortex.model.appConfig.GlobalDataStore;
-import tech.minediamond.vortex.program.ProgramInfo;
+import tech.minediamond.vortex.model.program.ProgramInfo;
 
 import java.io.File;
 import java.io.IOException;

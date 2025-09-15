@@ -22,8 +22,8 @@ package tech.minediamond.vortex.service.program;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import tech.minediamond.vortex.model.appConfig.GlobalDataStore;
-import tech.minediamond.vortex.program.ProgramInfo;
-import tech.minediamond.vortex.program.ProgramSource;
+import tech.minediamond.vortex.model.program.ProgramInfo;
+import tech.minediamond.vortex.model.program.ProgramSource;
 
 import java.io.BufferedReader;
 import java.io.IOException;

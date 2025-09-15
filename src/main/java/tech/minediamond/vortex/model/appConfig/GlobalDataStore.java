@@ -21,7 +21,7 @@ package tech.minediamond.vortex.model.appConfig;
 
 import lombok.Getter;
 import lombok.Setter;
-import tech.minediamond.vortex.program.ProgramInfo;
+import tech.minediamond.vortex.model.program.ProgramInfo;
 
 import java.util.ArrayList;
 

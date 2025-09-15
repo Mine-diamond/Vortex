@@ -19,8 +19,6 @@
 
 package tech.minediamond.vortex.util;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.search.EverythingResult;
 
@@ -28,18 +26,14 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-@Singleton
+/**
+ * 对{@code Desktop}的包装，目的是调用方不需要自己验证是否支持桌面操作
+ */
 @Slf4j
-public class OpenResourceService {
+public class OpenResourceUtil {
+    private static final Desktop desktop = Desktop.getDesktop();;
 
-    private final Desktop desktop;
-
-    @Inject
-    public OpenResourceService() {
-        desktop = Desktop.getDesktop();
-    }
-
-    public boolean OpenFile(EverythingResult result) {
+    public static boolean OpenFile(EverythingResult result) {
         if (desktop.isSupported(Desktop.Action.OPEN)) {
             try {
                 desktop.open(new File(result.getFullPath()));

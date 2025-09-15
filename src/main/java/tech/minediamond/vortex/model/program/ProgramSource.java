@@ -17,7 +17,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.program;
+package tech.minediamond.vortex.model.program;
 
 public enum ProgramSource {
     UWP,REGISTRY

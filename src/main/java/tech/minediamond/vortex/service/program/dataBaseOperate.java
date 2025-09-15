@@ -19,8 +19,8 @@
 
 package tech.minediamond.vortex.service.program;
 
-import tech.minediamond.vortex.program.ProgramInfo;
-import tech.minediamond.vortex.program.ProgramSource;
+import tech.minediamond.vortex.model.program.ProgramInfo;
+import tech.minediamond.vortex.model.program.ProgramSource;
 
 import java.nio.file.Path;
 import java.sql.*;

@@ -25,6 +25,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -47,19 +49,14 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import tech.minediamond.vortex.model.appConfig.AppConfig;
 import tech.minediamond.vortex.model.ui.ContentPanel;
 import tech.minediamond.vortex.model.ui.Theme;
-import tech.minediamond.vortex.service.ui.ShowStageListenerFactory;
 import tech.minediamond.vortex.service.i18n.I18nService;
-import tech.minediamond.vortex.service.ui.AutoOperateService;
-import tech.minediamond.vortex.service.ui.ShowStageListener;
-import tech.minediamond.vortex.service.ui.StageProvider;
-import tech.minediamond.vortex.service.ui.WindowAnimator;
+import tech.minediamond.vortex.service.ui.*;
 import tech.minediamond.vortex.ui.component.SimpleHoverTooltip;
 import tech.minediamond.vortex.util.BindingUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static tech.minediamond.vortex.model.ui.Theme.*;
 
@@ -70,8 +67,6 @@ public class MainWindow {
     private final WindowAnimator windowAnimator;
     private final I18nService i18n;
     private final AutoOperateService autoOperateService;
-
-    private static ContentPanel currentContentPanel;
 
     @FXML
     private AnchorPane mainWindow;
@@ -84,11 +79,14 @@ public class MainWindow {
     @FXML
     private ToggleButton quickEditBtn;
     @FXML
+    private ToggleButton settingBtn;
+    @FXML
     private Button themeSwitchBtn;
     @FXML
     private Button hideWindowBtn;
     //缓存已经加载的视图
     private final Map<String, Parent> viewCache = new HashMap<>();
+    private final ObjectProperty<ContentPanel> currentContentPanelProperty = new SimpleObjectProperty<>(ContentPanel.EDITORPANEL);
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -122,7 +120,7 @@ public class MainWindow {
         handleDragWindow();
         initUIComponent();
 
-        loadOrGetView(ContentPanel.EDITORPANEL);
+        loadOrGetView(currentContentPanelProperty.get());
         mainToggleGroup.selectToggle(quickEditBtn);
     }
 
@@ -183,7 +181,16 @@ public class MainWindow {
                 mainToggleGroup.selectToggle(oldValue);
             }
         });
+
+        currentContentPanelProperty.addListener((observable, oldValue, newValue) -> {
+            loadOrGetView(newValue);
+            switch (newValue) {
+                case EDITORPANEL -> mainToggleGroup.selectToggle(quickEditBtn);
+                case SETTINGPANEL -> mainToggleGroup.selectToggle(settingBtn);
+            }
+        });
     }
+
 
     /**
      * 设置主窗口的属性
@@ -246,10 +253,6 @@ public class MainWindow {
      * @param fxmlFileName 文件名
      */
     private void loadOrGetView(ContentPanel fxmlFileName) {
-        if (fxmlFileName == currentContentPanel) {
-            log.info("原页面：{}，新页面：{}，页面一致", fxmlFileName.getFileName(), currentContentPanel.getFileName());
-            return;
-        }
         String fileName = fxmlFileName.getFileName();
         Parent view = viewCache.get(fileName);
 
@@ -266,25 +269,24 @@ public class MainWindow {
                 AnchorPane.setBottomAnchor(view, 0.0);
                 AnchorPane.setLeftAnchor(view, 0.0);
                 AnchorPane.setRightAnchor(view, 0.0);
-                log.info("原页面：{}，新页面：{}，从文件加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+                log.info("加载新页面：{}，从文件加载新页面", fxmlFileName.getFileName());
             } catch (IOException e) {
                 log.error("加载 {} 页面出现错误: ", fileName, e);
                 return;
             }
         } else {
-            log.info("原页面：{}，新页面：{}，从缓存加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+            log.info("加载新页面：{}，从缓存加载新页面",  fxmlFileName.getFileName());
         }
-        currentContentPanel = fxmlFileName;
         //更新tabWindow
         tabWindow.getChildren().setAll(view);
     }
 
     public void showEditorPanel(ActionEvent actionEvent) {
-        loadOrGetView(ContentPanel.EDITORPANEL);
+        currentContentPanelProperty.set(ContentPanel.EDITORPANEL);
     }
 
     public void showSettingPanel(ActionEvent actionEvent) {
-        loadOrGetView(ContentPanel.SETTINGPANEL);
+        currentContentPanelProperty.set(ContentPanel.SETTINGPANEL);
     }
 
 }

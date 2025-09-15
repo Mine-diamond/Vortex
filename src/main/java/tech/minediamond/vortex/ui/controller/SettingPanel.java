@@ -31,12 +31,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.controlsfx.control.ToggleSwitch;
-import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.model.SupportedLocales;
-import tech.minediamond.vortex.service.StageProvider;
-import tech.minediamond.vortex.service.I18nService;
-import tech.minediamond.vortex.service.WindowAnimator;
-import tech.minediamond.vortex.service.interfaces.IAutoStartService;
+import tech.minediamond.vortex.model.appConfig.AppConfig;
+import tech.minediamond.vortex.model.i18n.SupportedLocales;
+import tech.minediamond.vortex.service.ui.StageProvider;
+import tech.minediamond.vortex.service.i18n.I18nService;
+import tech.minediamond.vortex.service.ui.WindowAnimator;
+import tech.minediamond.vortex.service.autoStart.IAutoStartService;
 import tech.minediamond.vortex.ui.component.ComponentList;
 
 import java.awt.*;

@@ -23,8 +23,10 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import tech.minediamond.vortex.config.AppModule;
-import tech.minediamond.vortex.model.EverythingResult;
-import tech.minediamond.vortex.model.SearchMode;
+import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.search.SearchMode;
+import tech.minediamond.vortex.service.search.EverythingService;
+import tech.minediamond.vortex.util.OpenResourceService;
 
 import java.io.IOException;
 import java.nio.file.Path;

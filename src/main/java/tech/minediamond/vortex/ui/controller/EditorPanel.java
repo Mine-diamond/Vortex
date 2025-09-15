@@ -34,7 +34,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import lombok.extern.slf4j.Slf4j;
-import tech.minediamond.vortex.model.AppConfig;
+import tech.minediamond.vortex.model.appConfig.AppConfig;
 import tech.minediamond.vortex.ui.component.SimpleHoverTooltip;
 
 import java.util.List;

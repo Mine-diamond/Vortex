@@ -44,11 +44,15 @@ import org.kordamp.ikonli.fluentui.FluentUiFilledMZ;
 import org.kordamp.ikonli.fluentui.FluentUiRegularAL;
 import org.kordamp.ikonli.fluentui.FluentUiRegularMZ;
 import org.kordamp.ikonli.javafx.FontIcon;
-import tech.minediamond.vortex.model.AppConfig;
-import tech.minediamond.vortex.model.ContentPanel;
-import tech.minediamond.vortex.model.Theme;
-import tech.minediamond.vortex.service.*;
-import tech.minediamond.vortex.service.factory.ShowStageListenerFactory;
+import tech.minediamond.vortex.model.appConfig.AppConfig;
+import tech.minediamond.vortex.model.ui.ContentPanel;
+import tech.minediamond.vortex.model.ui.Theme;
+import tech.minediamond.vortex.service.ui.ShowStageListenerFactory;
+import tech.minediamond.vortex.service.i18n.I18nService;
+import tech.minediamond.vortex.service.ui.AutoOperateService;
+import tech.minediamond.vortex.service.ui.ShowStageListener;
+import tech.minediamond.vortex.service.ui.StageProvider;
+import tech.minediamond.vortex.service.ui.WindowAnimator;
 import tech.minediamond.vortex.ui.component.SimpleHoverTooltip;
 import tech.minediamond.vortex.util.BindingUtils;
 
@@ -57,7 +61,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static tech.minediamond.vortex.model.Theme.*;
+import static tech.minediamond.vortex.model.ui.Theme.*;
 
 @Slf4j
 public class MainWindow {

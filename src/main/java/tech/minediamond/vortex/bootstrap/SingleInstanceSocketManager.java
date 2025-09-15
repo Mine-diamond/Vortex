@@ -21,7 +21,7 @@ package tech.minediamond.vortex.bootstrap;
 
 import javafx.application.Platform;
 import lombok.extern.slf4j.Slf4j;
-import tech.minediamond.vortex.service.WindowAnimator;
+import tech.minediamond.vortex.service.ui.WindowAnimator;
 
 import java.io.BufferedReader;
 import java.io.IOException;

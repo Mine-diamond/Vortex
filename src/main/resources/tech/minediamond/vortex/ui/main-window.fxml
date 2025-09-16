@@ -42,7 +42,7 @@
                 <FontIcon iconLiteral="fltral-document-edit-16"/>
             </graphic>
         </ToggleButton>
-        <ToggleButton text="%mainWindow.tab.search" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup">
+        <ToggleButton text="%mainWindow.tab.search" fx:id="searchBtn" onAction="#showSearchPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup">
             <graphic>
                 <FontIcon iconLiteral="fltfmz-search-20"/>
             </graphic>

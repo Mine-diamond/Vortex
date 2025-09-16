@@ -79,6 +79,8 @@ public class MainWindow {
     @FXML
     private ToggleButton quickEditBtn;
     @FXML
+    private ToggleButton searchBtn;
+    @FXML
     private ToggleButton settingBtn;
     @FXML
     private Button themeSwitchBtn;
@@ -86,7 +88,7 @@ public class MainWindow {
     private Button hideWindowBtn;
     //缓存已经加载的视图
     private final Map<String, Parent> viewCache = new HashMap<>();
-    private final ObjectProperty<ContentPanel> currentContentPanelProperty = new SimpleObjectProperty<>(ContentPanel.EDITORPANEL);
+    private final ObjectProperty<ContentPanel> currentContentPanelProperty = new SimpleObjectProperty<>(ContentPanel.EDITOR_PANEL);
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -185,8 +187,9 @@ public class MainWindow {
         currentContentPanelProperty.addListener((observable, oldValue, newValue) -> {
             loadOrGetView(newValue);
             switch (newValue) {
-                case EDITORPANEL -> mainToggleGroup.selectToggle(quickEditBtn);
-                case SETTINGPANEL -> mainToggleGroup.selectToggle(settingBtn);
+                case EDITOR_PANEL -> mainToggleGroup.selectToggle(quickEditBtn);
+                case SETTING_PANEL -> mainToggleGroup.selectToggle(settingBtn);
+                case SEARCH_PANEL -> mainToggleGroup.selectToggle(searchBtn);
             }
         });
     }
@@ -282,11 +285,14 @@ public class MainWindow {
     }
 
     public void showEditorPanel(ActionEvent actionEvent) {
-        currentContentPanelProperty.set(ContentPanel.EDITORPANEL);
+        currentContentPanelProperty.set(ContentPanel.EDITOR_PANEL);
     }
 
     public void showSettingPanel(ActionEvent actionEvent) {
-        currentContentPanelProperty.set(ContentPanel.SETTINGPANEL);
+        currentContentPanelProperty.set(ContentPanel.SETTING_PANEL);
     }
 
+    public void showSearchPanel(ActionEvent actionEvent) {
+        currentContentPanelProperty.set(ContentPanel.SEARCH_PANEL);
+    }
 }

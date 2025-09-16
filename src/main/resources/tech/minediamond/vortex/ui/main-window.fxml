@@ -34,7 +34,7 @@
         <ToggleGroup fx:id="mainToggleGroup" />
     </fx:define>
 
-    <TextField fx:id="searchField" promptText="%search.text" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
+    <TextField fx:id="searchField" promptText="%search.promptText" AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"/>
 
     <VBox alignment="CENTER" AnchorPane.topAnchor="50" AnchorPane.rightAnchor="1070" AnchorPane.leftAnchor="20" AnchorPane.bottomAnchor="70">
         <ToggleButton text="%mainWindow.tab.quickEdit" fx:id="quickEditBtn" onAction="#showEditorPanel" VBox.vgrow="SOMETIMES" maxHeight="40" maxWidth="Infinity" toggleGroup="$mainToggleGroup">

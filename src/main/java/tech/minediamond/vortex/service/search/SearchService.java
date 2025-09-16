@@ -24,9 +24,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import lombok.SneakyThrows;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.search.EverythingResult;
 import tech.minediamond.vortex.model.search.SearchMode;
+import tech.minediamond.vortex.service.i18n.I18nService;
 import tech.minediamond.vortex.ui.component.ComponentList;
 import tech.minediamond.vortex.ui.component.SearchResultCard;
 import tech.minediamond.vortex.util.OpenResourceUtil;
@@ -36,19 +39,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-public class SearchService  extends Service<ComponentList> {
+@Slf4j
+public class SearchService extends Service<ComponentList> {
 
     private final String NAME = "Search Thread";
 
     private final EverythingService everythingService;
+    private final I18nService i18n;
     private final StringProperty keyword = new SimpleStringProperty();
 
     private final ThreadFactory searchThreadFactory;
     private final ExecutorService executor;
 
     @Inject
-    public SearchService(EverythingService everythingService) {
+    public SearchService(EverythingService everythingService, I18nService i18n) {
         this.everythingService = everythingService;
+        this.i18n = i18n;
 
         searchThreadFactory = r -> {
             Thread t = new Thread(r, NAME);
@@ -81,13 +87,20 @@ public class SearchService  extends Service<ComponentList> {
                         .query();
 
                 ComponentList componentList = new ComponentList();
-                for (EverythingResult result : results) {
-                    SearchResultCard card = new SearchResultCard(result);
-                    card.setOnOpen(OpenResourceUtil::OpenFile);
-                    card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);
-                    componentList.addNode(card);
+                if (!results.isEmpty()) {
+                    for (EverythingResult result : results) {
+                        SearchResultCard card = new SearchResultCard(result);
+                        card.setOnOpen(OpenResourceUtil::OpenFile);
+                        card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);
+                        componentList.addNode(card);
+                    }
+                } else {
+                    HBox hbox = new HBox();
+                    Label label = new Label(i18n.t("search.result.notFound"));
+                    hbox.getChildren().add(label);
+                    componentList.addNode(hbox);
                 }
-
+                log.info("搜索成功");
                 return componentList;
             }
         };

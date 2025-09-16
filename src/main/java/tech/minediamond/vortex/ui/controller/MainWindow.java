@@ -198,7 +198,7 @@ public class MainWindow {
         });
 
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
+            if (newValue != null && !newValue.isEmpty()) {
                 currentContentPanelProperty.set(ContentPanel.SEARCH_PANEL);
                 searchPanel.search(newValue);
             }

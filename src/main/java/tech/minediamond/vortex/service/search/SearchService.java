@@ -87,19 +87,19 @@ public class SearchService extends Service<ComponentList> {
                         .query();
 
                 ComponentList componentList = new ComponentList();
-                if (!results.isEmpty()) {
-                    for (EverythingResult result : results) {
-                        SearchResultCard card = new SearchResultCard(result);
-                        card.setOnOpen(OpenResourceUtil::OpenFile);
-                        card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);
-                        componentList.addNode(card);
-                    }
-                } else {
-                    HBox hbox = new HBox();
-                    Label label = new Label(i18n.t("search.result.notFound"));
-                    hbox.getChildren().add(label);
-                    componentList.addNode(hbox);
+
+                if (results.isEmpty()) {
+                    updateProgress(0, 1);
+                    return null;
                 }
+
+                for (EverythingResult result : results) {
+                    SearchResultCard card = new SearchResultCard(result);
+                    card.setOnOpen(OpenResourceUtil::OpenFile);
+                    card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);
+                    componentList.addNode(card);
+                }
+
                 log.info("搜索成功");
                 return componentList;
             }

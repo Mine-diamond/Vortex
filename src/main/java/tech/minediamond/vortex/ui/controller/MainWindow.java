@@ -201,6 +201,8 @@ public class MainWindow {
             if (newValue != null && !newValue.isEmpty()) {
                 currentContentPanelProperty.set(ContentPanel.SEARCH_PANEL);
                 searchPanel.search(newValue);
+            } else if (newValue.isEmpty()) {
+                searchPanel.searchClear();
             }
         });
     }

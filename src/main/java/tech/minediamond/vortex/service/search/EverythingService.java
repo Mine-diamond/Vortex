@@ -222,25 +222,27 @@ public class EverythingService {
 
 
             char[] buffer = new char[MAX_PATH];
+            WinDef.DWORD resultListindex = new WinDef.DWORD();
             for (int i = 0; i < numResults.intValue(); i++) {
                 FileData fileData = new FileData();
+                resultListindex.setValue(i);
                 //获取搜索结果的完整路径
-                lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), Everything3.PropertyType.FULL_PATH.getID(), buffer, new WinDef.DWORD(MAX_PATH));
+                lib.Everything3_GetResultPropertyTextW(resultList, resultListindex, Everything3.PropertyType.FULL_PATH.getID(), buffer, new WinDef.DWORD(MAX_PATH));
                 String pathname = Native.toString(buffer);
                 fileData.setFullPath(pathname);
 
                 //获取搜索结果的名称
-                lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), Everything3.PropertyType.FILE_NAME.getID(), buffer, new WinDef.DWORD(MAX_PATH));
+                lib.Everything3_GetResultPropertyTextW(resultList, resultListindex, Everything3.PropertyType.FILE_NAME.getID(), buffer, new WinDef.DWORD(MAX_PATH));
                 String filename = Native.toString(buffer);
                 fileData.setFileName(filename);
 
                 //获取搜索结果的大小(单位:Byte)
                 //这里直接将返回的无符号int64转换为long，但是考虑到无符号int64达到最大位需要文件8EB以上的大小，因此直接赋值问题不大
-                long size = lib.Everything3_GetResultSize(resultList, new WinDef.DWORD(i));
+                long size = lib.Everything3_GetResultSize(resultList, resultListindex);
                 fileData.setSize(size);
 
                 //获取文件的类型
-                byte type = lib.Everything3_GetResultPropertyBYTE(resultList, new WinDef.DWORD(i), Everything3.PropertyType.IS_FOLDER.getID());
+                byte type = lib.Everything3_GetResultPropertyBYTE(resultList, resultListindex, Everything3.PropertyType.IS_FOLDER.getID());
                 int intType = type & 0xFF;
                 if (intType != 0) {
                     fileData.setType(FileType.FOLDER);

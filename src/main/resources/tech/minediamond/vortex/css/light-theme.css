@@ -67,6 +67,10 @@
     -fx-setting-combo-box-popup-bg-color-pressed: #b9b9be;/*设置条目单选按钮弹出框按下时背景颜色*/
     -fx-setting-combo-box-arrow-border-color: #353333;/* 设置条目单选按钮箭头边框颜色*/
 
+    /*搜索面板样式*/
+    -fx-search-result-file-path-text-color: #636363;/*搜索面板文件路径文本颜色*/
+    -fx-search-result-card-bg-color-hover:#d3d3d3;/*搜索面板列表悬浮时背景颜色*/
+
     /*特殊样式*/
     -fx-exit-button-bg-color-hover: #f86868;/*退出按钮悬浮时背景颜色*/
     -fx-exit-button-bg-color-pressed: #e86363;/*退出按钮悬浮时背景颜色*/

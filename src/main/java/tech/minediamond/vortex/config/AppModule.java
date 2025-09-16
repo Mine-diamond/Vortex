@@ -27,6 +27,7 @@ import tech.minediamond.vortex.service.appConfig.AppConfigProvider;
 import tech.minediamond.vortex.service.appConfig.AppConfigService;
 import tech.minediamond.vortex.service.autoStart.MockAutoStartService;
 import tech.minediamond.vortex.service.autoStart.WindowsAutoStartService;
+import tech.minediamond.vortex.service.search.SearchService;
 import tech.minediamond.vortex.service.ui.ShowStageListenerFactory;
 import tech.minediamond.vortex.service.autoStart.IAutoStartService;
 import tech.minediamond.vortex.service.i18n.I18nService;
@@ -36,6 +37,7 @@ import tech.minediamond.vortex.service.ui.StageProvider;
 import tech.minediamond.vortex.service.ui.TrayMenuService;
 import tech.minediamond.vortex.service.ui.WindowAnimator;
 import tech.minediamond.vortex.service.uncaughtExceptionHandle.GlobalUncaughtExceptionHandlerService;
+import tech.minediamond.vortex.ui.component.SearchResultCardFactory;
 import tech.minediamond.vortex.ui.controller.EditorPanel;
 import tech.minediamond.vortex.ui.controller.MainWindow;
 import tech.minediamond.vortex.ui.controller.SettingPanel;
@@ -58,6 +60,7 @@ public class AppModule extends AbstractModule {
         bind(EditorPanel.class);
         bind(SettingPanel.class);
         bind(TrayMenuService.class);
+        bind(SearchService.class);
 
         bind(WindowAnimator.class).in(Scopes.SINGLETON);
 
@@ -76,6 +79,6 @@ public class AppModule extends AbstractModule {
                 // 告诉 Guice，这个工厂的实现是基于 ShowStageListenerFactory 接口
                 .build(ShowStageListenerFactory.class));
 
-
+        install(new FactoryModuleBuilder().build(SearchResultCardFactory.class));
     }
 }

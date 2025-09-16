@@ -17,10 +17,12 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.model.search;
+package tech.minediamond.vortex.ui.component;
 
-public enum ResultType {
-    FILE,
-    FOLDER
+import tech.minediamond.vortex.model.fileData.FileData;
+
+public interface SearchResultCardFactory {
+
+    SearchResultCard create(FileData result);
+
 }
-

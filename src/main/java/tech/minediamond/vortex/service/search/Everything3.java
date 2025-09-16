@@ -41,7 +41,8 @@ public interface Everything3 extends StdCallLibrary {
     enum PropertyType {
         FILE_NAME(0),
         SIZE(2),
-        FULL_PATH(240);
+        FULL_PATH(240),
+        IS_FOLDER(269);
 
         final WinDef.DWORD ID;
 
@@ -165,6 +166,16 @@ public interface Everything3 extends StdCallLibrary {
      * @param filename_size_in_wchars 缓冲区的宽字符大小 (在 Java 中是 char)。
      */
     void Everything3_GetResultPropertyTextW(EverythingResultList resultList, WinDef.DWORD result_index, WinDef.DWORD propertyID, char[] buffer, WinDef.DWORD filename_size_in_wchars);
+
+    /**
+     * 根据属性值获取结果的特定属性
+     *
+     * @param resultList 结果列表句柄。
+     * @param result_index 结果的从零开始的索引。
+     * @param propertyID 需要获取的属性的属性值
+     * @return 返回的属性信息
+     */
+    byte Everything3_GetResultPropertyBYTE(EverythingResultList resultList, WinDef.DWORD result_index, WinDef.DWORD propertyID);
 
 
     /**

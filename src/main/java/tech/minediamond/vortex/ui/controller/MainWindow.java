@@ -25,11 +25,14 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -47,19 +50,14 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import tech.minediamond.vortex.model.appConfig.AppConfig;
 import tech.minediamond.vortex.model.ui.ContentPanel;
 import tech.minediamond.vortex.model.ui.Theme;
-import tech.minediamond.vortex.service.ui.ShowStageListenerFactory;
 import tech.minediamond.vortex.service.i18n.I18nService;
-import tech.minediamond.vortex.service.ui.AutoOperateService;
-import tech.minediamond.vortex.service.ui.ShowStageListener;
-import tech.minediamond.vortex.service.ui.StageProvider;
-import tech.minediamond.vortex.service.ui.WindowAnimator;
+import tech.minediamond.vortex.service.ui.*;
 import tech.minediamond.vortex.ui.component.SimpleHoverTooltip;
 import tech.minediamond.vortex.util.BindingUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static tech.minediamond.vortex.model.ui.Theme.*;
 
@@ -71,12 +69,12 @@ public class MainWindow {
     private final I18nService i18n;
     private final AutoOperateService autoOperateService;
 
-    private static ContentPanel currentContentPanel;
-
     @FXML
     private AnchorPane mainWindow;
     @FXML
     private AnchorPane tabWindow;
+    @FXML
+    private TextField searchField;
     @FXML
     private ToggleButton pinBtn;
     @FXML
@@ -84,11 +82,17 @@ public class MainWindow {
     @FXML
     private ToggleButton quickEditBtn;
     @FXML
+    private ToggleButton searchBtn;
+    @FXML
+    private ToggleButton settingBtn;
+    @FXML
     private Button themeSwitchBtn;
     @FXML
     private Button hideWindowBtn;
     //缓存已经加载的视图
     private final Map<String, Parent> viewCache = new HashMap<>();
+    private final ObjectProperty<ContentPanel> currentContentPanelProperty = new SimpleObjectProperty<>(ContentPanel.EDITOR_PANEL);
+    private SearchPanel searchPanel;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -122,7 +126,7 @@ public class MainWindow {
         handleDragWindow();
         initUIComponent();
 
-        loadOrGetView(ContentPanel.EDITORPANEL);
+        loadOrGetView(currentContentPanelProperty.get());
         mainToggleGroup.selectToggle(quickEditBtn);
     }
 
@@ -183,7 +187,26 @@ public class MainWindow {
                 mainToggleGroup.selectToggle(oldValue);
             }
         });
+
+        currentContentPanelProperty.addListener((observable, oldValue, newValue) -> {
+            loadOrGetView(newValue);
+            switch (newValue) {
+                case EDITOR_PANEL -> mainToggleGroup.selectToggle(quickEditBtn);
+                case SETTING_PANEL -> mainToggleGroup.selectToggle(settingBtn);
+                case SEARCH_PANEL -> mainToggleGroup.selectToggle(searchBtn);
+            }
+        });
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty()) {
+                currentContentPanelProperty.set(ContentPanel.SEARCH_PANEL);
+                searchPanel.search(newValue);
+            } else if (newValue.isEmpty()) {
+                searchPanel.searchClear();
+            }
+        });
     }
+
 
     /**
      * 设置主窗口的属性
@@ -246,10 +269,6 @@ public class MainWindow {
      * @param fxmlFileName 文件名
      */
     private void loadOrGetView(ContentPanel fxmlFileName) {
-        if (fxmlFileName == currentContentPanel) {
-            log.info("原页面：{}，新页面：{}，页面一致", fxmlFileName.getFileName(), currentContentPanel.getFileName());
-            return;
-        }
         String fileName = fxmlFileName.getFileName();
         Parent view = viewCache.get(fileName);
 
@@ -260,31 +279,36 @@ public class MainWindow {
                 loader.setResources(injector.getInstance(I18nService.class).getResourceBundle());
                 view = loader.load();
                 viewCache.put(fileName, view); // 加载后放入缓存
+                if (fxmlFileName == ContentPanel.SEARCH_PANEL) {
+                    searchPanel = loader.getController();
+                }
 
                 // 让新视图充满 tabWindow
                 AnchorPane.setTopAnchor(view, 0.0);
                 AnchorPane.setBottomAnchor(view, 0.0);
                 AnchorPane.setLeftAnchor(view, 0.0);
                 AnchorPane.setRightAnchor(view, 0.0);
-                log.info("原页面：{}，新页面：{}，从文件加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+                log.info("加载新页面：{}，从文件加载新页面", fxmlFileName.getFileName());
             } catch (IOException e) {
                 log.error("加载 {} 页面出现错误: ", fileName, e);
                 return;
             }
         } else {
-            log.info("原页面：{}，新页面：{}，从缓存加载新页面", Optional.ofNullable(currentContentPanel).map(ContentPanel::getFileName).orElse("无"), fxmlFileName.getFileName());
+            log.info("加载新页面：{}，从缓存加载新页面",  fxmlFileName.getFileName());
         }
-        currentContentPanel = fxmlFileName;
         //更新tabWindow
         tabWindow.getChildren().setAll(view);
     }
 
     public void showEditorPanel(ActionEvent actionEvent) {
-        loadOrGetView(ContentPanel.EDITORPANEL);
+        currentContentPanelProperty.set(ContentPanel.EDITOR_PANEL);
     }
 
     public void showSettingPanel(ActionEvent actionEvent) {
-        loadOrGetView(ContentPanel.SETTINGPANEL);
+        currentContentPanelProperty.set(ContentPanel.SETTING_PANEL);
     }
 
+    public void showSearchPanel(ActionEvent actionEvent) {
+        currentContentPanelProperty.set(ContentPanel.SEARCH_PANEL);
+    }
 }

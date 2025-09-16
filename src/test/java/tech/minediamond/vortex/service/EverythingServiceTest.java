@@ -23,10 +23,9 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import tech.minediamond.vortex.config.AppModule;
-import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.search.SearchMode;
 import tech.minediamond.vortex.service.search.EverythingService;
-import tech.minediamond.vortex.util.OpenResourceUtil;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -51,7 +50,7 @@ public class EverythingServiceTest {
         ArrayList<Path> folders = new ArrayList<>();
         folders.add(Paths.get("D:\\myDounment"));
         folders.add(Paths.get("F:\\software_play_in_F"));
-        List<EverythingResult> results = everythingServiceTest.service.QueryBuilder()
+        List<FileData> results = everythingServiceTest.service.QueryBuilder()
                 .searchFor("askding")
                 .inFolders(folders)
                 .mode(SearchMode.ALL)

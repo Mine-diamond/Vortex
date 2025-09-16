@@ -20,7 +20,7 @@
 package tech.minediamond.vortex.util;
 
 import lombok.extern.slf4j.Slf4j;
-import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.fileData.FileData;
 
 import java.awt.*;
 import java.io.File;
@@ -33,7 +33,7 @@ import java.io.IOException;
 public class OpenResourceUtil {
     private static final Desktop desktop = Desktop.getDesktop();;
 
-    public static boolean OpenFile(EverythingResult result) {
+    public static boolean OpenFile(FileData result) {
         if (desktop.isSupported(Desktop.Action.OPEN)) {
             try {
                 desktop.open(new File(result.getFullPath()));
@@ -45,5 +45,32 @@ public class OpenResourceUtil {
             }
         }
         return false;
+    }
+
+    public static boolean OpenFileInFolder(FileData result) {
+
+        ProcessBuilder pb = new ProcessBuilder("explorer","/select,"+"\""+result.getFullPath()+"\"");
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        try {
+            pb.start();
+            return true;
+        } catch (IOException e) {
+            log.error("打开文件 {} 出现错误，文件路径：{}",result.getFileName(),result.getFullPath(),e);
+        }
+        return false;
+    }
+
+    public static boolean OpenPathInTerminal(FileData result) {
+        ProcessBuilder pb = new ProcessBuilder("wt.exe", "-d", result.getParentPath());
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        try {
+            pb.start();
+            return true;
+        } catch (IOException e) {
+            log.error("在控制台打开文件 {} 出现错误，文件路径：{}",result.getFileName(),result.getFullPath(),e);
+        }
+        return true;
     }
 }

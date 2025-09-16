@@ -20,7 +20,7 @@
 package tech.minediamond.vortex.service.search;
 
 import tech.minediamond.vortex.model.search.EverythingQuery;
-import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.search.SearchMode;
 
 import java.nio.file.Path;
@@ -38,7 +38,7 @@ import java.util.Optional;
  *     <li>{@link #mode(SearchMode)} - 设置搜索模式（文件/文件夹/全部）</li>
  * </ul>
  * <p>
- * 构建完成后，通过{@code query()}发起请求，并返回一个{@code List<EverythingResult>}
+ * 构建完成后，通过{@code query()}发起请求，并返回一个{@code List<FileData>}
  *
  * @see EverythingService
  */
@@ -106,7 +106,7 @@ public class EverythingQueryBuilder {
      *
      * @return 搜索结果列表
      */
-    public List<EverythingResult> query() {
+    public List<FileData> query() {
         if (query == null || query.trim().isEmpty()) {
             return Collections.emptyList();
         }

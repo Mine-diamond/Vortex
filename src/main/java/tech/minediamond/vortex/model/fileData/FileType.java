@@ -17,20 +17,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.model.ui;
+package tech.minediamond.vortex.model.fileData;
 
-public enum ContentPanel {
-    EDITOR_PANEL("editorPanel.fxml"),
-    SETTING_PANEL("settingPanel.fxml"),
-    SEARCH_PANEL("searchPanel.fxml");
-
-    private final String fileName;
-
-    ContentPanel(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getFileName(){
-        return this.fileName;
-    }
+public enum FileType {
+    FILE,
+    FOLDER
 }
+

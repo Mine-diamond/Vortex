@@ -19,14 +19,28 @@
 
 package tech.minediamond.vortex.ui.component;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.SkinBase;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
+import org.kordamp.ikonli.fluentui.FluentUiRegularAL;
+import org.kordamp.ikonli.fluentui.FluentUiRegularMZ;
+import org.kordamp.ikonli.javafx.FontIcon;
 import tech.minediamond.vortex.model.search.EverythingResult;
 
+import java.util.function.Consumer;
+
 public class SearchResultCard extends Control {
+
+    private final ObjectProperty<Consumer<EverythingResult>> onOpen = new SimpleObjectProperty<>();
+    private final ObjectProperty<Consumer<EverythingResult>> onRevealInFolder = new SimpleObjectProperty<>();
 
     @Getter
     private final EverythingResult result;
@@ -40,10 +54,30 @@ public class SearchResultCard extends Control {
         return new Skin(this);
     }
 
+    public Consumer<EverythingResult> getOnOpen() { return onOpen.get(); }
+    public void setOnOpen(Consumer<EverythingResult> action) { onOpen.set(action); }
+    public ObjectProperty<Consumer<EverythingResult>> onOpenProperty() { return onOpen; }
 
+    public Consumer<EverythingResult> getOnRevealInFolder() { return onRevealInFolder.get(); }
+    public void setOnRevealInFolder(Consumer<EverythingResult> action) { onRevealInFolder.set(action); }
+    public ObjectProperty<Consumer<EverythingResult>> onRevealInFolderProperty() { return onRevealInFolder; }
+
+    public void open() {
+        Consumer<EverythingResult> c = getOnOpen();
+        if (c != null) c.accept(result);
+    }
+
+    public void revealInFolder() {
+        Consumer<EverythingResult> c = getOnRevealInFolder();
+        if (c != null) c.accept(result);
+    }
 
     private static final class Skin extends SkinBase<SearchResultCard> {
 
+        private final FontIcon openInFolderIcon = new FontIcon(FluentUiRegularAL.FOLDER_24);
+        private final FontIcon openIcon = new FontIcon(FluentUiRegularMZ.OPEN_24);
+
+        HBox hBox = new HBox();
         VBox vbox = new VBox();
 
         /**
@@ -57,8 +91,19 @@ public class SearchResultCard extends Control {
             Label fileNameLabel = new Label(control.result.getFileName());
             Label filePathLabel = new Label(control.result.getFullPath());
 
+            Button openBtn = new Button();
+            openBtn.setGraphic(openIcon);
+            Button openInFolderBtn = new Button();
+            openInFolderBtn.setGraphic(openInFolderIcon);
+            openBtn.setOnAction(e -> getSkinnable().open());
+            openInFolderBtn.setOnAction(e -> getSkinnable().revealInFolder());
+
+            Region region = new Region();
+            HBox.setHgrow(region, Priority.ALWAYS);
+
             vbox.getChildren().addAll(fileNameLabel, filePathLabel);
-            getChildren().add(vbox);
+            hBox.getChildren().addAll(vbox,region,openBtn, openInFolderBtn);
+            getChildren().add(hBox);
         }
     }
 

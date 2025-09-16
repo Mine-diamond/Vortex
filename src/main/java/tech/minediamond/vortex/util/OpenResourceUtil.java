@@ -46,4 +46,18 @@ public class OpenResourceUtil {
         }
         return false;
     }
+
+    public static boolean OpenFileInFolder(EverythingResult result) {
+
+        ProcessBuilder pb = new ProcessBuilder("explorer","/select,"+"\""+result.getFullPath()+"\"");
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        try {
+            pb.start();
+            return true;
+        } catch (IOException e) {
+            log.error("打开文件 {} 出现错误，文件路径：{}",result.getFileName(),result.getFullPath(),e);
+        }
+        return false;
+    }
 }

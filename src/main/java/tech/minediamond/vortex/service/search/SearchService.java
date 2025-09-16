@@ -24,10 +24,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import lombok.SneakyThrows;
 import tech.minediamond.vortex.model.search.EverythingResult;
 import tech.minediamond.vortex.model.search.SearchMode;
 import tech.minediamond.vortex.ui.component.ComponentList;
 import tech.minediamond.vortex.ui.component.SearchResultCard;
+import tech.minediamond.vortex.util.OpenResourceUtil;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -81,6 +83,8 @@ public class SearchService  extends Service<ComponentList> {
                 ComponentList componentList = new ComponentList();
                 for (EverythingResult result : results) {
                     SearchResultCard card = new SearchResultCard(result);
+                    card.setOnOpen(OpenResourceUtil::OpenFile);
+                    card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);
                     componentList.addNode(card);
                 }
 

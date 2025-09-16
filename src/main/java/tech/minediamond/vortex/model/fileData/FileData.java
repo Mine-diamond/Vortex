@@ -53,6 +53,13 @@ public class FileData {
         this.dateCreated = dateCreated;
     }
 
+    public String getParentPath(){
+        return switch (type){
+            case FILE-> fullPath.substring(0, fullPath.lastIndexOf('\\'));
+            case FOLDER-> fullPath;
+        };
+    }
+
 
     @Override
     public boolean equals(Object o) {

@@ -25,6 +25,7 @@ import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef;
 import lombok.extern.slf4j.Slf4j;
+import tech.minediamond.vortex.model.fileData.FileType;
 import tech.minediamond.vortex.model.search.EverythingQuery;
 import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.search.SearchMode;
@@ -180,6 +181,7 @@ public class EverythingService {
             lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FULL_PATH.getID());
             lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.SIZE.getID());
             lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FILE_NAME.getID());
+            lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.IS_FOLDER.getID());
 
             //生成搜索词字符串
             String queryKeywords = "\"" + query.query() + "\"";
@@ -236,6 +238,15 @@ public class EverythingService {
                 //这里直接将返回的无符号int64转换为long，但是考虑到无符号int64达到最大位需要文件8EB以上的大小，因此直接赋值问题不大
                 long size = lib.Everything3_GetResultSize(resultList, new WinDef.DWORD(i));
                 fileData.setSize(size);
+
+                //获取文件的类型
+                byte type = lib.Everything3_GetResultPropertyBYTE(resultList, new WinDef.DWORD(i), Everything3.PropertyType.IS_FOLDER.getID());
+                int intType = type & 0xFF;
+                if (intType != 0) {
+                    fileData.setType(FileType.FOLDER);
+                } else {
+                    fileData.setType(FileType.FILE);
+                }
 
                 results.add(fileData);
             }

@@ -49,7 +49,7 @@ public class OpenResourceUtil {
 
     public static boolean OpenFileInFolder(FileData result) {
 
-        ProcessBuilder pb = new ProcessBuilder("explorer","/select,"+"\""+result.getFullPath()+"\"");
+        ProcessBuilder pb = new ProcessBuilder("explorer","/select,"+"\""+result.getParentPath()+"\"");
         pb.redirectErrorStream(true);
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
         try {

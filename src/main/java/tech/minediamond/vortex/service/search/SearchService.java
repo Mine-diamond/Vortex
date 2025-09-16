@@ -96,7 +96,8 @@ public class SearchService extends Service<ComponentList> {
                     SearchResultCard card = new SearchResultCard(result);
                     card.setOnOpen(OpenResourceUtil::OpenFile);
                     card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);
-                    card.setOnCopy(everythingResult -> ClipboardUtil.copyToClipboard(everythingResult.getFullPath()));
+                    card.setOnCopy(fileData -> ClipboardUtil.copyToClipboard(fileData.getFullPath()));
+                    card.setOnOpenPathInTerminal(OpenResourceUtil::OpenPathInTerminal);
                     componentList.addNode(card);
                 }
 

@@ -42,6 +42,7 @@ public class SearchResultCard extends Control {
     private final ObjectProperty<Consumer<FileData>> onOpen = new SimpleObjectProperty<>();
     private final ObjectProperty<Consumer<FileData>> onRevealInFolder = new SimpleObjectProperty<>();
     private final ObjectProperty<Consumer<FileData>> onCopy = new SimpleObjectProperty<>();
+    private final ObjectProperty<Consumer<FileData>> onOpenPathInTerminal = new SimpleObjectProperty<>();
 
     @Getter
     private final FileData result;
@@ -91,6 +92,18 @@ public class SearchResultCard extends Control {
         return onCopy;
     }
 
+    public Consumer<FileData> getOnOpenPathInTerminal() {
+        return onOpenPathInTerminal.get();
+    }
+
+    public void setOnOpenPathInTerminal(Consumer<FileData> action) {
+        onOpenPathInTerminal.set(action);
+    }
+
+    public ObjectProperty<Consumer<FileData>> onOpenPathInTerminalProperty() {
+        return onOpenPathInTerminal;
+    }
+
     public void open() {
         Consumer<FileData> c = getOnOpen();
         if (c != null) c.accept(result);
@@ -106,11 +119,17 @@ public class SearchResultCard extends Control {
         if (c != null) c.accept(result);
     }
 
+    public void openPathInTerminal() {
+        Consumer<FileData> c = getOnOpenPathInTerminal();
+        if (c != null) c.accept(result);
+    }
+
     private static final class Skin extends SkinBase<SearchResultCard> {
 
         private final FontIcon openInFolderIcon = new FontIcon(FluentUiRegularAL.FOLDER_24);
         private final FontIcon openIcon = new FontIcon(FluentUiRegularMZ.OPEN_24);
         private final FontIcon copyPathIcon = new FontIcon(FluentUiRegularAL.COPY_24);
+        private final FontIcon terminalIcon = new FontIcon(FluentUiRegularMZ.WINDOW_HORIZONTAL_20);
 
         HBox hBox = new HBox();
         VBox vbox = new VBox();
@@ -144,12 +163,17 @@ public class SearchResultCard extends Control {
             copyPathBtn.managedProperty().bind(hBox.hoverProperty());
             copyPathBtn.setOnAction(e -> getSkinnable().copy());
 
+            Button openPathInTerminal = new Button();
+            openPathInTerminal.setGraphic(terminalIcon);
+            openPathInTerminal.visibleProperty().bind(hBox.hoverProperty());
+            openPathInTerminal.managedProperty().bind(hBox.hoverProperty());
+            openPathInTerminal.setOnAction(e -> getSkinnable().openPathInTerminal());
 
             Region region = new Region();
             HBox.setHgrow(region, Priority.ALWAYS);
 
             vbox.getChildren().addAll(fileNameLabel, filePathLabel);
-            hBox.getChildren().addAll(vbox, region, openBtn, openInFolderBtn, copyPathBtn);
+            hBox.getChildren().addAll(vbox, region, openBtn, openInFolderBtn, copyPathBtn, openPathInTerminal);
             getChildren().add(hBox);
         }
     }

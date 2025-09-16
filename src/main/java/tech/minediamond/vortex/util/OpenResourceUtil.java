@@ -49,7 +49,7 @@ public class OpenResourceUtil {
 
     public static boolean OpenFileInFolder(FileData result) {
 
-        ProcessBuilder pb = new ProcessBuilder("explorer","/select,"+"\""+result.getParentPath()+"\"");
+        ProcessBuilder pb = new ProcessBuilder("explorer","/select,"+"\""+result.getFullPath()+"\"");
         pb.redirectErrorStream(true);
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
         try {
@@ -62,7 +62,7 @@ public class OpenResourceUtil {
     }
 
     public static boolean OpenPathInTerminal(FileData result) {
-        ProcessBuilder pb = new ProcessBuilder("wt.exe", "-d", result.getFullPath());
+        ProcessBuilder pb = new ProcessBuilder("wt.exe", "-d", result.getParentPath());
         pb.redirectErrorStream(true);
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
         try {

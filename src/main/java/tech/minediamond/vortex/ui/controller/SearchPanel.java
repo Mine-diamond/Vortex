@@ -61,6 +61,7 @@ public class SearchPanel {
         this.i18n = i18n;
 
         debounce.setOnFinished(event -> {
+            log.info("开始搜索");
             searchService.search(keyword);
         });
 
@@ -100,7 +101,7 @@ public class SearchPanel {
     }
 
     public void search(String keyword) {
-        log.info("Search started");
+        log.debug("即将搜索");
         searchStatusProperty.set(SearchStatus.SEARCHING);
         this.keyword = keyword;
         debounce.playFromStart();

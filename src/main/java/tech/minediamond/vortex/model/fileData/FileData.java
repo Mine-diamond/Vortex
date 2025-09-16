@@ -17,19 +17,21 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.model.search;
+package tech.minediamond.vortex.model.fileData;
 
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Date;
 import java.util.Objects;
 
 @Getter
 @Setter
-public class EverythingResult {
-    private ResultType type;
+@ToString
+public class FileData {
+    private FileType type;
     private String fileName;
     private String extension;
     private String fullPath;
@@ -37,11 +39,11 @@ public class EverythingResult {
     private Date dateModified;
     private Date dateCreated;
 
-    public EverythingResult(){
+    public FileData(){
 
     }
 
-    public EverythingResult(ResultType type, String fileName, String extension, String fullPath, long size, Date dateModified, Date dateCreated) {
+    public FileData(FileType type, String fileName, String extension, String fullPath, long size, Date dateModified, Date dateCreated) {
         this.type = type;
         this.fileName = fileName;
         this.extension = extension;
@@ -51,20 +53,12 @@ public class EverythingResult {
         this.dateCreated = dateCreated;
     }
 
-    @Override
-    public String toString() {
-        return "EverythingResult{" +
-                "type=" + type +
-                ", fileName='" + fileName + '\'' +
-                ", fullPath='" + fullPath + '\'' +
-                '}';
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        return Objects.equals(fullPath, ((EverythingResult) o).fullPath);
+        return Objects.equals(fullPath, ((FileData) o).fullPath);
     }
 
     @Override

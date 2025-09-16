@@ -25,7 +25,7 @@ import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import lombok.extern.slf4j.Slf4j;
-import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.search.SearchMode;
 import tech.minediamond.vortex.service.i18n.I18nService;
 import tech.minediamond.vortex.ui.component.ComponentList;
@@ -80,7 +80,7 @@ public class SearchService extends Service<ComponentList> {
 
             @Override
             protected ComponentList call() throws Exception {
-                List<EverythingResult> results = everythingService.QueryBuilder()
+                List<FileData> results = everythingService.QueryBuilder()
                         .mode(SearchMode.ALL)
                         .searchFor(keyword.get())
                         .query();
@@ -92,7 +92,7 @@ public class SearchService extends Service<ComponentList> {
                     return null;
                 }
 
-                for (EverythingResult result : results) {
+                for (FileData result : results) {
                     SearchResultCard card = new SearchResultCard(result);
                     card.setOnOpen(OpenResourceUtil::OpenFile);
                     card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);

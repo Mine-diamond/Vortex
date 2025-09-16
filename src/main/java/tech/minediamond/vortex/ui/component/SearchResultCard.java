@@ -33,20 +33,20 @@ import lombok.Getter;
 import org.kordamp.ikonli.fluentui.FluentUiRegularAL;
 import org.kordamp.ikonli.fluentui.FluentUiRegularMZ;
 import org.kordamp.ikonli.javafx.FontIcon;
-import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.fileData.FileData;
 
 import java.util.function.Consumer;
 
 public class SearchResultCard extends Control {
 
-    private final ObjectProperty<Consumer<EverythingResult>> onOpen = new SimpleObjectProperty<>();
-    private final ObjectProperty<Consumer<EverythingResult>> onRevealInFolder = new SimpleObjectProperty<>();
-    private final ObjectProperty<Consumer<EverythingResult>> onCopy = new SimpleObjectProperty<>();
+    private final ObjectProperty<Consumer<FileData>> onOpen = new SimpleObjectProperty<>();
+    private final ObjectProperty<Consumer<FileData>> onRevealInFolder = new SimpleObjectProperty<>();
+    private final ObjectProperty<Consumer<FileData>> onCopy = new SimpleObjectProperty<>();
 
     @Getter
-    private final EverythingResult result;
+    private final FileData result;
 
-    public SearchResultCard(EverythingResult result) {
+    public SearchResultCard(FileData result) {
         this.result = result;
     }
 
@@ -55,54 +55,54 @@ public class SearchResultCard extends Control {
         return new Skin(this);
     }
 
-    public Consumer<EverythingResult> getOnOpen() {
+    public Consumer<FileData> getOnOpen() {
         return onOpen.get();
     }
 
-    public void setOnOpen(Consumer<EverythingResult> action) {
+    public void setOnOpen(Consumer<FileData> action) {
         onOpen.set(action);
     }
 
-    public ObjectProperty<Consumer<EverythingResult>> onOpenProperty() {
+    public ObjectProperty<Consumer<FileData>> onOpenProperty() {
         return onOpen;
     }
 
-    public Consumer<EverythingResult> getOnRevealInFolder() {
+    public Consumer<FileData> getOnRevealInFolder() {
         return onRevealInFolder.get();
     }
 
-    public void setOnRevealInFolder(Consumer<EverythingResult> action) {
+    public void setOnRevealInFolder(Consumer<FileData> action) {
         onRevealInFolder.set(action);
     }
 
-    public ObjectProperty<Consumer<EverythingResult>> onRevealInFolderProperty() {
+    public ObjectProperty<Consumer<FileData>> onRevealInFolderProperty() {
         return onRevealInFolder;
     }
 
-    public Consumer<EverythingResult> getOnCopy() {
+    public Consumer<FileData> getOnCopy() {
         return onCopy.get();
     }
 
-    public void setOnCopy(Consumer<EverythingResult> action) {
+    public void setOnCopy(Consumer<FileData> action) {
         onCopy.set(action);
     }
 
-    public ObjectProperty<Consumer<EverythingResult>> onCopyProperty() {
+    public ObjectProperty<Consumer<FileData>> onCopyProperty() {
         return onCopy;
     }
 
     public void open() {
-        Consumer<EverythingResult> c = getOnOpen();
+        Consumer<FileData> c = getOnOpen();
         if (c != null) c.accept(result);
     }
 
     public void revealInFolder() {
-        Consumer<EverythingResult> c = getOnRevealInFolder();
+        Consumer<FileData> c = getOnRevealInFolder();
         if (c != null) c.accept(result);
     }
 
     public void copy() {
-        Consumer<EverythingResult> c = getOnCopy();
+        Consumer<FileData> c = getOnCopy();
         if (c != null) c.accept(result);
     }
 

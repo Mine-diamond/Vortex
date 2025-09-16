@@ -26,7 +26,7 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef;
 import lombok.extern.slf4j.Slf4j;
 import tech.minediamond.vortex.model.search.EverythingQuery;
-import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.search.SearchMode;
 
 import java.io.IOException;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * 使用示例：
  * <pre>
  * EverythingService service = injector.getInstance(EverythingServiceTest.class);
- * List&lt;EverythingResult&gt; results = service.QueryBuilder()
+ * List&lt;FileData&gt; results = service.QueryBuilder()
  *     .searchFor("document")
  *     .inFolders(List.of(Path.of("C:/Users")))
  *     .mode(SearchMode.FILES_ONLY)
@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
  * </pre>
  *
  * @see EverythingQueryBuilder
- * @see EverythingResult
+ * @see FileData
  */
 @Singleton
 @Slf4j
@@ -150,7 +150,7 @@ public class EverythingService {
         return client;
     }
 
-    public List<EverythingResult> query(EverythingQuery query) {
+    public List<FileData> query(EverythingQuery query) {
 
         // 防御性检查
         if (client == null) {
@@ -165,7 +165,7 @@ public class EverythingService {
 
         Everything3.EverythingSearchState searchState = null;
         Everything3.EverythingResultList resultList = null;
-        List<EverythingResult> results = new ArrayList<>();
+        List<FileData> results = new ArrayList<>();
         try {
             // 创建和配置搜索条件
             searchState = lib.Everything3_CreateSearchState();
@@ -221,23 +221,23 @@ public class EverythingService {
 
             char[] buffer = new char[MAX_PATH];
             for (int i = 0; i < numResults.intValue(); i++) {
-                EverythingResult everythingResult = new EverythingResult();
+                FileData fileData = new FileData();
                 //获取搜索结果的完整路径
                 lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), Everything3.PropertyType.FULL_PATH.getID(), buffer, new WinDef.DWORD(MAX_PATH));
                 String pathname = Native.toString(buffer);
-                everythingResult.setFullPath(pathname);
+                fileData.setFullPath(pathname);
 
                 //获取搜索结果的名称
                 lib.Everything3_GetResultPropertyTextW(resultList, new WinDef.DWORD(i), Everything3.PropertyType.FILE_NAME.getID(), buffer, new WinDef.DWORD(MAX_PATH));
                 String filename = Native.toString(buffer);
-                everythingResult.setFileName(filename);
+                fileData.setFileName(filename);
 
                 //获取搜索结果的大小(单位:Byte)
                 //这里直接将返回的无符号int64转换为long，但是考虑到无符号int64达到最大位需要文件8EB以上的大小，因此直接赋值问题不大
                 long size = lib.Everything3_GetResultSize(resultList, new WinDef.DWORD(i));
-                everythingResult.setSize(size);
+                fileData.setSize(size);
 
-                results.add(everythingResult);
+                results.add(fileData);
             }
         } finally {
             if (resultList != null) {

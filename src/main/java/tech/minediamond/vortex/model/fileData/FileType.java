@@ -17,9 +17,9 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-package tech.minediamond.vortex.model.search;
+package tech.minediamond.vortex.model.fileData;
 
-public enum ResultType {
+public enum FileType {
     FILE,
     FOLDER
 }

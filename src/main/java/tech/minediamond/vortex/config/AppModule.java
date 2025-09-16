@@ -37,6 +37,7 @@ import tech.minediamond.vortex.service.ui.StageProvider;
 import tech.minediamond.vortex.service.ui.TrayMenuService;
 import tech.minediamond.vortex.service.ui.WindowAnimator;
 import tech.minediamond.vortex.service.uncaughtExceptionHandle.GlobalUncaughtExceptionHandlerService;
+import tech.minediamond.vortex.ui.component.SearchResultCardFactory;
 import tech.minediamond.vortex.ui.controller.EditorPanel;
 import tech.minediamond.vortex.ui.controller.MainWindow;
 import tech.minediamond.vortex.ui.controller.SettingPanel;
@@ -78,6 +79,6 @@ public class AppModule extends AbstractModule {
                 // 告诉 Guice，这个工厂的实现是基于 ShowStageListenerFactory 接口
                 .build(ShowStageListenerFactory.class));
 
-
+        install(new FactoryModuleBuilder().build(SearchResultCardFactory.class));
     }
 }

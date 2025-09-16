@@ -19,6 +19,8 @@
 
 package tech.minediamond.vortex.ui.component;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
@@ -34,6 +36,7 @@ import org.kordamp.ikonli.fluentui.FluentUiRegularAL;
 import org.kordamp.ikonli.fluentui.FluentUiRegularMZ;
 import org.kordamp.ikonli.javafx.FontIcon;
 import tech.minediamond.vortex.model.fileData.FileData;
+import tech.minediamond.vortex.service.i18n.I18nService;
 
 import java.util.function.Consumer;
 
@@ -44,11 +47,15 @@ public class SearchResultCard extends Control {
     private final ObjectProperty<Consumer<FileData>> onCopy = new SimpleObjectProperty<>();
     private final ObjectProperty<Consumer<FileData>> onOpenPathInTerminal = new SimpleObjectProperty<>();
 
+    private final I18nService i18n;
+
     @Getter
     private final FileData result;
 
-    public SearchResultCard(FileData result) {
+    @Inject
+    public SearchResultCard(@Assisted FileData result, I18nService i18n) {
         this.result = result;
+        this.i18n = i18n;
     }
 
     @Override
@@ -124,7 +131,7 @@ public class SearchResultCard extends Control {
         if (c != null) c.accept(result);
     }
 
-    private static final class Skin extends SkinBase<SearchResultCard> {
+    private final class Skin extends SkinBase<SearchResultCard> {
 
         private final FontIcon openInFolderIcon = new FontIcon(FluentUiRegularAL.FOLDER_24);
         private final FontIcon openIcon = new FontIcon(FluentUiRegularMZ.OPEN_24);
@@ -142,32 +149,40 @@ public class SearchResultCard extends Control {
         protected Skin(SearchResultCard control) {
             super(control);
 
+            hBox.getStyleClass().add("search-result-card");
+
             Label fileNameLabel = new Label(control.result.getFileName());
             Label filePathLabel = new Label(control.result.getFullPath());
+            fileNameLabel.getStyleClass().add("search-result-name-label");
+            filePathLabel.getStyleClass().add("search-result-file-path");
 
             Button openBtn = new Button();
             openBtn.setGraphic(openIcon);
             openBtn.visibleProperty().bind(hBox.hoverProperty());
             openBtn.managedProperty().bind(hBox.hoverProperty());
             openBtn.setOnAction(e -> getSkinnable().open());
+            SimpleHoverTooltip.textProperty(openBtn).set(i18n.t("file.open.tip"));
 
             Button openInFolderBtn = new Button();
             openInFolderBtn.setGraphic(openInFolderIcon);
             openInFolderBtn.visibleProperty().bind(hBox.hoverProperty());
             openInFolderBtn.managedProperty().bind(hBox.hoverProperty());
             openInFolderBtn.setOnAction(e -> getSkinnable().revealInFolder());
+            SimpleHoverTooltip.textProperty(openInFolderBtn).set(i18n.t("file.openInFolder.tip"));
 
             Button copyPathBtn = new Button();
             copyPathBtn.setGraphic(copyPathIcon);
             copyPathBtn.visibleProperty().bind(hBox.hoverProperty());
             copyPathBtn.managedProperty().bind(hBox.hoverProperty());
             copyPathBtn.setOnAction(e -> getSkinnable().copy());
+            SimpleHoverTooltip.textProperty(copyPathBtn).set(i18n.t("file.copyPath.tip"));
 
             Button openPathInTerminal = new Button();
             openPathInTerminal.setGraphic(terminalIcon);
             openPathInTerminal.visibleProperty().bind(hBox.hoverProperty());
             openPathInTerminal.managedProperty().bind(hBox.hoverProperty());
             openPathInTerminal.setOnAction(e -> getSkinnable().openPathInTerminal());
+            SimpleHoverTooltip.textProperty(openPathInTerminal).set(i18n.t("file.openPathInTerminal.tip"));
 
             Region region = new Region();
             HBox.setHgrow(region, Priority.ALWAYS);

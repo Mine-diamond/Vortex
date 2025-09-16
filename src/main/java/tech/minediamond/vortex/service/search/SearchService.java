@@ -20,6 +20,7 @@
 package tech.minediamond.vortex.service.search;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
@@ -30,6 +31,7 @@ import tech.minediamond.vortex.model.search.SearchMode;
 import tech.minediamond.vortex.service.i18n.I18nService;
 import tech.minediamond.vortex.ui.component.ComponentList;
 import tech.minediamond.vortex.ui.component.SearchResultCard;
+import tech.minediamond.vortex.ui.component.SearchResultCardFactory;
 import tech.minediamond.vortex.util.ClipboardUtil;
 import tech.minediamond.vortex.util.OpenResourceUtil;
 
@@ -45,15 +47,17 @@ public class SearchService extends Service<ComponentList> {
 
     private final EverythingService everythingService;
     private final I18nService i18n;
+    private final Injector injector;
     private final StringProperty keyword = new SimpleStringProperty();
 
     private final ThreadFactory searchThreadFactory;
     private final ExecutorService executor;
 
     @Inject
-    public SearchService(EverythingService everythingService, I18nService i18n) {
+    public SearchService(EverythingService everythingService, I18nService i18n, Injector injector) {
         this.everythingService = everythingService;
         this.i18n = i18n;
+        this.injector = injector;
 
         searchThreadFactory = r -> {
             Thread t = new Thread(r, NAME);
@@ -93,7 +97,7 @@ public class SearchService extends Service<ComponentList> {
                 }
 
                 for (FileData result : results) {
-                    SearchResultCard card = new SearchResultCard(result);
+                    SearchResultCard card = injector.getInstance(SearchResultCardFactory.class).create(result);
                     card.setOnOpen(OpenResourceUtil::OpenFile);
                     card.setOnRevealInFolder(OpenResourceUtil::OpenFileInFolder);
                     card.setOnCopy(fileData -> ClipboardUtil.copyToClipboard(fileData.getFullPath()));

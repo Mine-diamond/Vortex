@@ -75,6 +75,10 @@
     -fx-setting-combo-box-popup-bg-color-pressed: #b9b9be;/*设置条目单选按钮弹出框按下时背景颜色*/
     -fx-setting-combo-box-arrow-border-color: #353333;/* 设置条目单选按钮箭头边框颜色*/
 
+    /*搜索面板样式*/
+    -fx-search-result-file-path-text-color: #cdcdcd;/*搜索面板文件路径文本颜色*/
+    -fx-search-result-card-bg-color-hover:#474747;/*搜索面板列表悬浮时背景颜色*/
+
     /*特殊样式*/
     -fx-exit-button-bg-color-hover: #f86868;/*退出按钮悬浮时背景颜色*/
     -fx-exit-button-bg-color-pressed: #e86363;/*退出按钮悬浮时背景颜色*/
@@ -392,6 +396,38 @@
 
 }
 
+/* ===搜索结果卡片=== */
+
+.search-result-card {
+    -fx-min-height: 50;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 4px; /* 圆角 */
+    -fx-border-radius: 4px;     /* 边框也需要圆角 */
+    -fx-spacing: 2;
+    -fx-padding: 5 5 5 5;
+}
+
+.search-result-card:hover {
+    -fx-background-color: -fx-search-result-card-bg-color-hover;
+}
+
+.search-result-card .search-result-file-path {
+    -fx-text-fill: -fx-search-result-file-path-text-color;
+    -fx-font-size: 11px;
+}
+
+.search-result-card .button{
+    -fx-min-width: 35;
+    -fx-pref-height: 30;
+}
+
+.search-result-card .button:hover{
+    -fx-background-color: -fx-setting-list-button-bg-color-hover;
+}
+
+.search-result-card .button:pressed{
+    -fx-background-color: -fx-setting-list-button-bg-color-pressed;
+}
 
 /* ===特殊按钮=== */
 #pinBtn:selected .ikonli-font-icon{

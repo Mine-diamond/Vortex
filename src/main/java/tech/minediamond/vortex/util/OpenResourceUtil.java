@@ -60,4 +60,17 @@ public class OpenResourceUtil {
         }
         return false;
     }
+
+    public static boolean OpenPathInTerminal(EverythingResult result) {
+        ProcessBuilder pb = new ProcessBuilder("wt.exe", "-d", result.getFullPath());
+        pb.redirectErrorStream(true);
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        try {
+            pb.start();
+            return true;
+        } catch (IOException e) {
+            log.error("在控制台打开文件 {} 出现错误，文件路径：{}",result.getFileName(),result.getFullPath(),e);
+        }
+        return true;
+    }
 }

@@ -41,6 +41,7 @@ public class SearchResultCard extends Control {
 
     private final ObjectProperty<Consumer<EverythingResult>> onOpen = new SimpleObjectProperty<>();
     private final ObjectProperty<Consumer<EverythingResult>> onRevealInFolder = new SimpleObjectProperty<>();
+    private final ObjectProperty<Consumer<EverythingResult>> onCopy = new SimpleObjectProperty<>();
 
     @Getter
     private final EverythingResult result;
@@ -54,13 +55,41 @@ public class SearchResultCard extends Control {
         return new Skin(this);
     }
 
-    public Consumer<EverythingResult> getOnOpen() { return onOpen.get(); }
-    public void setOnOpen(Consumer<EverythingResult> action) { onOpen.set(action); }
-    public ObjectProperty<Consumer<EverythingResult>> onOpenProperty() { return onOpen; }
+    public Consumer<EverythingResult> getOnOpen() {
+        return onOpen.get();
+    }
 
-    public Consumer<EverythingResult> getOnRevealInFolder() { return onRevealInFolder.get(); }
-    public void setOnRevealInFolder(Consumer<EverythingResult> action) { onRevealInFolder.set(action); }
-    public ObjectProperty<Consumer<EverythingResult>> onRevealInFolderProperty() { return onRevealInFolder; }
+    public void setOnOpen(Consumer<EverythingResult> action) {
+        onOpen.set(action);
+    }
+
+    public ObjectProperty<Consumer<EverythingResult>> onOpenProperty() {
+        return onOpen;
+    }
+
+    public Consumer<EverythingResult> getOnRevealInFolder() {
+        return onRevealInFolder.get();
+    }
+
+    public void setOnRevealInFolder(Consumer<EverythingResult> action) {
+        onRevealInFolder.set(action);
+    }
+
+    public ObjectProperty<Consumer<EverythingResult>> onRevealInFolderProperty() {
+        return onRevealInFolder;
+    }
+
+    public Consumer<EverythingResult> getOnCopy() {
+        return onCopy.get();
+    }
+
+    public void setOnCopy(Consumer<EverythingResult> action) {
+        onCopy.set(action);
+    }
+
+    public ObjectProperty<Consumer<EverythingResult>> onCopyProperty() {
+        return onCopy;
+    }
 
     public void open() {
         Consumer<EverythingResult> c = getOnOpen();
@@ -72,10 +101,16 @@ public class SearchResultCard extends Control {
         if (c != null) c.accept(result);
     }
 
+    public void copy() {
+        Consumer<EverythingResult> c = getOnCopy();
+        if (c != null) c.accept(result);
+    }
+
     private static final class Skin extends SkinBase<SearchResultCard> {
 
         private final FontIcon openInFolderIcon = new FontIcon(FluentUiRegularAL.FOLDER_24);
         private final FontIcon openIcon = new FontIcon(FluentUiRegularMZ.OPEN_24);
+        private final FontIcon copyPathIcon = new FontIcon(FluentUiRegularAL.COPY_24);
 
         HBox hBox = new HBox();
         VBox vbox = new VBox();
@@ -93,16 +128,28 @@ public class SearchResultCard extends Control {
 
             Button openBtn = new Button();
             openBtn.setGraphic(openIcon);
+            openBtn.visibleProperty().bind(hBox.hoverProperty());
+            openBtn.managedProperty().bind(hBox.hoverProperty());
+            openBtn.setOnAction(e -> getSkinnable().open());
+
             Button openInFolderBtn = new Button();
             openInFolderBtn.setGraphic(openInFolderIcon);
-            openBtn.setOnAction(e -> getSkinnable().open());
+            openInFolderBtn.visibleProperty().bind(hBox.hoverProperty());
+            openInFolderBtn.managedProperty().bind(hBox.hoverProperty());
             openInFolderBtn.setOnAction(e -> getSkinnable().revealInFolder());
+
+            Button copyPathBtn = new Button();
+            copyPathBtn.setGraphic(copyPathIcon);
+            copyPathBtn.visibleProperty().bind(hBox.hoverProperty());
+            copyPathBtn.managedProperty().bind(hBox.hoverProperty());
+            copyPathBtn.setOnAction(e -> getSkinnable().copy());
+
 
             Region region = new Region();
             HBox.setHgrow(region, Priority.ALWAYS);
 
             vbox.getChildren().addAll(fileNameLabel, filePathLabel);
-            hBox.getChildren().addAll(vbox,region,openBtn, openInFolderBtn);
+            hBox.getChildren().addAll(vbox, region, openBtn, openInFolderBtn, copyPathBtn);
             getChildren().add(hBox);
         }
     }

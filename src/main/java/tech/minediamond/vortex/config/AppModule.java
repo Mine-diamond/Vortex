@@ -27,6 +27,7 @@ import tech.minediamond.vortex.service.appConfig.AppConfigProvider;
 import tech.minediamond.vortex.service.appConfig.AppConfigService;
 import tech.minediamond.vortex.service.autoStart.MockAutoStartService;
 import tech.minediamond.vortex.service.autoStart.WindowsAutoStartService;
+import tech.minediamond.vortex.service.search.SearchService;
 import tech.minediamond.vortex.service.ui.ShowStageListenerFactory;
 import tech.minediamond.vortex.service.autoStart.IAutoStartService;
 import tech.minediamond.vortex.service.i18n.I18nService;
@@ -58,6 +59,7 @@ public class AppModule extends AbstractModule {
         bind(EditorPanel.class);
         bind(SettingPanel.class);
         bind(TrayMenuService.class);
+        bind(SearchService.class);
 
         bind(WindowAnimator.class).in(Scopes.SINGLETON);
 

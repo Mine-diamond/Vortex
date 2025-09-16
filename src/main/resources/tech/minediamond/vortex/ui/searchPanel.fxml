@@ -29,6 +29,10 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tech.minediamond.vortex.ui.controller.SearchPanel"
             prefHeight="400.0" prefWidth="600.0">
-    <Button text="搜索页面"/>
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" pickOnBounds="false" focusTraversable="false"
+                AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="20"
+                AnchorPane.bottomAnchor="0">
+
+    </ScrollPane>
 
 </AnchorPane>

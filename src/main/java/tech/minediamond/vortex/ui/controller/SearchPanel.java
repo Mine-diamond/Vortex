@@ -19,6 +19,44 @@
 
 package tech.minediamond.vortex.ui.controller;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import javafx.animation.PauseTransition;
+import javafx.fxml.FXML;
+import javafx.scene.control.ScrollPane;
+import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
+import tech.minediamond.vortex.service.search.SearchService;
+
+@Singleton
+@Slf4j
 public class SearchPanel {
+
+    @FXML
+    private ScrollPane scrollPane;
+
+    private final PauseTransition debounce = new PauseTransition(Duration.millis(300));
+    private String keyword;
+
+    private final SearchService searchService;
+
+    @Inject
+    public SearchPanel(SearchService searchService) {
+        this.searchService = searchService;
+
+        debounce.setOnFinished(event -> {
+            searchService.search(keyword);
+        });
+    }
+
+    public void initialize() {
+        scrollPane.contentProperty().bind(searchService.valueProperty());
+    }
+
+    public void search(String keyword) {
+        log.info("Search started");
+        this.keyword = keyword;
+        debounce.playFromStart();
+    }
 
 }

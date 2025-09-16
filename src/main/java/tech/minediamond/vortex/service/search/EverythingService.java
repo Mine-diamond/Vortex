@@ -170,7 +170,7 @@ public class EverythingService {
             // 创建和配置搜索条件
             searchState = lib.Everything3_CreateSearchState();
             if (searchState == null) {
-                log.error("创建搜索失败。");
+                log.error("无法执行查询：创建搜索失败。");
             }
             // 设置搜索关键字
             String finalQueryString;
@@ -258,14 +258,14 @@ public class EverythingService {
                 .map(Path::toString)
                 .collect(Collectors.joining("|"));
         String pathQueryPart = "ancestor:" + body;
-        log.debug("pathQueryPart: {}",pathQueryPart);
+        log.debug("搜索路径关键词: {}",pathQueryPart);
         return pathQueryPart;
     }
 
     //构建搜索描述部分字符串
     private String buildSearchModeQueryPart(EverythingQuery query) {
         SearchMode searchMode = query.searchMode().orElse(SearchMode.ALL);
-        log.debug("searchModeQueryPart: {}",searchMode.getQueryPrefix());
+        log.debug("searchMode关键词: {}",searchMode.getQueryPrefix());
         return searchMode.getQueryPrefix();
     }
 

@@ -32,6 +32,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
@@ -73,6 +74,8 @@ public class MainWindow {
     @FXML
     private AnchorPane tabWindow;
     @FXML
+    private TextField searchField;
+    @FXML
     private ToggleButton pinBtn;
     @FXML
     private ToggleGroup mainToggleGroup;
@@ -89,6 +92,7 @@ public class MainWindow {
     //缓存已经加载的视图
     private final Map<String, Parent> viewCache = new HashMap<>();
     private final ObjectProperty<ContentPanel> currentContentPanelProperty = new SimpleObjectProperty<>(ContentPanel.EDITOR_PANEL);
+    private SearchPanel searchPanel;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -192,6 +196,13 @@ public class MainWindow {
                 case SEARCH_PANEL -> mainToggleGroup.selectToggle(searchBtn);
             }
         });
+
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                currentContentPanelProperty.set(ContentPanel.SEARCH_PANEL);
+                searchPanel.search(newValue);
+            }
+        });
     }
 
 
@@ -266,6 +277,9 @@ public class MainWindow {
                 loader.setResources(injector.getInstance(I18nService.class).getResourceBundle());
                 view = loader.load();
                 viewCache.put(fileName, view); // 加载后放入缓存
+                if (fxmlFileName == ContentPanel.SEARCH_PANEL) {
+                    searchPanel = loader.getController();
+                }
 
                 // 让新视图充满 tabWindow
                 AnchorPane.setTopAnchor(view, 0.0);

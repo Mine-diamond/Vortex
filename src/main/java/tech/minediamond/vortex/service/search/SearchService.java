@@ -1,0 +1,92 @@
+/*
+ * Vortex
+ * Copyright (C) 2025 Mine-diamond
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+package tech.minediamond.vortex.service.search;
+
+import com.google.inject.Inject;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import tech.minediamond.vortex.model.search.EverythingResult;
+import tech.minediamond.vortex.model.search.SearchMode;
+import tech.minediamond.vortex.ui.component.ComponentList;
+import tech.minediamond.vortex.ui.component.SearchResultCard;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+
+public class SearchService  extends Service<ComponentList> {
+
+    private final String NAME = "Search Thread";
+
+    private final EverythingService everythingService;
+    private final StringProperty keyword = new SimpleStringProperty();
+
+    private final ThreadFactory searchThreadFactory;
+    private final ExecutorService executor;
+
+    @Inject
+    public SearchService(EverythingService everythingService) {
+        this.everythingService = everythingService;
+
+        searchThreadFactory = r -> {
+            Thread t = new Thread(r, NAME);
+            t.setDaemon(true);
+            return t;
+        };
+        executor = Executors.newSingleThreadExecutor(searchThreadFactory);
+        setExecutor(executor);
+
+    }
+
+    public String getKeyword() {
+        return keyword.get();
+    }
+
+    public void search(String keyword) {
+        this.keyword.set(keyword);
+        restart();
+    }
+
+    @Override
+    protected Task<ComponentList> createTask() {
+        return new Task<ComponentList>() {
+
+            @Override
+            protected ComponentList call() throws Exception {
+                List<EverythingResult> results = everythingService.QueryBuilder()
+                        .mode(SearchMode.ALL)
+                        .searchFor(keyword.get())
+                        .query();
+
+                ComponentList componentList = new ComponentList();
+                for (EverythingResult result : results) {
+                    SearchResultCard card = new SearchResultCard(result);
+                    componentList.addNode(card);
+                }
+
+                return componentList;
+            }
+        };
+    }
+
+}

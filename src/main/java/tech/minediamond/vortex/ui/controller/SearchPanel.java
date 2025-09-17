@@ -52,7 +52,7 @@ public class SearchPanel {
     HBox searchNotFoundTiphbox = new HBox();
 
     enum SearchStatus {
-        SEARCHING, PENDING,NOT_FOUND
+        SEARCHING, SEARCHED, PENDING, NOT_FOUND
     }
 
     @Inject
@@ -68,8 +68,6 @@ public class SearchPanel {
     }
 
     public void initialize() {
-        scrollPane.contentProperty().bind(searchService.valueProperty());
-
         Label searchtipLabel = new Label(i18n.t("search.pending.text"));
         searchTiphbox.getChildren().add(searchtipLabel);
         searchTiphbox.setAlignment(Pos.CENTER);
@@ -81,14 +79,13 @@ public class SearchPanel {
         searchStatusProperty.addListener((observable, oldValue, newValue) -> {//监控不同的状态展示不同的界面
             switch (newValue) {
                 case PENDING -> {
-                    scrollPane.contentProperty().unbind();
                     scrollPane.contentProperty().set(searchTiphbox);
                 }
                 case NOT_FOUND -> {
-                    scrollPane.contentProperty().unbind();
                     scrollPane.contentProperty().set(searchNotFoundTiphbox);
                 }
-                case SEARCHING -> {scrollPane.contentProperty().bind(searchService.valueProperty());}
+                case SEARCHING -> {}//处于搜索状态时显示之前的画面，考虑到Everything引擎搜索极快，不打算显示搜索中页面
+                case SEARCHED -> {scrollPane.contentProperty().set(searchService.valueProperty().get());}
             }
         });
         searchStatusProperty.set(SearchStatus.PENDING);
@@ -96,6 +93,8 @@ public class SearchPanel {
         searchService.progressProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(0.0)) {
                 searchStatusProperty.set(SearchStatus.NOT_FOUND);
+            } else if(newValue.equals(1.0)) {
+                searchStatusProperty.set(SearchStatus.SEARCHED);
             }
         });
     }

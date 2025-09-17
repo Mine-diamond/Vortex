@@ -108,6 +108,12 @@ public class SearchService extends Service<ComponentList> {
                 log.info("搜索成功");
                 return componentList;
             }
+
+            @Override
+            public void succeeded(){
+                super.succeeded();
+                updateProgress(1, 1);
+            }
         };
     }
 

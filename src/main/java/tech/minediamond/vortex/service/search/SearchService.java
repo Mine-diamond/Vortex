@@ -41,6 +41,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
+/**
+ * 连接 {@link tech.minediamond.vortex.ui.controller.SearchPanel} 和 {@link EverythingService}的关键服务
+ */
 @Slf4j
 public class SearchService extends Service<ComponentList> {
 
@@ -112,18 +115,18 @@ public class SearchService extends Service<ComponentList> {
             }
 
             @Override
-            public void succeeded(){
+            public void succeeded() {
                 super.succeeded();
                 updateProgress(1, 1);
             }
 
             @Override
-            public void failed(){
+            public void failed() {
                 super.failed();
-                if (searchServiceHealthProperty.get()){
+                if (searchServiceHealthProperty.get()) {
                     updateProgress(0, 1);
                 } else {
-                    updateProgress(0.5,1);
+                    updateProgress(0.5, 1);
                 }
             }
         };

@@ -23,7 +23,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import javafx.animation.PauseTransition;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -105,8 +104,11 @@ public class SearchPanel {
                 case SERVICE_ERROR -> {
                     scrollPane.contentProperty().set(serviceErrorTiphbox);
                 }
-                case SEARCHING -> {}//显示处于搜索状态时显示之前的画面，考虑到Everything引擎搜索速度极快，不显示专门的搜索中页面
-                case SEARCHED -> {scrollPane.contentProperty().set(searchService.valueProperty().get());}
+                case SEARCHING -> {
+                }//显示处于搜索状态时显示之前的画面，考虑到Everything引擎搜索速度极快，不显示专门的搜索中页面
+                case SEARCHED -> {
+                    scrollPane.contentProperty().set(searchService.valueProperty().get());
+                }
             }
         });
         searchStatusProperty.set(SearchStatus.PENDING);
@@ -115,7 +117,7 @@ public class SearchPanel {
         searchService.progressProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.equals(0.0)) {
                 searchStatusProperty.set(SearchStatus.NOT_FOUND);
-            } else if(newValue.equals(1.0)) {
+            } else if (newValue.equals(1.0)) {
                 searchStatusProperty.set(SearchStatus.SEARCHED);
             } else if (newValue.equals(0.5)) {
                 searchStatusProperty.set(SearchStatus.SERVICE_ERROR);
@@ -125,6 +127,7 @@ public class SearchPanel {
 
     /**
      * 执行搜索方法
+     *
      * @param keyword 搜索关键词
      */
     public void search(String keyword) {
@@ -137,7 +140,7 @@ public class SearchPanel {
     /**
      * 清除搜索状态，重置为等待搜索状态
      */
-    public void searchClear(){
+    public void searchClear() {
         searchStatusProperty.set(SearchStatus.PENDING);
     }
 

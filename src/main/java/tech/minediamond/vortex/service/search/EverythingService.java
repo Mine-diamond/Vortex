@@ -24,17 +24,18 @@ import com.google.inject.Singleton;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import lombok.extern.slf4j.Slf4j;
+import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.fileData.FileType;
 import tech.minediamond.vortex.model.search.EverythingQuery;
-import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.search.SearchMode;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -66,20 +67,31 @@ public class EverythingService {
 
     private static final int MAX_PATH = 32767;
     private static final String EVERYTHING_PATH = Paths.get("everything\\Everything64.exe").toFile().getAbsolutePath();
+    private static final Pattern FORBIDDEN_CHAR_PATTERN = Pattern.compile(
+            Pattern.quote("\"") + "|" +
+                    Pattern.quote("*") + "|" +
+                    Pattern.quote("?") + "|" +
+                    Pattern.quote("<") + "|" +
+                    Pattern.quote(">") + "|" +
+                    Pattern.quote("|")
+    );
 
     private Everything3.EverythingClient client = null;
     private final Everything3 lib = Everything3.INSTANCE;
-    Thread linkEverythingThread;
+    private Thread linkEverythingThread;
+    private final Runnable linkEverythingRunnable;
+    private Process everythingProcess;
+    private final ReadOnlyBooleanWrapper searchServiceHealthProperty = new ReadOnlyBooleanWrapper(false);//供外部调用
+
 
     @Inject
     public EverythingService() throws IOException, InterruptedException {
-        StartEverythingInstance();
-        linkEverythingThread = new Thread(() -> {
+        linkEverythingRunnable = () -> {
             try {
                 TimeUnit.SECONDS.sleep(1);
                 for (int i = 0; i < 20; i++) {
-                    client = LinkEverythingInstance();
-                    if (client != null) {
+                    boolean linkSuccess = linkEverythingInstance();
+                    if (linkSuccess) {
                         log.info("everything连接成功");
                         return;
                     } else {
@@ -90,9 +102,20 @@ public class EverythingService {
             } catch (InterruptedException e) {
                 log.warn("linkEverythingThread被中断");
             }
+        };
+
+        linkEverythingThread = new Thread(linkEverythingRunnable);
+        StartEverythingInstance();
+        connectEverythingInstance();
+        searchServiceHealthProperty.addListener((observable,oldValue,newValue) -> {
+            if (!newValue){
+                connectEverythingInstance();
+            }
         });
-        linkEverythingThread.setName("Link Everything Instance Thread");
-        linkEverythingThread.start();
+    }
+
+    public ReadOnlyBooleanProperty getSearchServiceHealthProperty(){
+        return searchServiceHealthProperty.getReadOnlyProperty();
     }
 
 
@@ -117,7 +140,7 @@ public class EverythingService {
         pb.redirectErrorStream(true);
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
         pb.redirectError(ProcessBuilder.Redirect.DISCARD);
-        pb.start();
+        everythingProcess = pb.start();
     }
 
     /**
@@ -142,25 +165,65 @@ public class EverythingService {
     }
 
     /**
-     * 连接到正在运行的Everything实例。
+     * 连接到正在运行的Everything实例(尝试多次，异步执行)。
+     */
+    public void connectEverythingInstance() {
+        log.debug("尝试连接/重新连接EverythingInstance");
+        if (everythingProcess == null || !everythingProcess.isAlive()) {//当everything未运行
+            log.debug("everything未运行");
+            try {
+                client = null;
+                StartEverythingInstance();
+                if (!linkEverythingThread.isAlive()){
+                    startLinkEverythingThread();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {//当everything已运行
+            if (!linkEverythingThread.isAlive()){
+                startLinkEverythingThread();
+            }
+        }
+        log.debug("执行到这里了");
+    }
+
+    private void startLinkEverythingThread(){
+        linkEverythingThread = new Thread(linkEverythingRunnable);
+        linkEverythingThread.setName("Link Everything Instance Thread");
+        linkEverythingThread.start();
+    }
+
+    /**
+     * 连接到正在运行的Everything实例(仅尝试一次)。
      *
      * @return Everything客户端句柄，连接失败时返回null
      */
-    public Everything3.EverythingClient LinkEverythingInstance() {
+    public boolean linkEverythingInstance() {
         client = lib.Everything3_ConnectW(new WString("vortex_backend"));
-        return client;
+        if (client != null) {
+            searchServiceHealthProperty.set(true);
+            return true;
+        }
+        return false;
     }
 
     public List<FileData> query(EverythingQuery query) {
 
         // 防御性检查
+        if (!searchServiceHealthProperty.get()){
+            return Collections.emptyList();
+        }
+
         if (client == null) {
             log.error("无法执行查询：Everything 服务未连接。");
+            searchServiceHealthProperty.set(false);
             return Collections.emptyList();
         }
 
         if (!lib.Everything3_IsDBLoaded(client)) {
             log.error("无法执行查询：Everything数据库未加载。");
+            searchServiceHealthProperty.set(false);
             return Collections.emptyList();
         }
 
@@ -172,9 +235,8 @@ public class EverythingService {
             searchState = lib.Everything3_CreateSearchState();
             if (searchState == null) {
                 log.error("无法执行查询：创建搜索失败。");
+                return Collections.emptyList();
             }
-            // 设置搜索关键字
-            String finalQueryString;
             // 设置返回结果的最大数量
             lib.Everything3_SetSearchViewportCount(searchState, new WinDef.DWORD(200));
             //设置搜索内容
@@ -183,30 +245,8 @@ public class EverythingService {
             lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.FILE_NAME.getID());
             lib.Everything3_AddSearchPropertyRequest(searchState, Everything3.PropertyType.IS_FOLDER.getID());
 
-            //生成搜索词字符串
-            String queryKeywords = "\"" + query.query() + "\"";
-            //去除部分关键字
-            List<String> forbiddenChar = Arrays.asList("\"", "*", "?", "<", ">", "|");
-            String regex = forbiddenChar.stream()
-                    .map(Pattern::quote) // 使用Pattern.quote处理特殊字符
-                    .collect(Collectors.joining("|"));
-
-            queryKeywords = queryKeywords.replaceAll(regex, "");
-
-            //生成文件夹字符串
-            String pathQueryPart = "";
-            if (query.targetFolders().isPresent()) {
-                pathQueryPart = buildPathQueryPart(query);
-
-            }
-
-            //生成搜索模式字符串
-            String searchModeQueryPart = "";
-            if (query.searchMode().isPresent()) {
-                searchModeQueryPart = buildSearchModeQueryPart(query);
-            }
-
-            finalQueryString = pathQueryPart + " "+ searchModeQueryPart + queryKeywords;
+            // 设置搜索关键字
+            String finalQueryString = buildQueryString(query);
 
             //执行搜索
             log.info("正在执行搜索 '{}'...", query);
@@ -220,29 +260,29 @@ public class EverythingService {
             WinDef.DWORD numResults = lib.Everything3_GetResultListViewportCount(resultList);
             log.info("找到 {} 个结果:", numResults.intValue());
 
-
             char[] buffer = new char[MAX_PATH];
-            WinDef.DWORD resultListindex = new WinDef.DWORD();
-            for (int i = 0; i < numResults.intValue(); i++) {
+            WinDef.DWORD resultListIndex = new WinDef.DWORD();
+            WinDef.DWORD maxPathLength = new WinDef.DWORD(MAX_PATH);
+            for (int i = 0; i < numResults.intValue(); i++) {//遍历搜索结果
                 FileData fileData = new FileData();
-                resultListindex.setValue(i);
+                resultListIndex.setValue(i);
                 //获取搜索结果的完整路径
-                lib.Everything3_GetResultPropertyTextW(resultList, resultListindex, Everything3.PropertyType.FULL_PATH.getID(), buffer, new WinDef.DWORD(MAX_PATH));
+                lib.Everything3_GetResultPropertyTextW(resultList, resultListIndex, Everything3.PropertyType.FULL_PATH.getID(), buffer, maxPathLength);
                 String pathname = Native.toString(buffer);
                 fileData.setFullPath(pathname);
 
                 //获取搜索结果的名称
-                lib.Everything3_GetResultPropertyTextW(resultList, resultListindex, Everything3.PropertyType.FILE_NAME.getID(), buffer, new WinDef.DWORD(MAX_PATH));
+                lib.Everything3_GetResultPropertyTextW(resultList, resultListIndex, Everything3.PropertyType.FILE_NAME.getID(), buffer, maxPathLength);
                 String filename = Native.toString(buffer);
                 fileData.setFileName(filename);
 
                 //获取搜索结果的大小(单位:Byte)
                 //这里直接将返回的无符号int64转换为long，但是考虑到无符号int64达到最大位需要文件8EB以上的大小，因此直接赋值问题不大
-                long size = lib.Everything3_GetResultSize(resultList, resultListindex);
+                long size = lib.Everything3_GetResultSize(resultList, resultListIndex);
                 fileData.setSize(size);
 
                 //获取文件的类型
-                byte type = lib.Everything3_GetResultPropertyBYTE(resultList, resultListindex, Everything3.PropertyType.IS_FOLDER.getID());
+                byte type = lib.Everything3_GetResultPropertyBYTE(resultList, resultListIndex, Everything3.PropertyType.IS_FOLDER.getID());
                 int intType = type & 0xFF;
                 if (intType != 0) {
                     fileData.setType(FileType.FOLDER);
@@ -260,8 +300,33 @@ public class EverythingService {
                 lib.Everything3_DestroySearchState(searchState);
             }
         }
-        log.info(results.toString());
+        searchServiceHealthProperty.set(true);
+        log.debug(results.toString());
         return results;
+    }
+
+    // 构建查询字符串
+    private String buildQueryString(EverythingQuery query) {
+        StringBuilder queryString = new StringBuilder();
+
+        // 添加路径查询部分
+        if(query.targetFolders().isPresent()){
+            String pathQueryPart = buildPathQueryPart(query);
+            queryString.append(pathQueryPart).append(" ");
+        }
+
+        // 添加搜索模式部分
+        if (query.searchMode().isPresent()) {
+            String searchModeQueryPart = buildSearchModeQueryPart(query);
+            queryString.append(searchModeQueryPart);
+        }
+
+        // 添加关键词部分
+        String queryKeywords = "\"" + query.query() + "\"";
+        queryKeywords = FORBIDDEN_CHAR_PATTERN.matcher(queryKeywords).replaceAll("");
+        queryString.append(queryKeywords);
+
+        return queryString.toString();
     }
 
     //构建搜索路径部分字符串

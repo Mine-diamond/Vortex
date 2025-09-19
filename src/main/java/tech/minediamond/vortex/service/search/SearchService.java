@@ -21,6 +21,7 @@ package tech.minediamond.vortex.service.search;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.concurrent.Service;
@@ -48,6 +49,7 @@ public class SearchService extends Service<ComponentList> {
     private final EverythingService everythingService;
     private final I18nService i18n;
     private final Injector injector;
+    private final ReadOnlyBooleanProperty searchServiceHealthProperty;
     private final StringProperty keyword = new SimpleStringProperty();
 
     private final ThreadFactory searchThreadFactory;
@@ -58,6 +60,7 @@ public class SearchService extends Service<ComponentList> {
         this.everythingService = everythingService;
         this.i18n = i18n;
         this.injector = injector;
+        this.searchServiceHealthProperty = everythingService.getSearchServiceHealthProperty();
 
         searchThreadFactory = r -> {
             Thread t = new Thread(r, NAME);
@@ -92,8 +95,7 @@ public class SearchService extends Service<ComponentList> {
                 ComponentList componentList = new ComponentList();
 
                 if (results.isEmpty()) {
-                    updateProgress(0, 1);
-                    return null;
+                    throw new Exception("Result is Empty");
                 }
 
                 for (FileData result : results) {
@@ -113,6 +115,16 @@ public class SearchService extends Service<ComponentList> {
             public void succeeded(){
                 super.succeeded();
                 updateProgress(1, 1);
+            }
+
+            @Override
+            public void failed(){
+                super.failed();
+                if (searchServiceHealthProperty.get()){
+                    updateProgress(0, 1);
+                } else {
+                    updateProgress(0.5,1);
+                }
             }
         };
     }

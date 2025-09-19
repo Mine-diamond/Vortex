@@ -24,10 +24,12 @@ import com.google.inject.Singleton;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanWrapper;
 import lombok.extern.slf4j.Slf4j;
+import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.fileData.FileType;
 import tech.minediamond.vortex.model.search.EverythingQuery;
-import tech.minediamond.vortex.model.fileData.FileData;
 import tech.minediamond.vortex.model.search.SearchMode;
 
 import java.io.IOException;
@@ -76,17 +78,20 @@ public class EverythingService {
 
     private Everything3.EverythingClient client = null;
     private final Everything3 lib = Everything3.INSTANCE;
-    Thread linkEverythingThread;
+    private Thread linkEverythingThread;
+    private final Runnable linkEverythingRunnable;
+    private Process everythingProcess;
+    private final ReadOnlyBooleanWrapper searchServiceHealthProperty = new ReadOnlyBooleanWrapper(false);//供外部调用
+
 
     @Inject
     public EverythingService() throws IOException, InterruptedException {
-        StartEverythingInstance();
-        linkEverythingThread = new Thread(() -> {
+        linkEverythingRunnable = () -> {
             try {
                 TimeUnit.SECONDS.sleep(1);
                 for (int i = 0; i < 20; i++) {
-                    client = LinkEverythingInstance();
-                    if (client != null) {
+                    boolean linkSuccess = linkEverythingInstance();
+                    if (linkSuccess) {
                         log.info("everything连接成功");
                         return;
                     } else {
@@ -97,9 +102,20 @@ public class EverythingService {
             } catch (InterruptedException e) {
                 log.warn("linkEverythingThread被中断");
             }
+        };
+
+        linkEverythingThread = new Thread(linkEverythingRunnable);
+        StartEverythingInstance();
+        connectEverythingInstance();
+        searchServiceHealthProperty.addListener((observable,oldValue,newValue) -> {
+            if (!newValue){
+                connectEverythingInstance();
+            }
         });
-        linkEverythingThread.setName("Link Everything Instance Thread");
-        linkEverythingThread.start();
+    }
+
+    public ReadOnlyBooleanProperty getSearchServiceHealthProperty(){
+        return searchServiceHealthProperty.getReadOnlyProperty();
     }
 
 
@@ -124,7 +140,7 @@ public class EverythingService {
         pb.redirectErrorStream(true);
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
         pb.redirectError(ProcessBuilder.Redirect.DISCARD);
-        pb.start();
+        everythingProcess = pb.start();
     }
 
     /**
@@ -149,25 +165,65 @@ public class EverythingService {
     }
 
     /**
-     * 连接到正在运行的Everything实例。
+     * 连接到正在运行的Everything实例(尝试多次，异步执行)。
+     */
+    public void connectEverythingInstance() {
+        log.debug("尝试连接/重新连接EverythingInstance");
+        if (everythingProcess == null || !everythingProcess.isAlive()) {//当everything未运行
+            log.debug("everything未运行");
+            try {
+                client = null;
+                StartEverythingInstance();
+                if (!linkEverythingThread.isAlive()){
+                    startLinkEverythingThread();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else {//当everything已运行
+            if (!linkEverythingThread.isAlive()){
+                startLinkEverythingThread();
+            }
+        }
+        log.debug("执行到这里了");
+    }
+
+    private void startLinkEverythingThread(){
+        linkEverythingThread = new Thread(linkEverythingRunnable);
+        linkEverythingThread.setName("Link Everything Instance Thread");
+        linkEverythingThread.start();
+    }
+
+    /**
+     * 连接到正在运行的Everything实例(仅尝试一次)。
      *
      * @return Everything客户端句柄，连接失败时返回null
      */
-    public Everything3.EverythingClient LinkEverythingInstance() {
+    public boolean linkEverythingInstance() {
         client = lib.Everything3_ConnectW(new WString("vortex_backend"));
-        return client;
+        if (client != null) {
+            searchServiceHealthProperty.set(true);
+            return true;
+        }
+        return false;
     }
 
     public List<FileData> query(EverythingQuery query) {
 
         // 防御性检查
+        if (!searchServiceHealthProperty.get()){
+            return Collections.emptyList();
+        }
+
         if (client == null) {
             log.error("无法执行查询：Everything 服务未连接。");
+            searchServiceHealthProperty.set(false);
             return Collections.emptyList();
         }
 
         if (!lib.Everything3_IsDBLoaded(client)) {
             log.error("无法执行查询：Everything数据库未加载。");
+            searchServiceHealthProperty.set(false);
             return Collections.emptyList();
         }
 
@@ -244,6 +300,7 @@ public class EverythingService {
                 lib.Everything3_DestroySearchState(searchState);
             }
         }
+        searchServiceHealthProperty.set(true);
         log.debug(results.toString());
         return results;
     }

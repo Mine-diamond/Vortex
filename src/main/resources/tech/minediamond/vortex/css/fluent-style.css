@@ -19,15 +19,8 @@
 
 /* fluent-style.css */
 
-/* 加载常规字重 */
-@font-face {
-    -fx-font-family: 'Noto Sans SC';
-    src: url('../../../../fonts/NotoSansSC-Regular.ttf');
-}
-
 .root {
-    /*字体样式*/
-    /*-fx-font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;*/
+    /*字体*/
     -fx-font-size: 13px;
     -fx-font-smoothing-type: lcd;
 

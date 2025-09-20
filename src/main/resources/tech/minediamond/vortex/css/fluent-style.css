@@ -19,17 +19,16 @@
 
 /* fluent-style.css */
 
-/* 加载常规字重 */
-@font-face {
-    -fx-font-family: 'Noto Sans SC';
-    src: url('../../../../fonts/NotoSansSC-Regular.ttf');
-}
+/*<editor-fold desc="root -> 全局变量定义">*/
+/*
+ * ===================================================================
+ * 全局变量
+ * ===================================================================
+ */
 
 .root {
-    /*字体样式*/
-    /*-fx-font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;*/
+    /*字体*/
     -fx-font-size: 13px;
-    -fx-font-smoothing-type: lcd;
 
     /*根节点样式*/
     -fx-background-color: #f1f1f1;
@@ -43,74 +42,89 @@
     -button-bg-color-hover: #e6e7e8; /* 悬停时更亮一点 */
     -button-bg-color-pressed: #e1e2e3; /* 按下时更深一点 */
     -button-selected-bg-color: #e3e4e4; /* 选中后的按钮背景 */
-    -button-text-fill-color-disabled: #2e2b2b;/*禁用按钮时的文字颜色*/
+    -button-text-fill-color-disabled: #2e2b2b; /*禁用按钮时的文字颜色*/
 
-    /*开关按钮样式*/
-    -toggle-switch-thumb-bg-color:#f8f6f6;/*滑块颜色*/
-    -toggle-switch-thumb-area-bg-color-selected: #4570cd;/*开启时轨道颜色*/
-    -toggle-switch-thumb-area-bg-color-unselected: #a5a3a1;/*关闭时轨道颜色*/
+    /*开关样式*/
+    -toggle-switch-thumb-bg-color: #f8f6f6; /*滑块颜色*/
+    -toggle-switch-thumb-area-bg-color-selected: #4570cd; /*开启时轨道颜色*/
+    -toggle-switch-thumb-area-bg-color-unselected: #a5a3a1; /*关闭时轨道颜色*/
 
-    /*文本框样式*/
-    -textField-bg-color: #f2f3f4;/*文本框背景颜色*/
-    -textField-bg-color-focused: #fdfdfd;/*聚焦时文本框背景颜色*/
-    -textField-border-color: #c8cbcc;/*文本框边框颜色*/
-    -textField-border-color-focused: #3e3d3d;/*聚焦时文本框边框颜色*/
+    /*文本输入框样式*/
+    -textField-bg-color: #f2f3f4; /*文本框背景颜色*/
+    -textField-bg-color-focused: #fdfdfd; /*聚焦时文本框背景颜色*/
+    -textField-border-color: #c8cbcc; /*文本框边框颜色*/
+    -textField-border-color-focused: #3e3d3d; /*聚焦时文本框边框颜色*/
 
     /*codeArea样式*/
-    -code-area-bg-color:#e3e1de;/*editor背景颜色*/
-    -code-area-selection-fill-color: rgba(121, 136, 107, 0.4);/*被选中的文本的样式*/
-    -scroll-bar-thumb-bg-color:#c6c6c6;/*滚动条正常颜色*/
-    -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
+    -code-area-bg-color: #e3e1de; /*editor背景颜色*/
+    -code-area-selection-fill-color: rgba(121, 136, 107, 0.4); /*被选中的文本的样式*/
+
+    /*滚动条样式*/
+    -scroll-bar-thumb-bg-color: #c6c6c6; /*滚动条正常颜色*/
+    -scroll-bar-thumb-bg-color-hover-pressed: #939393; /*滚动条悬浮和选中的颜色*/
 
     /*设置面板样式*/
-    -fx-setting-list-bg-color: #e1e1e3;/*设置条目背景颜色*/
-    -fx-setting-list-separator-line-color: #b2b2b2;/*设置分隔线背景颜色*/
-    -fx-setting-list-button-bg-color:#cdcdd2;/*设置条目按钮颜色*/
-    -fx-setting-list-button-bg-color-hover:#c1c1c7;/*设置条目悬浮时按钮颜色*/
-    -fx-setting-list-button-bg-color-pressed:#b9b9be;/*设置条目按下时按钮颜色*/
+    -fx-setting-list-bg-color: #e1e1e3; /*设置条目背景颜色*/
+    -fx-setting-list-separator-line-color: #b2b2b2; /*设置分隔线背景颜色*/
+    -fx-setting-list-button-bg-color: #cdcdd2; /*设置条目按钮颜色*/
+    -fx-setting-list-button-bg-color-hover: #c1c1c7; /*设置条目悬浮时按钮颜色*/
+    -fx-setting-list-button-bg-color-pressed: #b9b9be; /*设置条目按下时按钮颜色*/
 
-    -fx-setting-combo-box-popup-bg-color: #e1e1e3;/*设置条目单选按钮弹出框背景颜色*/
-    -fx-setting-combo-box-popup-border-color: #99999f;/*设置条目单选按钮弹出框边框颜色*/
-    -fx-setting-combo-box-popup-bg-color-hover: #c1c1c7;/*设置条目单选按钮弹出框悬浮是背景颜色*/
-    -fx-setting-combo-box-popup-bg-color-pressed: #b9b9be;/*设置条目单选按钮弹出框按下时背景颜色*/
-    -fx-setting-combo-box-arrow-border-color: #353333;/* 设置条目单选按钮箭头边框颜色*/
+    /*下拉选择框样式*/
+    -fx-setting-combo-box-popup-bg-color: #e1e1e3; /*设置条目单选按钮弹出框背景颜色*/
+    -fx-setting-combo-box-popup-border-color: #99999f; /*设置条目单选按钮弹出框边框颜色*/
+    -fx-setting-combo-box-popup-bg-color-hover: #c1c1c7; /*设置条目单选按钮弹出框悬浮是背景颜色*/
+    -fx-setting-combo-box-popup-bg-color-pressed: #b9b9be; /*设置条目单选按钮弹出框按下时背景颜色*/
+    -fx-setting-combo-box-arrow-border-color: #353333; /* 设置条目单选按钮箭头边框颜色*/
 
-    /*搜索面板样式*/
-    -fx-search-result-file-path-text-color: #cdcdcd;/*搜索面板文件路径文本颜色*/
-    -fx-search-result-card-bg-color-hover:#474747;/*搜索面板列表悬浮时背景颜色*/
+    /*搜索卡片样式*/
+    -fx-search-result-file-path-text-color: #cdcdcd; /*搜索面板文件路径文本颜色*/
+    -fx-search-result-card-bg-color-hover: #474747; /*搜索面板列表悬浮时背景颜色*/
 
     /*特殊样式*/
-    -fx-exit-button-bg-color-hover: #f86868;/*退出按钮悬浮时背景颜色*/
-    -fx-exit-button-bg-color-pressed: #e86363;/*退出按钮悬浮时背景颜色*/
+    -fx-exit-button-bg-color-hover: #f86868; /*退出按钮悬浮时背景颜色*/
+    -fx-exit-button-bg-color-pressed: #e86363; /*退出按钮悬浮时背景颜色*/
+}
+
+/*</editor-fold>*/
+/*<editor-fold desc="base -> 基础元素样式">*/
+/*
+ * ===================================================================
+ * 基础样式
+ * ===================================================================
+ */
+
+.text {
+    -fx-font-smoothing-type: gray; /* 文字使用灰度抗锯齿 */
 }
 
 .label {
-    -fx-text-fill:-app-text-fill-color
+    -fx-text-fill: -app-text-fill-color
 }
 
-/* 创建按钮样式 */
-.button, .toggle-button{
-    /*鼠标形状:手性*/
-    -fx-cursor: hand;
-    -fx-graphic-text-gap: 2px;
-
-    /* 形状与空间 */
-    -fx-background-radius: 4px; /* 关键的圆角 */
-    -fx-border-radius: 4px;     /* 边框也需要圆角 */
-
-    -fx-background-color: transparent;
-
-    -fx-text-fill: -app-text-fill-color;
-
-    /* 2. 现在可以安全地添加边框了 */
-    -fx-border-color: transparent; /* 默认透明边框，占位但不显示 */
-    -fx-border-width: 1px; /* 固定边框宽度 */
-
+/*</editor-fold>*/
+/*<editor-fold desc="component: button -> 按钮">*/
+/*
+ * ===================================================================
+ * 按钮
+ * ===================================================================
+ */
+.button, .toggle-button {
     -fx-alignment: CENTER;
     -fx-min-width: 30;
     -fx-pref-height: 30;
 
-    /* 对背景色和阴影效果的变化，应用一个0.15秒的缓动动画 */
+    /* 圆角边框 */
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent; /* 默认透明边框，占位但不显示 */
+    -fx-border-width: 1px; /* 固定边框宽度 */
+
+    -fx-text-fill: -app-text-fill-color;
+    -fx-graphic-text-gap: 2px;
+
+    -fx-cursor: hand;
     -fx-transition: -fx-background-color 0.15s ease-in-out, -fx-effect 0.15s ease-in-out;
 }
 
@@ -119,17 +133,17 @@
     -fx-icon-size: 16;
 }
 
-.button:hover ,.toggle-button:hover{
+.button:hover, .toggle-button:hover {
     -fx-background-color: -button-bg-color-hover;
     -fx-effect: dropshadow(gaussian, -button-bg-color-hover, 3, 0, 0, 0);
 }
 
-.button:pressed ,.toggle-button:pressed{
+.button:pressed, .toggle-button:pressed {
     -fx-background-color: -button-bg-color-pressed;
     -fx-effect: dropshadow(gaussian, -button-bg-color-pressed, 3, 0, 0, 0);
 }
 
-.button:disabled ,.toggle-button:disabled{
+.button:disabled, .toggle-button:disabled {
     -fx-text-fill: -button-text-fill-color-disabled;
 }
 
@@ -138,7 +152,13 @@
     -fx-effect: dropshadow(gaussian, -button-selected-bg-color, 3, 0, 0, 0);
 }
 
-/* ===切换开关样式=== */
+/*</editor-fold>*/
+/*<editor-fold desc="component: toggle switch -> 开关">*/
+/*
+ * ===================================================================
+ * 开关
+ * ===================================================================
+ */
 
 .toggle-switch {
     -fx-cursor: hand;
@@ -149,7 +169,7 @@
 .toggle-switch .thumb {
     -fx-background-color: -toggle-switch-thumb-bg-color; /* 滑块颜色 */
     -fx-background-insets: 2.5; /* 背景距离边框的距离 */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1); /* 滑块阴影 */
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 5, 0, 0, 1); /* 滑块阴影 */
 }
 
 
@@ -162,7 +182,14 @@
     -fx-background-color: -toggle-switch-thumb-area-bg-color-unselected;
 }
 
-/*创建textField样式*/
+/*</editor-fold>*/
+/*<editor-fold desc="component: text field -> 文本输入框">*/
+/*
+ * ===================================================================
+ * 文本输入框
+ * ===================================================================
+ */
+
 .text-field {
     /* 形状与空间 */
     -fx-background-radius: 4px;
@@ -178,20 +205,16 @@
     -fx-border-color: -textField-border-color-focused;
 }
 
-/*创建codeArea样式*/
-
-/* 光标样式
-.caret {
-    -fx-stroke: -app-text-fill-color;
-}
-*/
-
-
-
-/* ===== 滚动条样式 ===== */
+/*</editor-fold>*/
+/*<editor-fold desc="component: scroll bar -> 滚动条">*/
+/*
+ * ===================================================================
+ * 滚动条
+ * ===================================================================
+ */
 
 /* 滚动条 */
-.scroll-bar:vertical ,
+.scroll-bar:vertical,
 .scroll-bar:horizontal {
     -fx-background-color: transparent; /* 滚动条整体背景 */
     -fx-border-color: transparent;
@@ -234,115 +257,94 @@
     -fx-background-color: -scroll-bar-thumb-bg-color-hover-pressed;
 }
 
-/* 滑块按下效果 */
-/*
-.scroll-bar:vertical .thumb:pressed,
-.scroll-bar:horizontal .thumb:pressed {
-    -fx-background-color: #5a5a5a;
-}
-*/
 
 /* 隐藏滚动条的箭头按钮 */
-.scroll-bar:vertical .increment-button,
-.scroll-bar:vertical .decrement-button,
-.scroll-bar:horizontal .increment-button,
-.scroll-bar:horizontal .decrement-button {
+.scroll-bar:vertical > .increment-button,
+.scroll-bar:vertical > .decrement-button,
+.scroll-bar:horizontal > .increment-button,
+.scroll-bar:horizontal > .decrement-button {
     -fx-background-color: transparent;
-    -fx-background-radius: 0;
-    -fx-border-color: transparent;
-
+    -fx-padding: 0;
     -fx-pref-width: 0;
     -fx-pref-height: 0;
+    -fx-max-width: 0;
+    -fx-max-height: 0;
 }
 
-/* 同时隐藏按钮内的箭头图标本身 */
-.virtualized-scroll-pane .scroll-bar .increment-arrow,
-.virtualized-scroll-pane .scroll-bar .decrement-arrow {
-    -fx-shape: "";
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: transparent;
     -fx-padding: 0;
+    -fx-shape: ""; /* 去掉箭头形状，避免残影 */
+    -fx-max-width: 0;
+    -fx-max-height: 0;
 }
 
-/* ===simple-hover-tooltip=== */
+/*</editor-fold>*/
+/*<editor-fold desc="custom component: simple hover tooltip -> 悬浮提示">*/
+/*
+ * ===================================================================
+ * 悬浮提示
+ * ===================================================================
+ */
+
 .simple-hover-tooltip {
-    -fx-background-color: #424242;
-    -fx-background-radius: 2;
+    -fx-background-color: #3A3A3A;
+    -fx-background-radius: 3px;
 }
 
 .simple-hover-tooltip .label {
+    -fx-label-padding: 1px;
     -fx-text-fill: WHITE;
 }
 
-/* ===设置界面=== */
+/*</editor-fold>*/
+/*<editor-fold desc="custom component: search result card -> 搜索卡片">*/
+/*
+ * ===================================================================
+ * 搜索卡片
+ * ===================================================================
+ */
 
-/*noinspection CssInvalidPseudoSelector*/
-#settingList .component-list-item:first  {
-    -fx-background-radius: 4 4 0 0;
-}
-
-/*noinspection CssInvalidPseudoSelector*/
-#settingList .component-list-item:last  {
-    -fx-background-radius: 0 0 4 4;
-    -fx-border-width: 0 0 0 0;
-}
-
-
-#settingList .component-list-item{
-    -fx-background-color: -fx-setting-list-bg-color;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: -fx-setting-list-separator-line-color;
-}
-
-/* 设置页面各个HBox样式 */
-#settingList HBox {
-    -fx-min-height: 40;
+.search-result-card {
+    -fx-min-height: 50;
     -fx-alignment: CENTER_LEFT;
     -fx-background-radius: 4px; /* 圆角 */
-    -fx-border-radius: 4px;     /* 边框也需要圆角 */
-
-    -fx-background-color: -fx-setting-list-bg-color;
-
-    -fx-spacing: 5;
+    -fx-border-radius: 4px; /* 边框也需要圆角 */
+    -fx-spacing: 2;
     -fx-padding: 5 5 5 5;
 }
 
-/* 创建按钮样式 */
-#settingList .button{
-    -fx-text-fill: -app-text-fill-color;
-    -fx-background-color: -fx-setting-list-button-bg-color;
-
-    -fx-effect: dropshadow(gaussian, -fx-setting-list-button-bg-color, 3, 0, 0, 0);
-
+.search-result-card:hover {
+    -fx-background-color: -fx-search-result-card-bg-color-hover;
 }
 
-#settingList .button:hover{
+.search-result-card .search-result-file-path {
+    -fx-text-fill: -fx-search-result-file-path-text-color;
+    -fx-font-size: 11px;
+}
+
+.search-result-card .button {
+    -fx-min-width: 35;
+    -fx-pref-height: 30;
+}
+
+.search-result-card .button:hover {
     -fx-background-color: -fx-setting-list-button-bg-color-hover;
 }
 
-#settingList .button:pressed{
+.search-result-card .button:pressed {
     -fx-background-color: -fx-setting-list-button-bg-color-pressed;
 }
 
-.settings-panel {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
-}
+/*</editor-fold>*/
+/*<editor-fold desc="component: combo box -> 下拉选择框">*/
+/*
+ * ===================================================================
+ * 下拉选择框
+ * ===================================================================
+ */
 
-.scroll-pane {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
-}
-
-/* 显示实际内容的 viewport */
-.scroll-pane > .viewport {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
-}
-
-
-/* ==ComboBox== */
 .combo-box {
     -fx-cursor: hand;
     -fx-background-color: -fx-setting-list-button-bg-color;
@@ -388,7 +390,7 @@
     /* 1. 定义箭头的颜色 */
     -fx-background-color: transparent;
     -fx-border-color: -fx-setting-combo-box-arrow-border-color; /* 箭头的亮灰色 */
-    -fx-border-width: 1px;   /* 箭头的线条粗细 */
+    -fx-border-width: 1px; /* 箭头的线条粗细 */
 
     /* 2. 定义箭头的形状 */
     -fx-shape: "M -4 -2 L 0 2 L 4 -2";
@@ -396,50 +398,100 @@
 
 }
 
-/* ===搜索结果卡片=== */
+/*</editor-fold>*/
+/*<editor-fold desc="view: setting panel -> 设置面板">*/
+/*
+ * ===================================================================
+ * 设置面板
+ * ===================================================================
+ */
 
-.search-result-card {
-    -fx-min-height: 50;
+/*noinspection CssInvalidPseudoSelector*/
+#settingList .component-list-item:first {
+    -fx-background-radius: 4 4 0 0;
+}
+
+/*noinspection CssInvalidPseudoSelector*/
+#settingList .component-list-item:last {
+    -fx-background-radius: 0 0 4 4;
+    -fx-border-width: 0 0 0 0;
+}
+
+
+#settingList .component-list-item {
+    -fx-background-color: -fx-setting-list-bg-color;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: -fx-setting-list-separator-line-color;
+}
+
+/* 设置页面各个HBox样式 */
+#settingList HBox {
+    -fx-min-height: 40;
     -fx-alignment: CENTER_LEFT;
     -fx-background-radius: 4px; /* 圆角 */
-    -fx-border-radius: 4px;     /* 边框也需要圆角 */
-    -fx-spacing: 2;
+    -fx-border-radius: 4px; /* 边框也需要圆角 */
+
+    -fx-background-color: -fx-setting-list-bg-color;
+
+    -fx-spacing: 5;
     -fx-padding: 5 5 5 5;
 }
 
-.search-result-card:hover {
-    -fx-background-color: -fx-search-result-card-bg-color-hover;
+/* 创建按钮样式 */
+#settingList .button {
+    -fx-text-fill: -app-text-fill-color;
+    -fx-background-color: -fx-setting-list-button-bg-color;
+
+    -fx-effect: dropshadow(gaussian, -fx-setting-list-button-bg-color, 3, 0, 0, 0);
+
 }
 
-.search-result-card .search-result-file-path {
-    -fx-text-fill: -fx-search-result-file-path-text-color;
-    -fx-font-size: 11px;
-}
-
-.search-result-card .button{
-    -fx-min-width: 35;
-    -fx-pref-height: 30;
-}
-
-.search-result-card .button:hover{
+#settingList .button:hover {
     -fx-background-color: -fx-setting-list-button-bg-color-hover;
 }
 
-.search-result-card .button:pressed{
+#settingList .button:pressed {
     -fx-background-color: -fx-setting-list-button-bg-color-pressed;
 }
 
-/* ===特殊按钮=== */
-#pinBtn:selected .ikonli-font-icon{
+.settings-panel {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+/* 显示实际内容的 viewport */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+/*</editor-fold>*/
+/*<editor-fold desc="override -> 特殊样式及覆盖">*/
+/*
+ * ===================================================================
+ * 11. UTILITY & OVERRIDES -> 特殊样式及覆盖
+ * ===================================================================
+ */
+
+#pinBtn:selected .ikonli-font-icon {
     -fx-icon-color: #46d346;
     -fx-fill: #46d346;
 }
 
 #settingList #exitBtn:hover {
-    -fx-background-color:-fx-exit-button-bg-color-hover;
+    -fx-background-color: -fx-exit-button-bg-color-hover;
 }
 
 #settingList #exitBtn:pressed {
-    -fx-background-color:-fx-exit-button-bg-color-pressed;
+    -fx-background-color: -fx-exit-button-bg-color-pressed;
 }
 
+/*</editor-fold>*/

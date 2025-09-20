@@ -19,13 +19,16 @@
 
 /* light-theme.css */
 
+/*
+ * ===================================================================
+ * 全局变量
+ * ===================================================================
+ */
 .root{
-    /*字体样式*/
-    /*-fx-font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;*/
+    /*字体*/
     -fx-font-size: 13px;
-    -fx-font-smoothing-type: lcd;
 
-    /*全局背景样式*/
+    /*根节点样式*/
     -fx-background-color: #f1f1f1;
 
     /*全局自定义样式*/
@@ -37,12 +40,12 @@
     -button-selected-bg-color: #dedfdf; /* 选中后的按钮背景 */
     -button-text-fill-color-disabled: #2e2b2b;/*禁用按钮时的文字颜色*/
 
-    /*开关按钮样式*/
+    /*开关样式*/
     -toggle-switch-thumb-bg-color:#f8f6f6;/*滑块颜色*/
     -toggle-switch-thumb-area-bg-color-selected: #4570cd;/*开启时轨道颜色*/
     -toggle-switch-thumb-area-bg-color-unselected: #a5a3a1;/*关闭时轨道颜色*/
 
-    /*文本框样式*/
+    /*文本输入框样式*/
     -textField-bg-color: #f2f3f4;/*文本框背景颜色*/
     -textField-bg-color-focused: #fdfdfd;/*聚焦时文本框背景颜色*/
     -textField-border-color: #c8cbcc;/*文本框边框颜色*/
@@ -51,6 +54,8 @@
     /*codeArea样式*/
     -code-area-bg-color:#e3e1de;/*editor背景颜色*/
     -code-area-selection-fill-color: rgba(98, 190, 239, 0.4);/*被选中的文本的样式*/
+
+    /*滚动条样式*/
     -scroll-bar-thumb-bg-color:#c6c6c6;/*滚动条正常颜色*/
     -scroll-bar-thumb-bg-color-hover-pressed:#939393;/*滚动条悬浮和选中的颜色*/
 
@@ -61,13 +66,14 @@
     -fx-setting-list-button-bg-color-hover:#c1c1c7;/*设置条目悬浮时按钮颜色*/
     -fx-setting-list-button-bg-color-pressed:#b9b9be;/*设置条目按下时按钮颜色*/
 
+    /*下拉选择框样式*/
     -fx-setting-combo-box-popup-bg-color: #e1e1e3;/*设置条目单选按钮弹出框背景颜色*/
     -fx-setting-combo-box-popup-border-color: #99999f;/*设置条目单选按钮弹出框边框颜色*/
     -fx-setting-combo-box-popup-bg-color-hover: #c1c1c7;/*设置条目单选按钮弹出框悬浮是背景颜色*/
     -fx-setting-combo-box-popup-bg-color-pressed: #b9b9be;/*设置条目单选按钮弹出框按下时背景颜色*/
     -fx-setting-combo-box-arrow-border-color: #353333;/* 设置条目单选按钮箭头边框颜色*/
 
-    /*搜索面板样式*/
+    /*搜索卡片样式*/
     -fx-search-result-file-path-text-color: #636363;/*搜索面板文件路径文本颜色*/
     -fx-search-result-card-bg-color-hover:#d3d3d3;/*搜索面板列表悬浮时背景颜色*/
 

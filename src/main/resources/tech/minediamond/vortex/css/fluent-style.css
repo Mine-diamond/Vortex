@@ -22,7 +22,6 @@
 .root {
     /*字体*/
     -fx-font-size: 13px;
-    -fx-font-smoothing-type: lcd;
 
     /*根节点样式*/
     -fx-background-color: #f1f1f1;
@@ -75,6 +74,10 @@
     /*特殊样式*/
     -fx-exit-button-bg-color-hover: #f86868;/*退出按钮悬浮时背景颜色*/
     -fx-exit-button-bg-color-pressed: #e86363;/*退出按钮悬浮时背景颜色*/
+}
+
+.text {
+    -fx-font-smoothing-type: lcd;
 }
 
 .label {

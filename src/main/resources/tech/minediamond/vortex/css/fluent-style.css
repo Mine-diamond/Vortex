@@ -77,7 +77,7 @@
 }
 
 .text {
-    -fx-font-smoothing-type: lcd;
+    -fx-font-smoothing-type: gray;/* 文字使用灰度抗锯齿 */
 }
 
 .label {
